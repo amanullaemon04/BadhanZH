@@ -3,119 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Hall Blood Donor Directory">
+  <title>Hall Blood Donor</title>
 
-  <title>Hall Blood Donor Directory</title>
-
+  <!-- Keep the existing project design -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Supabase configuration -->
-  <script src="config.js"></script>
 </head>
 
 <body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Hall Blood Donor home">
+        <span class="brand-icon">Blood</span>
+        <span>Hall Blood Donor</span>
+      </a>
 
-  <header class="header">
-    <div class="container">
-      <h1>Hall Blood Donor Directory</h1>
-      <p>Find blood donors from the hall community.</p>
+      <a class="admin-link" href="admin.html">Admin</a>
     </div>
   </header>
 
-  <main class="container">
-
-    <section class="filters">
-
-      <div class="field">
-        <label for="blood">Blood group</label>
-        <select id="blood">
-          <option value="">All blood groups</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="city">City / District</label>
-        <select id="city">
-          <option value="">All cities / districts</option>
-          <option value="Dhaka">Dhaka</option>
-          <option value="Chattogram">Chattogram</option>
-          <option value="Rajshahi">Rajshahi</option>
-          <option value="Khulna">Khulna</option>
-          <option value="Barishal">Barishal</option>
-          <option value="Sylhet">Sylhet</option>
-          <option value="Rangpur">Rangpur</option>
-          <option value="Mymensingh">Mymensingh</option>
-          <option value="Cumilla">Cumilla</option>
-          <option value="Gazipur">Gazipur</option>
-          <option value="Narayanganj">Narayanganj</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="location">Specific location</label>
-        <input
-          id="location"
-          type="text"
-          placeholder="Optional, e.g. Zahurul Huq Hall"
-          autocomplete="off"
-        >
-      </div>
-
-      <div class="field">
-        <label for="status">Availability</label>
-        <select id="status">
-          <option value="">All</option>
-          <option value="available">Available</option>
-          <option value="unavailable">Unavailable</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="sort">Sort by</label>
-        <select id="sort">
-          <option value="available">Availability</option>
-          <option value="blood">Blood group</option>
-          <option value="location">Location</option>
-          <option value="recent">Recently verified</option>
-        </select>
-      </div>
-
+  <main>
+    <section class="hero container">
+      <div class="eyebrow">HALL BLOOD DONOR DIRECTORY</div>
+      <h1>Find a blood donor quickly.</h1>
+      <p>Search by blood group, city, availability, and donation location.</p>
     </section>
 
-    <section class="results-header">
-      <h2>Donors</h2>
-      <span id="count">0 donors</span>
-    </section>
+    <section class="container">
+      <div class="filter-card">
+        <div class="field">
+          <label for="blood">Blood group</label>
+          <select id="blood">
+            <option value="">All blood groups</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
 
-    <section id="results" class="results" aria-live="polite">
-      <div class="card">
-        <strong>Loading donors...</strong>
+        <div class="field">
+          <label for="city">City / District</label>
+          <select id="city">
+            <option value="">All cities / districts</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="location">Specific location</label>
+          <input
+            id="location"
+            type="text"
+            autocomplete="off"
+            placeholder="Optional, e.g. Zahurul Huq Hall"
+          >
+        </div>
+
+        <div class="field">
+          <label for="status">Availability</label>
+          <select id="status">
+            <option value="">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="sort">Sort</label>
+          <select id="sort">
+            <option value="available">Available first</option>
+            <option value="blood">Blood group</option>
+            <option value="location">Location</option>
+            <option value="recent">Recently verified</option>
+          </select>
+        </div>
       </div>
     </section>
 
+    <section class="container donors-section">
+      <div class="section-heading">
+        <h2>Donors</h2>
+        <span id="count">0 donors</span>
+      </div>
+
+      <div id="results">
+        <div class="card">
+          <strong>No donors found.</strong>
+          <div class="meta">Try another filter.</div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer class="footer">
+  <footer class="site-footer">
     <div class="container">
-      <p>
-        Please confirm donor eligibility and availability before contacting a donor.
-      </p>
+      Use donor information responsibly. Confirm availability before contacting a donor.
     </div>
   </footer>
 
+  <script src="config.js"></script>
   <script src="app.js"></script>
-
 </body>
 </html>
