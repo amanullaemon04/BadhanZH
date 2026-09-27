@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>রক্তের পরিসংখ্যান - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .stats-title {
@@ -90,14 +89,12 @@
       const container = document.getElementById("statsContainer");
 
       try {
-        // Querying donors table
+        // Shob data fetch korbe
         const { data, error } = await client
           .from("donors")
-          .select("blood, verified");
+          .select("*");
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         const counts = {
           "A+": 0, "A-": 0,
@@ -108,9 +105,10 @@
 
         if (data && data.length > 0) {
           data.forEach(item => {
-            // verified thakle count barabe (verified false holeo count korte chaile `item.verified` condition bad dewa jabe)
-            if (item.verified === true && counts.hasOwnProperty(item.blood)) {
-              counts[item.blood]++;
+            // column blood_group ba blood ja-i thakuk seta dhore nibe
+            const bg = (item.blood_group || item.blood || item.group || "").trim();
+            if (counts.hasOwnProperty(bg)) {
+              counts[bg]++;
             }
           });
         }
@@ -130,7 +128,7 @@
               ডাটা লোড করতে সমস্যা হয়েছে!
             </div>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
-              ${err.message || 'Supabase access error'}
+              ${err.message || 'Supabase error'}
             </p>
           </div>
         `;
