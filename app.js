@@ -1,14 +1,14 @@
 /* =========================================================
-   BADHAN ZH - Public Donor Directory
-   Robust filtering + automatic availability calculation
+   BADHAN ZH - Public Blood Donor Directory
    ========================================================= */
 
 (() => {
   "use strict";
 
-  // ---------------------------------------------------------
-  // DOM
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     DOM ELEMENTS
+     ========================================================= */
 
   const $ = (id) => document.getElementById(id);
 
@@ -20,24 +20,33 @@
   const resultsEl = $("results");
   const countEl = $("count");
 
-  // ---------------------------------------------------------
-  // Global data
-  // ---------------------------------------------------------
 
-  let supabaseClient = null;
-  let allDonors = [];
+  /* =========================================================
+     HTML SAFETY
+     ========================================================= */
 
-  // ---------------------------------------------------------
-  // TEXT NORMALIZATION
-  // ---------------------------------------------------------
-  // Makes:
-  // Zahurul Huq Hall
-  // zahurul huq hall
-  // ZAHURUL HUQ HALL
-  // Zahurul   Huq   Hall
-  //
-  // all behave the same.
-  // ---------------------------------------------------------
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  /* =========================================================
+     NORMALIZE TEXT
+     
+     Makes these equivalent:
+     
+     Zahurul Huq Hall
+     zahurul huq hall
+     ZAHURUL HUQ HALL
+     ZaHuRuL HuQ HaLl
+     
+     Also removes extra spaces / NBSP.
+     ========================================================= */
 
   function normalize(value) {
     return String(value ?? "")
@@ -49,45 +58,31 @@
       .toLowerCase();
   }
 
-  function cleanText(value) {
-    return String(value ?? "")
-      .normalize("NFKC")
-      .replace(/\u00A0/g, " ")
-      .replace(/\u200B/g, "")
-      .trim()
-      .replace(/\s+/g, " ");
-  }
 
-  // ---------------------------------------------------------
-  // HTML SAFETY
-  // ---------------------------------------------------------
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  // ---------------------------------------------------------
-  // DATE FUNCTIONS
-  // ---------------------------------------------------------
+  /* =========================================================
+     DATE PARSER
+     ========================================================= */
 
   function parseDate(value) {
-    if (!value) return null;
+    if (!value) {
+      return null;
+    }
 
     if (value instanceof Date) {
-      const d = new Date(value.getTime());
-      return Number.isNaN(d.getTime()) ? null : d;
+      const copy = new Date(value);
+
+      return Number.isNaN(copy.getTime())
+        ? null
+        : copy;
     }
 
     const raw = String(value).trim();
 
-    if (!raw) return null;
+    /*
+      Supabase DATE:
+      YYYY-MM-DD
+    */
 
-    // YYYY-MM-DD
     const iso = raw.match(
       /^(\d{4})-(\d{1,2})-(\d{1,2})/
     );
@@ -101,10 +96,16 @@
         )
       );
 
-      return Number.isNaN(d.getTime()) ? null : d;
+      return Number.isNaN(d.getTime())
+        ? null
+        : d;
     }
 
-    // MM/DD/YYYY
+
+    /*
+      MM/DD/YYYY
+    */
+
     const slash = raw.match(
       /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
     );
@@ -118,15 +119,52 @@
         )
       );
 
-      return Number.isNaN(d.getTime()) ? null : d;
+      return Number.isNaN(d.getTime())
+        ? null
+        : d;
     }
+
+
+    /*
+      Fallback
+    */
 
     const d = new Date(raw);
 
-    return Number.isNaN(d.getTime()) ? null : d;
+    return Number.isNaN(d.getTime())
+      ? null
+      : d;
   }
 
-  function todayUTC() {
+
+  /* =========================================================
+     FORMAT DATE
+     ========================================================= */
+
+  function formatDate(value) {
+    const d = parseDate(value);
+
+    if (!d) {
+      return "Not specified";
+    }
+
+    return d.toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC"
+      }
+    );
+  }
+
+
+  /* =========================================================
+     TODAY - UTC DATE
+     ========================================================= */
+
+  function today() {
     const now = new Date();
 
     return new Date(
@@ -138,27 +176,13 @@
     );
   }
 
-  function formatDate(value) {
-    const d = parseDate(value);
 
-    if (!d) {
-      return "Not specified";
-    }
-
-    return d.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      timeZone: "UTC"
-    });
-  }
-
-  // ---------------------------------------------------------
-  // ELIGIBILITY
-  // ---------------------------------------------------------
-  // Blood donation eligibility:
-  // last donation + 3 calendar months
-  // ---------------------------------------------------------
+  /* =========================================================
+     ELIGIBILITY DATE
+     
+     Blood donor becomes available 3 months after
+     last donation.
+     ========================================================= */
 
   function eligibilityDate(lastDonation) {
     const d = parseDate(lastDonation);
@@ -176,666 +200,749 @@
     );
   }
 
-  // ---------------------------------------------------------
-  // DONOR FIELD HELPERS
-  // ---------------------------------------------------------
-  // Supports common schema column variations.
-  // ---------------------------------------------------------
 
-  function getBlood(donor) {
-    return (
-      donor.blood_group ??
-      donor.blood ??
-      donor.bloodGroup ??
-      ""
-    );
-  }
-
-  function getCity(donor) {
-    return (
-      donor.city ??
-      donor.district ??
-      donor.city_district ??
-      ""
-    );
-  }
-
-  function getLocation(donor) {
-    return (
-      donor.location ??
-      donor.donation_location ??
-      donor.hall ??
-      donor.hall_name ??
-      donor.specific_location ??
-      ""
-    );
-  }
-
-  function getName(donor) {
-    return (
-      donor.name ??
-      donor.full_name ??
-      donor.fullName ??
-      "Unnamed donor"
-    );
-  }
-
-  function getPhone(donor) {
-    return (
-      donor.phone ??
-      donor.mobile ??
-      donor.phone_number ??
-      ""
-    );
-  }
-
-  function getLastDonation(donor) {
-    return (
-      donor.last_donation ??
-      donor.lastDonation ??
-      donor.last_donation_date ??
-      ""
-    );
-  }
-
-  function getVerifiedAt(donor) {
-    return (
-      donor.verified_at ??
-      donor.verifiedAt ??
-      donor.verified_date ??
-      ""
-    );
-  }
-
-  function getAvailableFrom(donor) {
-    return (
-      donor.available_from ??
-      donor.availableFrom ??
-      ""
-    );
-  }
-
-  // ---------------------------------------------------------
-  // AVAILABILITY
-  // ---------------------------------------------------------
-  //
-  // IMPORTANT:
-  //
-  // If last_donation exists:
-  //     availability = last donation + 3 months
-  //
-  // This is authoritative.
-  //
-  // If last_donation does not exist:
-  //     use database "available" field.
-  // ---------------------------------------------------------
+  /* =========================================================
+     AVAILABILITY LOGIC
+     
+     RULE:
+     
+     1. If last_donation exists:
+        calculate 3 months automatically.
+     
+     2. If 3 months have passed:
+        AVAILABLE
+     
+     3. If 3 months have NOT passed:
+        UNAVAILABLE
+     
+     4. If last_donation does not exist:
+        use database "available" field.
+     ========================================================= */
 
   function effectiveAvailable(donor) {
-    const lastDonation = getLastDonation(donor);
+
+    const lastDonation =
+      donor.last_donation;
+
+
+    /*
+      Last donation is the primary source.
+    */
 
     if (lastDonation) {
-      const eligibleDate = eligibilityDate(lastDonation);
 
-      if (eligibleDate) {
-        return eligibleDate.getTime() <=
-          todayUTC().getTime();
+      const eligible =
+        eligibilityDate(lastDonation);
+
+      if (eligible) {
+
+        return (
+          eligible.getTime() <=
+          today().getTime()
+        );
+
       }
     }
 
-    // Fallback to database availability
-    const value =
-      donor.available ??
-      donor.is_available ??
-      donor.isAvailable ??
-      donor.availability;
 
-    if (typeof value === "boolean") {
-      return value;
-    }
+    /*
+      If no valid last donation exists,
+      use database availability.
+    */
 
-    const normalized = normalize(value);
-
-    if (
-      normalized === "true" ||
-      normalized === "yes" ||
-      normalized === "available" ||
-      normalized === "1"
-    ) {
-      return true;
-    }
-
-    if (
-      normalized === "false" ||
-      normalized === "no" ||
-      normalized === "unavailable" ||
-      normalized === "0"
-    ) {
-      return false;
-    }
-
-    return false;
+    return (
+      donor.available === true ||
+      donor.available === "true" ||
+      donor.available === 1 ||
+      donor.available === "1"
+    );
   }
 
-  function effectiveAvailableDate(donor) {
-    const lastDonation = getLastDonation(donor);
 
-    if (lastDonation) {
-      const eligible = eligibilityDate(lastDonation);
+  /* =========================================================
+     AVAILABLE FROM DATE
+     ========================================================= */
+
+  function effectiveAvailableDate(donor) {
+
+    /*
+      If last donation exists,
+      available date = last donation + 3 months.
+    */
+
+    if (donor.last_donation) {
+
+      const eligible =
+        eligibilityDate(
+          donor.last_donation
+        );
 
       if (eligible) {
         return eligible;
       }
     }
 
-    const availableFrom = getAvailableFrom(donor);
 
-    if (availableFrom) {
-      return parseDate(availableFrom);
+    /*
+      Otherwise use available_from.
+    */
+
+    if (donor.available_from) {
+
+      return parseDate(
+        donor.available_from
+      );
     }
+
 
     return null;
   }
 
-  // ---------------------------------------------------------
-  // SUPABASE CONFIG
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     SUPABASE CONFIG
+     ========================================================= */
 
   function getConfigValue(names) {
+
     for (const name of names) {
+
       if (
         typeof window[name] !== "undefined" &&
         window[name]
       ) {
         return window[name];
       }
+
     }
 
     return "";
   }
 
+
+  /* =========================================================
+     CREATE SUPABASE CLIENT
+     ========================================================= */
+
   function createClient() {
+
     if (
       !window.supabase ||
       typeof window.supabase.createClient !== "function"
     ) {
+
       throw new Error(
         "Supabase library could not be loaded."
       );
+
     }
 
-    const url = getConfigValue([
-      "SUPABASE_URL",
-      "supabaseUrl",
-      "SUPABASE_PROJECT_URL",
-      "PROJECT_URL"
-    ]);
 
-    const key = getConfigValue([
-      "SUPABASE_ANON_KEY",
-      "SUPABASE_KEY",
-      "supabaseAnonKey",
-      "ANON_KEY",
-      "PUBLIC_SUPABASE_ANON_KEY"
-    ]);
+    const url =
+      getConfigValue([
+        "SUPABASE_URL",
+        "supabaseUrl",
+        "SUPABASE_PROJECT_URL",
+        "PROJECT_URL"
+      ]);
+
+
+    const key =
+      getConfigValue([
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_KEY",
+        "supabaseAnonKey",
+        "ANON_KEY",
+        "PUBLIC_SUPABASE_ANON_KEY"
+      ]);
+
 
     if (!url || !key) {
+
       throw new Error(
         "Supabase configuration was not found. Check config.js."
       );
+
     }
 
-    return window.supabase.createClient(url, key);
+
+    return window.supabase.createClient(
+      url,
+      key
+    );
   }
 
-  // ---------------------------------------------------------
-  // LOAD DONORS
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     SUPABASE VARIABLES
+     ========================================================= */
+
+  let supabaseClient = null;
+
+  let allDonors = [];
+
+
+  /* =========================================================
+     LOAD DONORS
+     
+     IMPORTANT:
+     We DO NOT call populateCities().
+     
+     City dropdown is already written inside index.html.
+     ========================================================= */
 
   async function loadDonors() {
+
     try {
+
       if (!supabaseClient) {
-        supabaseClient = createClient();
+
+        supabaseClient =
+          createClient();
+
       }
 
-      const { data, error } = await supabaseClient
+
+      const {
+        data,
+        error
+      } = await supabaseClient
         .from("donors")
         .select("*");
+
 
       if (error) {
         throw error;
       }
 
-      allDonors = Array.isArray(data)
-        ? data
-        : [];
 
-      populateCities();
+      allDonors =
+        Array.isArray(data)
+          ? data
+          : [];
+
+
+      /*
+        Render immediately.
+      */
 
       render();
 
     } catch (error) {
+
       console.error(
         "Could not load donors:",
         error
       );
 
-      allDonors = [];
 
       if (countEl) {
-        countEl.textContent = "0 donors";
+
+        countEl.textContent =
+          "0 donors";
+
       }
 
+
       if (resultsEl) {
+
         resultsEl.innerHTML = `
           <div class="empty-state">
             <strong>Could not load donors.</strong>
-            <p>Please refresh the page and try again.</p>
+            <p>
+              Please refresh the page and try again.
+            </p>
           </div>
         `;
+
       }
+
     }
   }
 
-  // ---------------------------------------------------------
-  // CITY DROPDOWN
-  // ---------------------------------------------------------
-  //
-  // IMPORTANT:
-  // We do NOT require location to be filled.
-  //
-  // City alone works perfectly.
-  //
-  // The dropdown is populated from donor data.
-  // ---------------------------------------------------------
 
-  function populateCities() {
-    if (!cityEl) {
-      return;
-    }
-
-    const currentValue =
-      cleanText(cityEl.value);
-
-    const cityMap = new Map();
-
-    allDonors.forEach((donor) => {
-      const city = cleanText(getCity(donor));
-
-      if (!city) {
-        return;
-      }
-
-      const key = normalize(city);
-
-      if (!cityMap.has(key)) {
-        cityMap.set(key, city);
-      }
-    });
-
-    const cities = Array.from(
-      cityMap.values()
-    ).sort((a, b) =>
-      a.localeCompare(b)
-    );
-
-    cityEl.innerHTML = "";
-
-    const allOption =
-      document.createElement("option");
-
-    allOption.value = "";
-    allOption.textContent = "All locations";
-
-    cityEl.appendChild(allOption);
-
-    cities.forEach((city) => {
-      const option =
-        document.createElement("option");
-
-      option.value = city;
-      option.textContent = city;
-
-      cityEl.appendChild(option);
-    });
-
-    // Restore selected city
-    const wanted = normalize(currentValue);
-
-    if (wanted) {
-      const matching = Array.from(
-        cityEl.options
-      ).find(
-        (option) =>
-          normalize(option.value) === wanted
-      );
-
-      if (matching) {
-        cityEl.value = matching.value;
-      }
-    }
-  }
-
-  // ---------------------------------------------------------
-  // LOCATION MATCH
-  // ---------------------------------------------------------
-  //
-  // Specific location is OPTIONAL.
-  //
-  // Empty location:
-  //     do NOT filter by location.
-  //
-  // Filled location:
-  //     filter inside selected city.
-  //
-  // Case-insensitive + space-insensitive.
-  // ---------------------------------------------------------
-
-  function locationMatches(
-    searchLocation,
-    donorLocation
-  ) {
-    const search = normalize(searchLocation);
-    const donor = normalize(donorLocation);
-
-    if (!search) {
-      return true;
-    }
-
-    if (!donor) {
-      return false;
-    }
-
-    return donor.includes(search);
-  }
-
-  // ---------------------------------------------------------
-  // FILTER DONORS
-  // ---------------------------------------------------------
+  /* =========================================================
+     FILTER DONORS
+     ========================================================= */
 
   function filteredDonors() {
+
+    /*
+      Read current filter values.
+    */
+
     const blood =
-      normalize(bloodEl?.value);
+      normalize(
+        bloodEl?.value
+      );
 
     const city =
-      normalize(cityEl?.value);
+      normalize(
+        cityEl?.value
+      );
 
     const location =
-      normalize(locationEl?.value);
+      normalize(
+        locationEl?.value
+      );
 
     const status =
-      normalize(statusEl?.value);
+      normalize(
+        statusEl?.value
+      );
+
+
+    /*
+      Filter donor data.
+    */
 
     const list =
-      allDonors.filter((donor) => {
+      allDonors.filter(
+        (donor) => {
 
-        // -----------------------------------------------
-        // BLOOD GROUP
-        // -----------------------------------------------
+          /*
+            -----------------------------------------------
+            BLOOD GROUP
+            -----------------------------------------------
+          */
 
-        const donorBlood =
-          normalize(getBlood(donor));
+          const donorBlood =
+            normalize(
+              donor.blood_group ??
+              donor.blood
+            );
 
-        if (
-          blood &&
-          donorBlood !== blood
-        ) {
-          return false;
+
+          if (
+            blood &&
+            donorBlood !== blood
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            -----------------------------------------------
+            CITY / DISTRICT
+            -----------------------------------------------
+            
+            Example:
+            
+            Filter:
+            Dhaka
+            
+            Donor:
+            Dhaka
+            
+            -> MATCH
+          */
+
+          const donorCity =
+            normalize(
+              donor.city
+            );
+
+
+          if (
+            city &&
+            donorCity !== city
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            -----------------------------------------------
+            SPECIFIC LOCATION
+            -----------------------------------------------
+            
+            Case-insensitive.
+            
+            Example:
+            
+            Zahurul Huq Hall
+            zahurul huq hall
+            ZAHURUL HUQ HALL
+            
+            all match.
+          */
+
+          const donorLocation =
+            normalize(
+              donor.location
+            );
+
+
+          if (
+            location &&
+            !donorLocation.includes(
+              location
+            )
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            -----------------------------------------------
+            AVAILABILITY
+            -----------------------------------------------
+          */
+
+          const available =
+            effectiveAvailable(
+              donor
+            );
+
+
+          /*
+            Available selected
+          */
+
+          if (
+            status === "available" &&
+            !available
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            Unavailable selected
+          */
+
+          if (
+            status === "unavailable" &&
+            available
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            All selected
+            -> no availability filter
+          */
+
+
+          return true;
+
         }
+      );
 
-        // -----------------------------------------------
-        // CITY / DISTRICT
-        // -----------------------------------------------
 
-        const donorCity =
-          normalize(getCity(donor));
-
-        if (
-          city &&
-          donorCity !== city
-        ) {
-          return false;
-        }
-
-        // -----------------------------------------------
-        // SPECIFIC LOCATION
-        // -----------------------------------------------
-        //
-        // Only applied when user typed something.
-        // -----------------------------------------------
-
-        const donorLocation =
-          getLocation(donor);
-
-        if (
-          location &&
-          !locationMatches(
-            location,
-            donorLocation
-          )
-        ) {
-          return false;
-        }
-
-        // -----------------------------------------------
-        // AVAILABILITY
-        // -----------------------------------------------
-
-        const available =
-          effectiveAvailable(donor);
-
-        if (
-          status === "available" &&
-          !available
-        ) {
-          return false;
-        }
-
-        if (
-          status === "unavailable" &&
-          available
-        ) {
-          return false;
-        }
-
-        return true;
-      });
-
-    // -----------------------------------------------------
-    // SORT
-    // -----------------------------------------------------
+    /* =====================================================
+       SORT
+       ===================================================== */
 
     const sort =
-      sortEl?.value || "available";
+      sortEl?.value ||
+      "available";
+
+
+    /*
+      AVAILABLE FIRST
+    */
 
     if (sort === "available") {
 
-      list.sort((a, b) => {
+      list.sort(
+        (a, b) => {
 
-        const aAvailable =
-          effectiveAvailable(a)
-            ? 0
-            : 1;
+          const av =
+            effectiveAvailable(a)
+              ? 0
+              : 1;
 
-        const bAvailable =
-          effectiveAvailable(b)
-            ? 0
-            : 1;
+          const bv =
+            effectiveAvailable(b)
+              ? 0
+              : 1;
 
-        if (
-          aAvailable !== bAvailable
-        ) {
-          return (
-            aAvailable -
-            bAvailable
+
+          if (av !== bv) {
+
+            return av - bv;
+
+          }
+
+
+          return normalize(
+            a.name
+          ).localeCompare(
+            normalize(b.name)
           );
+
         }
-
-        return normalize(
-          getName(a)
-        ).localeCompare(
-          normalize(getName(b))
-        );
-      });
-
-    } else if (sort === "blood") {
-
-      list.sort((a, b) =>
-        normalize(
-          getBlood(a)
-        ).localeCompare(
-          normalize(getBlood(b))
-        )
       );
 
-    } else if (sort === "location") {
-
-      list.sort((a, b) => {
-
-        const aLocation =
-          `${getCity(a)} ${getLocation(a)}`;
-
-        const bLocation =
-          `${getCity(b)} ${getLocation(b)}`;
-
-        return aLocation.localeCompare(
-          bLocation
-        );
-      });
-
-    } else if (sort === "recent") {
-
-      list.sort((a, b) => {
-
-        const aDate =
-          parseDate(
-            getVerifiedAt(a)
-          )?.getTime() || 0;
-
-        const bDate =
-          parseDate(
-            getVerifiedAt(b)
-          )?.getTime() || 0;
-
-        return bDate - aDate;
-      });
     }
+
+
+    /*
+      BLOOD GROUP
+    */
+
+    else if (sort === "blood") {
+
+      list.sort(
+        (a, b) => {
+
+          return normalize(
+            a.blood_group ??
+            a.blood
+          ).localeCompare(
+            normalize(
+              b.blood_group ??
+              b.blood
+            )
+          );
+
+        }
+      );
+
+    }
+
+
+    /*
+      LOCATION
+    */
+
+    else if (sort === "location") {
+
+      list.sort(
+        (a, b) => {
+
+          const al =
+            `${a.city ?? ""} ${
+              a.location ?? ""
+            }`;
+
+          const bl =
+            `${b.city ?? ""} ${
+              b.location ?? ""
+            }`;
+
+
+          return al.localeCompare(
+            bl
+          );
+
+        }
+      );
+
+    }
+
+
+    /*
+      RECENTLY VERIFIED
+    */
+
+    else if (sort === "recent") {
+
+      list.sort(
+        (a, b) => {
+
+          const ad =
+            parseDate(
+              a.verified_at
+            )?.getTime() || 0;
+
+          const bd =
+            parseDate(
+              b.verified_at
+            )?.getTime() || 0;
+
+
+          return bd - ad;
+
+        }
+      );
+
+    }
+
 
     return list;
   }
 
-  // ---------------------------------------------------------
-  // DONOR CARD
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     DONOR CARD
+     ========================================================= */
 
   function donorCard(donor) {
 
     const name =
       escapeHtml(
-        getName(donor)
+        donor.name ||
+        "Unnamed donor"
       );
+
 
     const blood =
       escapeHtml(
-        getBlood(donor) || "—"
+        donor.blood_group ??
+        donor.blood ??
+        "—"
       );
+
 
     const city =
       escapeHtml(
-        getCity(donor) || "—"
+        donor.city ||
+        "—"
       );
+
 
     const location =
       escapeHtml(
-        getLocation(donor) ||
+        donor.location ||
         "Not specified"
       );
 
+
+    /*
+      Calculate current availability.
+    */
+
     const available =
-      effectiveAvailable(donor);
+      effectiveAvailable(
+        donor
+      );
+
 
     const statusClass =
       available
         ? "available"
         : "unavailable";
 
+
     const statusText =
       available
         ? "Available"
         : "Unavailable";
 
+
+    /*
+      Dates
+    */
+
     const lastDonation =
       formatDate(
-        getLastDonation(donor)
+        donor.last_donation
       );
+
 
     const availableFrom =
       formatDate(
-        effectiveAvailableDate(donor)
+        effectiveAvailableDate(
+          donor
+        )
       );
+
 
     const verified =
       formatDate(
-        getVerifiedAt(donor)
+        donor.verified_at
       );
+
+
+    /*
+      Phone
+    */
 
     const phone =
       String(
-        getPhone(donor)
+        donor.phone ?? ""
       ).trim();
 
-    const contactButton =
-      phone
-        ? `
-          <a
-            class="contact-btn"
-            href="tel:${escapeHtml(phone)}"
-          >
-            Contact donor
-          </a>
-        `
-        : `
-          <button
-            class="contact-btn"
-            type="button"
-            disabled
-          >
-            Contact donor
-          </button>
-        `;
+
+    let contactButton;
+
+
+    if (phone) {
+
+      contactButton = `
+        <a
+          class="contact-btn"
+          href="tel:${escapeHtml(phone)}"
+        >
+          Contact donor
+        </a>
+      `;
+
+    } else {
+
+      contactButton = `
+        <button
+          class="contact-btn"
+          type="button"
+          disabled
+        >
+          Contact donor
+        </button>
+      `;
+
+    }
+
+
+    /*
+      Return donor card.
+    */
 
     return `
       <article class="donor-card">
 
         <div class="donor-card-head">
-          <h3>${name}</h3>
+
+          <h3>
+            ${name}
+          </h3>
 
           <strong class="blood-badge">
             ${blood}
           </strong>
+
         </div>
+
 
         <span class="status ${statusClass}">
           ${statusText}
         </span>
 
+
         <div class="donor-location">
           📍 ${city} • ${location}
         </div>
+
 
         <div class="donor-date">
           🩸 Last donation:
           ${lastDonation}
         </div>
 
+
         <div class="donor-available">
           📅 Available from:
           ${availableFrom}
         </div>
 
+
         <div class="donor-verified">
           🛡️ Verified:
           ${verified}
         </div>
+
 
         ${contactButton}
 
@@ -843,51 +950,79 @@
     `;
   }
 
-  // ---------------------------------------------------------
-  // RENDER
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     RENDER
+     ========================================================= */
 
   function render() {
+
     if (!resultsEl) {
       return;
     }
 
+
     const donors =
       filteredDonors();
 
+
+    /*
+      Update count.
+    */
+
     if (countEl) {
+
       countEl.textContent =
         `${donors.length} ${
           donors.length === 1
             ? "donor"
             : "donors"
         }`;
+
     }
+
+
+    /*
+      No results.
+    */
 
     if (!donors.length) {
 
       resultsEl.innerHTML = `
         <div class="empty-state">
-          <strong>No donors found.</strong>
+
+          <strong>
+            No donors found.
+          </strong>
+
           <p>
             Try another blood group,
             location, or availability filter.
           </p>
+
         </div>
       `;
 
       return;
     }
 
+
+    /*
+      Display donor cards.
+    */
+
     resultsEl.innerHTML =
       donors
-        .map(donorCard)
+        .map(
+          donorCard
+        )
         .join("");
   }
 
-  // ---------------------------------------------------------
-  // EVENTS
-  // ---------------------------------------------------------
+
+  /* =========================================================
+     FILTER EVENTS
+     ========================================================= */
 
   [
     bloodEl,
@@ -895,26 +1030,41 @@
     locationEl,
     statusEl,
     sortEl
-  ].forEach((element) => {
 
-    if (!element) {
-      return;
+  ].forEach(
+    (element) => {
+
+      if (!element) {
+        return;
+      }
+
+
+      /*
+        Select boxes
+      */
+
+      element.addEventListener(
+        "change",
+        render
+      );
+
+
+      /*
+        Text input
+      */
+
+      element.addEventListener(
+        "input",
+        render
+      );
+
     }
+  );
 
-    element.addEventListener(
-      "input",
-      render
-    );
 
-    element.addEventListener(
-      "change",
-      render
-    );
-  });
-
-  // ---------------------------------------------------------
-  // INITIAL LOAD
-  // ---------------------------------------------------------
+  /* =========================================================
+     INITIAL LOAD
+     ========================================================= */
 
   loadDonors();
 
