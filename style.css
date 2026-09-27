@@ -1,4 +1,4 @@
-/* Reset & Base Fonts */
+/* Reset & Fonts */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,7 +13,7 @@
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --border-color: #cbd5e1;
   --success: #16a34a;
   --danger: #dc2626;
   --radius: 10px;
@@ -31,11 +31,11 @@ body {
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 8px 16px;
+  padding: 12px 18px;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   width: 100%;
 }
 
@@ -44,40 +44,40 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
 }
 
 .logo {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .admin-link {
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -99,55 +99,64 @@ body {
   border-color: var(--primary) !important;
 }
 
-/* Universal Slogan Row */
+.btn-primary-action:hover {
+  background: var(--primary-hover) !important;
+}
+
+/* Slogan */
 .header-slogan-wrap {
   text-align: center;
-  padding-top: 3px;
-  border-top: 1px dashed #f1f5f9;
+  padding-top: 4px;
+  border-top: 1px dashed #e2e8f0;
 }
 
 .header-slogan {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-muted);
-  letter-spacing: 0.1px;
 }
 
-/* Compact Container (Zero-Scroll Scaling) */
+/* Main Container */
 .container {
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
-  margin: 8px auto;
-  padding: 0 12px;
+  margin: 18px auto;
+  padding: 0 16px;
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Filter Card */
-.filter-card {
+/* Cards (Filter & Form) */
+.filter-card, .form-card {
   background: var(--card-bg);
-  padding: 12px 14px;
+  padding: 20px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 14px;
 }
 
 .filter-grid {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
 .filter-group label {
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -155,13 +164,14 @@ body {
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 6px 10px;
+  padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   background-color: #ffffff;
   color: var(--text-main);
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .filter-group select:focus,
@@ -169,19 +179,30 @@ body {
   border-color: var(--primary);
 }
 
-/* Results Section */
-.results-section {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+.submit-btn {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background-color 0.2s;
 }
 
+.submit-btn:hover {
+  background: var(--primary-hover);
+}
+
+/* Results Section */
 .results-header {
-  margin-bottom: 6px;
+  margin-bottom: 14px;
 }
 
 .results-header h2 {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -193,29 +214,29 @@ body {
 .donor-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
 }
 
 .no-results {
   text-align: center;
-  padding: 14px 10px;
+  padding: 28px 16px;
   color: var(--text-muted);
   background: var(--card-bg);
   border-radius: var(--radius);
   border: 1px dashed var(--border-color);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
-/* Donor Card Compact */
+/* Donor Card */
 .donor-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 12px 14px;
+  padding: 18px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .donor-header {
@@ -225,26 +246,28 @@ body {
 }
 
 .donor-header h3 {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .blood-badge {
   background-color: #fee2e2;
   color: var(--primary);
   font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .donor-status {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  width: fit-content;
 }
 
 .status-available {
@@ -258,11 +281,11 @@ body {
 }
 
 .donor-details {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
 .donor-details strong {
@@ -275,50 +298,18 @@ body {
   background-color: var(--primary);
   color: #ffffff;
   text-decoration: none;
-  padding: 7px 12px;
+  padding: 10px 14px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   border-radius: 6px;
 }
 
-/* Registration Form Specific Compact Styling */
-.form-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  padding: 14px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-title {
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 2px;
-}
-
-.submit-btn {
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
-  padding: 9px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-/* Footer: Always Clean & Visible without scroll */
+/* Footer */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
-  padding: 8px 14px;
-  margin-top: auto;
+  padding: 16px 20px;
+  margin-top: 30px;
   width: 100%;
 }
 
@@ -327,18 +318,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 6px;
 }
 
 .footer-notice {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   text-align: center;
-  line-height: 1.2;
 }
 
 .footer-credit {
-  font-size: 0.76rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -349,12 +339,8 @@ body {
   text-decoration: none;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 650px) {
   .logo { font-size: 1.25rem; }
-  .header-slogan { font-size: 0.85rem; }
-  .container { max-width: 550px; margin: 16px auto; }
-  .filter-card { padding: 18px; }
-  .filter-group select, .filter-group input { padding: 8px 12px; font-size: 0.9rem; }
   .footer-container {
     flex-direction: row;
     justify-content: space-between;
