@@ -188,7 +188,7 @@
 
     const all = document.createElement("option");
     all.value = "";
-    all.textContent = "All locations";
+    all.textContent = "Select a city / district";
     cityEl.appendChild(all);
 
     cities.forEach((city) => {
@@ -213,13 +213,22 @@
     const location = normalize(locationEl?.value);
     const status = normalize(statusEl?.value);
 
+    // Require BOTH blood group and city/district before showing donors.
+    // "All locations" means no district has been selected yet.
+    const hasBloodSelection = !!blood;
+    const hasCitySelection = !!city;
+
+    if (!hasBloodSelection || !hasCitySelection) {
+      return [];
+    }
+
     let list = allDonors.filter((x) => {
       const donorBlood = normalize(x.blood_group ?? x.blood);
       const donorCity = normalize(x.city);
       const donorLocation = normalize(x.location);
 
-      if (blood && donorBlood !== blood) return false;
-      if (city && donorCity !== city) return false;
+      if (donorBlood !== blood) return false;
+      if (donorCity !== city) return false;
 
       if (location) {
         const combinedLocation = `${donorCity} ${donorLocation}`;
