@@ -1,7 +1,150 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hall Blood Donor</title><meta name="description" content="Find available blood donors."><link rel="stylesheet" href="style.css"></head><body>
-<header class="topbar"><div class="brand">🩸 Hall Blood Donor</div><nav class="nav"><a class="admin-link" href="admin.html">Admin</a></nav></header>
-<main><section class="hero"><p class="eyebrow">HALL BLOOD DONOR DIRECTORY</p><h1>Find a blood donor quickly.</h1><p>Search by blood group, city, availability, and donation location.</p></section>
-<section class="search-card"><div class="field"><label>Blood group</label><select id="blood"><option value="">All groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div><div class="field"><label>City / District</label><select id="city"><option value="">All locations</option><option value="Dhaka">Dhaka</option></select></div><div class="field"><label>Specific location</label><input id="location" placeholder="e.g. Zahurul Huq Hall"></div><div class="field"><label>Availability</label><select id="status"><option value="available">Available</option><option value="">All</option><option value="unavailable">Unavailable</option></select></div><div class="field"><label>Sort</label><select id="sort"><option value="available">Available first</option><option value="blood">Blood group</option><option value="location">Location</option><option value="recent">Recently verified</option></select></div></section>
-<section class="results-head"><h2>Donors</h2><span id="count"></span></section><section id="results" class="grid"></section></main>
-<footer>Use donor information responsibly. Confirm availability before contacting a donor.</footer>
-<script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app.js?v=20260927-2"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Hall Blood Donor</title>
+
+  <meta
+    name="description"
+    content="Find available blood donors by blood group, city, and donation location."
+  >
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="brand">🩸 Hall Blood Donor</div>
+
+    <nav class="nav">
+      <a class="admin-link" href="admin.html">Admin</a>
+    </nav>
+  </header>
+
+
+  <!-- Main -->
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <p class="eyebrow">HALL BLOOD DONOR DIRECTORY</p>
+
+      <h1>Find a blood donor quickly.</h1>
+
+      <p>
+        Search by blood group, city, availability, and donation location.
+      </p>
+    </section>
+
+
+    <!-- Search / Filter -->
+    <section class="search-card">
+
+      <!-- Blood group -->
+      <div class="field">
+        <label for="blood">Blood group</label>
+
+        <select id="blood">
+          <option value="">All groups</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+
+
+      <!-- City / District -->
+      <div class="field">
+        <label for="city">City / District</label>
+
+        <select id="city">
+          <option value="">All locations</option>
+        </select>
+      </div>
+
+
+      <!-- Specific location -->
+      <div class="field">
+        <label for="location">Specific location</label>
+
+        <input
+          id="location"
+          type="text"
+          placeholder="e.g. Zahurul Huq Hall"
+          autocomplete="off"
+        >
+      </div>
+
+
+      <!-- Availability -->
+      <div class="field">
+        <label for="status">Availability</label>
+
+        <select id="status">
+          <option value="available">Available</option>
+          <option value="">All</option>
+          <option value="unavailable">Unavailable</option>
+        </select>
+      </div>
+
+
+      <!-- Sort -->
+      <div class="field">
+        <label for="sort">Sort</label>
+
+        <select id="sort">
+          <option value="available">Available first</option>
+          <option value="blood">Blood group</option>
+          <option value="location">Location</option>
+          <option value="recent">Recently verified</option>
+        </select>
+      </div>
+
+    </section>
+
+
+    <!-- Results -->
+    <section class="results-head">
+      <h2>Donors</h2>
+      <span id="count">0 donors</span>
+    </section>
+
+    <section id="results" class="grid">
+      <div class="empty-state">
+        <strong>Loading donors...</strong>
+        <p>Please wait.</p>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- Footer -->
+  <footer>
+    Use donor information responsibly. Confirm availability before contacting a donor.
+  </footer>
+
+
+  <!-- Configuration -->
+  <script src="config.js"></script>
+
+  <!-- Supabase -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+  <!-- Application -->
+  <!-- Version parameter prevents old browser cache -->
+  <script src="app.js?v=20260927-2"></script>
+
+</body>
+</html>
