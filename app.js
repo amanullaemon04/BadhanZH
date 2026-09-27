@@ -1,7 +1,6 @@
 /* Hall Blood Donor - public site
    UTF-8 safe version.
    Keeps the existing HTML/CSS design unchanged.
-   Filtering is robust against extra spaces, NBSP, and case differences.
 */
 
 (() => {
@@ -31,37 +30,10 @@
   function parseDate(value) {
     if (!value) return null;
 
-    if (value instanceof Date) {
-      const d = new Date(value);
-      return Number.isNaN(d.getTime()) ? null : d;
-    }
+    const d = value instanceof Date ? new Date(value) : new Date(String(value));
 
-    const raw = String(value).trim();
-
-    // Supabase DATE: YYYY-MM-DD
-    const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (iso) {
-      const d = new Date(Date.UTC(
-        Number(iso[1]),
-        Number(iso[2]) - 1,
-        Number(iso[3])
-      ));
-      return Number.isNaN(d.getTime()) ? null : d;
-    }
-
-    // MM/DD/YYYY
-    const slash = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (slash) {
-      const d = new Date(Date.UTC(
-        Number(slash[3]),
-        Number(slash[1]) - 1,
-        Number(slash[2])
-      ));
-      return Number.isNaN(d.getTime()) ? null : d;
-    }
-
-    const d = new Date(raw);
-    return Number.isNaN(d.getTime()) ? null : d;
+    if (Number.isNaN(d.getTime())) return null;
+    return d;
   }
 
   function formatDate(value) {
@@ -76,63 +48,46 @@
     });
   }
 
+  // Uses calendar months, not a fixed 90-day approximation.
   function eligibilityDate(lastDonation) {
     const d = parseDate(lastDonation);
     if (!d) return null;
 
-    return new Date(Date.UTC(
-      d.getUTCFullYear(),
-      d.getUTCMonth() + 3,
-      d.getUTCDate()
-    ));
+    const year = d.getUTCFullYear();
+    const month = d.getUTCMonth();
+    const day = d.getUTCDate();
+
+    // JS Date automatically handles month/year changes.
+    return new Date(Date.UTC(year, month + 3, day));
   }
 
   function today() {
     const now = new Date();
-
-    return new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate()
-    ));
+    return new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
   }
 
-  // Last donation is authoritative when present.
+  // Last donation à¦¥à¦¾à¦•à¦²à§‡ 3-month rule automatically applies.
+  // Last donation à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ admin-à¦à¦° availability à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¬à§‡.
   function effectiveAvailable(x) {
-    if (x.last_donation) {
-      const eligible = eligibilityDate(x.last_donation);
+    const e = eligibilityDate(x.last_donation);
 
-      if (eligible) {
-        return eligible.getTime() <= today().getTime();
-      }
-    }
+    if (e) return e <= today();
 
     return !!x.available;
   }
 
   function effectiveAvailableDate(x) {
-    if (x.last_donation) {
-      const eligible = eligibilityDate(x.last_donation);
-      if (eligible) return eligible;
-    }
+    const e = eligibilityDate(x.last_donation);
 
-    if (x.available_from) {
-      return parseDate(x.available_from);
-    }
+    if (e) return e;
+
+    if (x.available_from) return parseDate(x.available_from);
 
     return null;
   }
 
-    return null;
-  }
-
-  /*
-    This normalization fixes filters when Supabase contains:
-    - uppercase/lowercase differences
-    - extra spaces
-    - non-breaking spaces
-    - Unicode spacing differences
-  */
   function normalize(value) {
     return String(value ?? "")
       .normalize("NFKC")
@@ -153,29 +108,24 @@
     return donor.includes(filter);
   }
 
+  function getAvailabilityLabel(x) {
+    return effectiveAvailable(x) ? "Available" : "Unavailable";
+  }
+
   // ---------- Supabase ----------
 
   function getConfigValue(names) {
     for (const name of names) {
-      if (
-        typeof window[name] !== "undefined" &&
-        window[name]
-      ) {
+      if (typeof window[name] !== "undefined" && window[name]) {
         return window[name];
       }
     }
-
     return "";
   }
 
   function createClient() {
-    if (
-      !window.supabase ||
-      typeof window.supabase.createClient !== "function"
-    ) {
-      throw new Error(
-        "Supabase library could not be loaded."
-      );
+    if (!window.supabase || typeof window.supabase.createClient !== "function") {
+      throw new Error("Supabase library could not be loaded.");
     }
 
     const url = getConfigValue([
@@ -220,15 +170,12 @@
       if (error) throw error;
 
       allDonors = Array.isArray(data) ? data : [];
-
       populateCities(allDonors);
       render();
     } catch (error) {
       console.error("Could not load donors:", error);
 
-      if (countEl) {
-        countEl.textContent = "0 donors";
-      }
+      if (countEl) countEl.textContent = "0 donors";
 
       if (resultsEl) {
         resultsEl.innerHTML = `
@@ -246,14 +193,13 @@
 
     const current = cityEl.value;
 
-    const cities = [
-      ...new Set(
-        donors
-          .map((x) => String(x.city ?? "").trim())
-          .filter(Boolean)
-      )
-    ].sort((a, b) => a.localeCompare(b));
+    const cities = [...new Set(
+      donors
+        .map((x) => String(x.city ?? "").trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
 
+    // Keep the existing option/design, only update its options.
     cityEl.innerHTML = "";
 
     const all = document.createElement("option");
@@ -263,20 +209,16 @@
 
     cities.forEach((city) => {
       const option = document.createElement("option");
-
       option.value = city;
       option.textContent = city;
-
       cityEl.appendChild(option);
     });
 
-    const currentNormalized = normalize(current);
-
-    const matchingCity = cities.find(
-      (city) => normalize(city) === currentNormalized
-    );
-
-    cityEl.value = matchingCity || "";
+    if (cities.includes(current)) {
+      cityEl.value = current;
+    } else {
+      cityEl.value = "";
+    }
   }
 
   // ---------- Filtering & sorting ----------
@@ -287,42 +229,32 @@
     const location = normalize(locationEl?.value);
     const status = normalize(statusEl?.value);
 
-    // LOCATION IS REQUIRED.
-    if (!city && !location) {
-      return [];
-    }
+    // City / District is the main location selector.
+    // Specific location is optional and only narrows the selected city.
+    // No city selected = do not show the donor directory yet.
+    if (!city) return [];
 
-    const list = allDonors.filter((x) => {
-      const donorBlood = normalize(
-        x.blood_group ?? x.blood
-      );
+    let list = allDonors.filter((x) => {
+      const donorBlood = normalize(x.blood_group ?? x.blood);
       const donorCity = normalize(x.city);
       const donorLocation = normalize(x.location);
 
-      // Blood group is secondary.
-      if (blood && donorBlood !== blood) {
-        return false;
-      }
+      // Blood group is optional.
+      if (blood && donorBlood !== blood) return false;
 
-      // City/District is the main location filter.
-      if (city && donorCity !== city) {
-        return false;
-      }
+      // City / District is the MAIN filter.
+      if (donorCity !== city) return false;
 
-      // Specific location narrows the city.
+      // Specific location is OPTIONAL.
+      // If empty, every donor in the selected city is included.
       if (location && !textMatches(location, donorLocation)) {
         return false;
       }
 
       const available = effectiveAvailable(x);
 
-      if (status === "available" && !available) {
-        return false;
-      }
-
-      if (status === "unavailable" && available) {
-        return false;
-      }
+      if (status === "available" && !available) return false;
+      if (status === "unavailable" && available) return false;
 
       return true;
     });
@@ -333,13 +265,18 @@
       list.sort((a, b) => {
         const av = effectiveAvailable(a) ? 0 : 1;
         const bv = effectiveAvailable(b) ? 0 : 1;
+
         if (av !== bv) return av - bv;
-        return normalize(a.name).localeCompare(normalize(b.name));
+
+        const an = normalize(a.name);
+        const bn = normalize(b.name);
+        return an.localeCompare(bn);
       });
     } else if (sort === "blood") {
       list.sort((a, b) =>
-        normalize(a.blood_group ?? a.blood)
-          .localeCompare(normalize(b.blood_group ?? b.blood))
+        normalize(a.blood_group ?? a.blood).localeCompare(
+          normalize(b.blood_group ?? b.blood)
+        )
       );
     } else if (sort === "location") {
       list.sort((a, b) => {
@@ -361,51 +298,30 @@
   // ---------- Donor card ----------
 
   function donorCard(x) {
-    const name = escapeHtml(
-      x.name || "Unnamed donor"
-    );
-
-    const blood = escapeHtml(
-      x.blood_group ?? x.blood ?? "â€”"
-    );
-
-    const city = escapeHtml(
-      x.city || "â€”"
-    );
-
-    const location = escapeHtml(
-      x.location || "Not specified"
-    );
+    const name = escapeHtml(x.name || "Unnamed donor");
+    const blood = escapeHtml(x.blood_group ?? x.blood ?? "â€”");
+    const city = escapeHtml(x.city || "â€”");
+    const location = escapeHtml(x.location || "Not specified");
 
     const available = effectiveAvailable(x);
+    const statusClass = available ? "available" : "unavailable";
+    const statusText = available ? "Available" : "Unavailable";
 
-    const statusClass = available
-      ? "available"
-      : "unavailable";
+    const lastDonation = formatDate(x.last_donation);
+    const availableFrom = formatDate(effectiveAvailableDate(x));
+    const verified = formatDate(x.verified_at);
 
-    const statusText = available
-      ? "Available"
-      : "Unavailable";
-
-    const lastDonation =
-      formatDate(x.last_donation);
-
-    const availableFrom =
-      formatDate(effectiveAvailableDate(x));
-
-    const verified =
-      formatDate(x.verified_at);
-
-    const phone =
-      String(x.phone ?? "").trim();
+    const phone = String(x.phone ?? "").trim();
 
     const contactButton = phone
       ? `<a class="contact-btn" href="tel:${escapeHtml(phone)}">Contact donor</a>`
       : `<button class="contact-btn" type="button" disabled>Contact donor</button>`;
 
     /*
-      Keep emoji strings as real UTF-8 characters.
-      The existing CSS controls the visual design.
+      IMPORTANT:
+      Keep these emoji strings as real UTF-8 characters.
+      The HTML file already declares UTF-8 and the existing CSS controls
+      the visual design, so this JS does not change the page layout.
     */
     return `
       <article class="donor-card">
@@ -414,9 +330,7 @@
           <strong class="blood-badge">${blood}</strong>
         </div>
 
-        <span class="status ${statusClass}">
-          ${statusText}
-        </span>
+        <span class="status ${statusClass}">${statusText}</span>
 
         <div class="donor-location">
           ðŸ“ ${city} â€¢ ${location}
@@ -445,12 +359,9 @@
     const donors = filteredDonors();
 
     if (countEl) {
-      countEl.textContent =
-        `${donors.length} ${
-          donors.length === 1
-            ? "donor"
-            : "donors"
-        }`;
+      countEl.textContent = `${donors.length} ${
+        donors.length === 1 ? "donor" : "donors"
+      }`;
     }
 
     if (!donors.length) {
@@ -460,29 +371,21 @@
           <p>Try another filter.</p>
         </div>
       `;
-
       return;
     }
 
-    resultsEl.innerHTML =
-      donors.map(donorCard).join("");
+    resultsEl.innerHTML = donors.map(donorCard).join("");
   }
 
   // ---------- Events ----------
 
-  [
-    bloodEl,
-    cityEl,
-    locationEl,
-    statusEl,
-    sortEl
-  ].forEach((element) => {
+  [bloodEl, cityEl, locationEl, statusEl, sortEl].forEach((element) => {
     if (!element) return;
 
     element.addEventListener("input", render);
     element.addEventListener("change", render);
   });
 
-  // Initial load
+  // Initial load.
   loadDonors();
 })();
