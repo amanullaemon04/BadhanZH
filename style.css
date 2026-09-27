@@ -1,3 +1,4 @@
+/* Reset & Fonts */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -26,10 +27,11 @@ body {
   flex-direction: column;
 }
 
+/* Header (Mobile-Friendly & Desktop Clean) */
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 16px 20px;
+  padding: 12px 16px;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -42,26 +44,42 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
+/* Logo: Never breaks into two lines */
 .logo {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
   align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Header Action Buttons */
+.header-actions {
+  display: flex;
+  align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .admin-link {
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 14px;
+  padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   background: #ffffff;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
 
@@ -70,6 +88,17 @@ body {
   border-color: var(--primary);
 }
 
+.btn-primary-action {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+}
+
+.btn-primary-action:hover {
+  background: var(--primary-hover) !important;
+}
+
+/* Main Container */
 .container {
   max-width: 900px;
   width: 100%;
@@ -78,6 +107,7 @@ body {
   flex: 1;
 }
 
+/* Filter Card */
 .filter-card {
   background: var(--card-bg);
   padding: 20px;
@@ -124,6 +154,7 @@ body {
   box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
 }
 
+/* Results Section */
 .results-header {
   margin-bottom: 16px;
 }
@@ -143,6 +174,7 @@ body {
   gap: 18px;
 }
 
+/* Donor Cards */
 .donor-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -241,6 +273,7 @@ body {
   font-size: 0.95rem;
 }
 
+/* Footer */
 .footer {
   text-align: center;
   padding: 24px 16px;
@@ -249,4 +282,15 @@ body {
   border-top: 1px solid var(--border-color);
   background: #ffffff;
   margin-top: 40px;
+}
+
+/* Responsive adjustments for desktop */
+@media (min-width: 600px) {
+  .logo {
+    font-size: 1.35rem;
+  }
+  .admin-link {
+    font-size: 0.95rem;
+    padding: 7px 14px;
+  }
 }
