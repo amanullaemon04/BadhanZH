@@ -1,150 +1,47 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+function populateCities(donors) {
+  if (!cityEl) return;
 
-  <title>Hall Blood Donor</title>
+  // Keep the 64 Bangladesh districts already defined in index.html.
+  // Do not replace the dropdown with only cities found in donor records.
 
-  <meta
-    name="description"
-    content="Find available blood donors by blood group, city, and donation location."
-  >
+  const current = cityEl.value;
 
-  <link rel="stylesheet" href="style.css">
-</head>
+  // If the HTML already contains the district list,
+  // preserve it exactly as it is.
+  if (cityEl.options.length > 1) {
+    const currentNormalized = normalize(current);
 
-<body>
+    const matchingOption = Array.from(cityEl.options).find(
+      (option) => normalize(option.value) === currentNormalized
+    );
 
-  <!-- Header -->
-  <header class="topbar">
-    <div class="brand">🩸 Hall Blood Donor</div>
+    cityEl.value = matchingOption
+      ? matchingOption.value
+      : "";
 
-    <nav class="nav">
-      <a class="admin-link" href="admin.html">Admin</a>
-    </nav>
-  </header>
+    return;
+  }
 
+  // Fallback only if the HTML dropdown has no district options.
+  const cities = [
+    ...new Set(
+      donors
+        .map((x) => String(x.city ?? "").trim())
+        .filter(Boolean)
+    )
+  ].sort((a, b) => a.localeCompare(b));
 
-  <!-- Main -->
-  <main>
+  cityEl.innerHTML = "";
 
-    <!-- Hero -->
-    <section class="hero">
-      <p class="eyebrow">HALL BLOOD DONOR DIRECTORY</p>
+  const all = document.createElement("option");
+  all.value = "";
+  all.textContent = "All districts";
+  cityEl.appendChild(all);
 
-      <h1>Find a blood donor quickly.</h1>
-
-      <p>
-        Search by blood group, city, availability, and donation location.
-      </p>
-    </section>
-
-
-    <!-- Search / Filter -->
-    <section class="search-card">
-
-      <!-- Blood group -->
-      <div class="field">
-        <label for="blood">Blood group</label>
-
-        <select id="blood">
-          <option value="">All groups</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-        </select>
-      </div>
-
-
-      <!-- City / District -->
-      <div class="field">
-        <label for="city">City / District</label>
-
-        <select id="city">
-          <option value="">All locations</option>
-        </select>
-      </div>
-
-
-      <!-- Specific location -->
-      <div class="field">
-        <label for="location">Specific location</label>
-
-        <input
-          id="location"
-          type="text"
-          placeholder="e.g. Zahurul Huq Hall"
-          autocomplete="off"
-        >
-      </div>
-
-
-      <!-- Availability -->
-      <div class="field">
-        <label for="status">Availability</label>
-
-        <select id="status">
-          <option value="available">Available</option>
-          <option value="">All</option>
-          <option value="unavailable">Unavailable</option>
-        </select>
-      </div>
-
-
-      <!-- Sort -->
-      <div class="field">
-        <label for="sort">Sort</label>
-
-        <select id="sort">
-          <option value="available">Available first</option>
-          <option value="blood">Blood group</option>
-          <option value="location">Location</option>
-          <option value="recent">Recently verified</option>
-        </select>
-      </div>
-
-    </section>
-
-
-    <!-- Results -->
-    <section class="results-head">
-      <h2>Donors</h2>
-      <span id="count">0 donors</span>
-    </section>
-
-    <section id="results" class="grid">
-      <div class="empty-state">
-        <strong>Loading donors...</strong>
-        <p>Please wait.</p>
-      </div>
-    </section>
-
-  </main>
-
-
-  <!-- Footer -->
-  <footer>
-    Use donor information responsibly. Confirm availability before contacting a donor.
-  </footer>
-
-
-  <!-- Configuration -->
-  <script src="config.js"></script>
-
-  <!-- Supabase -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-  ></script>
-
-  <!-- Application -->
-  <!-- Version parameter prevents old browser cache -->
-  <script src="app.js?v=20260927-2"></script>
-
-</body>
-</html>
+  cities.forEach((city) => {
+    const option = document.createElement("option");
+    option.value = city;
+    option.textContent = city;
+    cityEl.appendChild(option);
+  });
+}
