@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>আপনার মতামত দিন - BADHAN ZH</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="form-card" style="margin-top: 10px;">
+      <h2 class="form-title">ওয়েবসাইট সম্পর্কে আপনার মতামত দিন</h2>
+      <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+        BADHAN ZH প্ল্যাটফর্মটি আরও উন্নত করতে আপনার মূল্যবান মতামত ও পরামর্শ জানান।
+      </p>
+
+      <form id="feedbackForm" class="filter-grid">
+        <div class="filter-group">
+          <label for="fbName">আপনার নাম *</label>
+          <input type="text" id="fbName" placeholder="e.g. Amanulla Emon" required />
+        </div>
+
+        <div class="filter-group">
+          <label for="fbPhone">মোবাইল বা ইমেইল (ঐচ্ছিক)</label>
+          <input type="text" id="fbPhone" placeholder="01XXXXXXXXX বা email" />
+        </div>
+
+        <div class="filter-group">
+          <label for="fbMessage">আপনার মতামত বা পরামর্শ *</label>
+          <textarea 
+            id="fbMessage" 
+            rows="4" 
+            placeholder="আপনার মতামত বিস্তারিত লিখুন..." 
+            required
+            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none;"
+          ></textarea>
+        </div>
+
+        <button type="submit" id="btnSubmitFeedback" class="submit-btn">
+          মতামত জমা দিন
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — আপনার মতামত আমাদের অনুপ্রেরণা</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSubmitFeedback");
+      btn.disabled = true;
+      btn.innerText = "পাঠানো হচ্ছে...";
+
+      const feedbackData = {
+        name: document.getElementById("fbName").value.trim(),
+        contact: document.getElementById("fbPhone").value.trim() || null,
+        message: document.getElementById("fbMessage").value.trim()
+      };
+
+      try {
+        const { error } = await client.from("feedbacks").insert([feedbackData]);
+
+        if (error) {
+          // Jodi feedbacks table toiri na thake, user-ke janabe
+          alert("মতামত পাঠাতে সমস্যা হয়েছে! (Database table error: " + error.message + ")");
+          btn.disabled = false;
+          btn.innerText = "মতামত জমা দিন";
+        } else {
+          alert("ধন্যবাদ! আপনার মূল্যবান মতামতটি সফলভাবে গৃহীত হয়েছে।");
+          window.location.href = "index.html";
+        }
+      } catch (err) {
+        alert("নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন।");
+        btn.disabled = false;
+        btn.innerText = "মতামত জমা দিন";
+      }
+    });
+  </script>
+</body>
+</html>
