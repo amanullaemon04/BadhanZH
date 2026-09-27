@@ -31,13 +31,37 @@
   function parseDate(value) {
     if (!value) return null;
 
-    const d =
-      value instanceof Date
-        ? new Date(value)
-        : new Date(String(value));
+    if (value instanceof Date) {
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
 
-    if (Number.isNaN(d.getTime())) return null;
-    return d;
+    const raw = String(value).trim();
+
+    // Supabase DATE: YYYY-MM-DD
+    const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) {
+      const d = new Date(Date.UTC(
+        Number(iso[1]),
+        Number(iso[2]) - 1,
+        Number(iso[3])
+      ));
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    // MM/DD/YYYY
+    const slash = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (slash) {
+      const d = new Date(Date.UTC(
+        Number(slash[3]),
+        Number(slash[1]) - 1,
+        Number(slash[2])
+      ));
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
   }
 
   function formatDate(value) {
@@ -52,48 +76,52 @@
     });
   }
 
-  // Uses calendar months, not a fixed 90-day approximation.
   function eligibilityDate(lastDonation) {
     const d = parseDate(lastDonation);
     if (!d) return null;
 
-    const year = d.getUTCFullYear();
-    const month = d.getUTCMonth();
-    const day = d.getUTCDate();
-
-    return new Date(Date.UTC(year, month + 3, day));
+    return new Date(Date.UTC(
+      d.getUTCFullYear(),
+      d.getUTCMonth() + 3,
+      d.getUTCDate()
+    ));
   }
 
   function today() {
     const now = new Date();
 
-    return new Date(
-      Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate()
-      )
-    );
+    return new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate()
+    ));
   }
 
-  // Last donation à¦¥à¦¾à¦•à¦²à§‡ 3-month rule automatically applies.
-  // Last donation à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ admin-à¦à¦° availability à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¬à§‡.
+  // Last donation is authoritative when present.
   function effectiveAvailable(x) {
-    const e = eligibilityDate(x.last_donation);
+    if (x.last_donation) {
+      const eligible = eligibilityDate(x.last_donation);
 
-    if (e) return e <= today();
+      if (eligible) {
+        return eligible.getTime() <= today().getTime();
+      }
+    }
 
     return !!x.available;
   }
 
   function effectiveAvailableDate(x) {
-    const e = eligibilityDate(x.last_donation);
-
-    if (e) return e;
+    if (x.last_donation) {
+      const eligible = eligibilityDate(x.last_donation);
+      if (eligible) return eligible;
+    }
 
     if (x.available_from) {
       return parseDate(x.available_from);
     }
+
+    return null;
+  }
 
     return null;
   }
@@ -254,14 +282,12 @@
   // ---------- Filtering & sorting ----------
 
   function filteredDonors() {
-
     const blood = normalize(bloodEl?.value);
     const city = normalize(cityEl?.value);
     const location = normalize(locationEl?.value);
     const status = normalize(statusEl?.value);
 
-    // LOCATION IS THE MAIN FILTER.
-    // No city and no specific location = show no donors.
+    // LOCATION IS REQUIRED.
     if (!city && !location) {
       return [];
     }
@@ -270,26 +296,24 @@
       const donorBlood = normalize(
         x.blood_group ?? x.blood
       );
-
       const donorCity = normalize(x.city);
       const donorLocation = normalize(x.location);
 
-      // Blood group is an optional secondary filter.
+      // Blood group is secondary.
       if (blood && donorBlood !== blood) {
         return false;
       }
 
-      // City/District is a main location filter.
+      // City/District is the main location filter.
       if (city && donorCity !== city) {
         return false;
       }
 
-      // Specific location narrows the selected city further.
+      // Specific location narrows the city.
       if (location && !textMatches(location, donorLocation)) {
         return false;
       }
 
-      // Availability is applied after location filtering.
       const available = effectiveAvailable(x);
 
       if (status === "available" && !available) {
@@ -303,44 +327,30 @@
       return true;
     });
 
-
     const sort = sortEl?.value || "available";
 
     if (sort === "available") {
       list.sort((a, b) => {
         const av = effectiveAvailable(a) ? 0 : 1;
         const bv = effectiveAvailable(b) ? 0 : 1;
-
         if (av !== bv) return av - bv;
-
-        const an = normalize(a.name);
-        const bn = normalize(b.name);
-
-        return an.localeCompare(bn);
+        return normalize(a.name).localeCompare(normalize(b.name));
       });
     } else if (sort === "blood") {
       list.sort((a, b) =>
-        normalize(
-          a.blood_group ?? a.blood
-        ).localeCompare(
-          normalize(b.blood_group ?? b.blood)
-        )
+        normalize(a.blood_group ?? a.blood)
+          .localeCompare(normalize(b.blood_group ?? b.blood))
       );
     } else if (sort === "location") {
       list.sort((a, b) => {
         const al = `${a.city ?? ""} ${a.location ?? ""}`;
         const bl = `${b.city ?? ""} ${b.location ?? ""}`;
-
         return al.localeCompare(bl);
       });
     } else if (sort === "recent") {
       list.sort((a, b) => {
-        const ad =
-          parseDate(a.verified_at)?.getTime() || 0;
-
-        const bd =
-          parseDate(b.verified_at)?.getTime() || 0;
-
+        const ad = parseDate(a.verified_at)?.getTime() || 0;
+        const bd = parseDate(b.verified_at)?.getTime() || 0;
         return bd - ad;
       });
     }
