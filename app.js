@@ -166,14 +166,14 @@ function render() {
             </div>
 
             <span class="badge ${ok ? "yes" : "no"}">
-              ${ok ? "Available" : "Unavailable"}
+              ${ok ? "\u{1F7E2} Available" : "\u{1F534} Unavailable"}
             </span>
 
             <div class="meta">
-              Location: ${esc(x.city || "Not specified")}${x.location ? ` â€¢ ${esc(x.location)}` : ""}<br>
-              Last donation: ${esc(fmtDate(x.last_donation))}<br>
-              ${cooldown ? `Available from: ${esc(fmtDate(e))}<br>` : ""}
-              Verified: ${esc(fmtDate(x.verified_at))}
+              \u{1F4CD} ${esc(x.city || "Not specified")}${x.location ? ` â€¢ ${esc(x.location)}` : ""}<br>
+              \u{1F489} Last donation: ${esc(fmtDate(x.last_donation))}<br>
+              ${cooldown ? `\u{23F3} Available from: ${esc(fmtDate(e))}<br>` : ""}
+              \u{2714}\uFE0F Verified: ${esc(fmtDate(x.verified_at))}
             </div>
 
             ${
