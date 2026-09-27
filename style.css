@@ -119,7 +119,7 @@ body {
   color: var(--text-muted);
 }
 
-/* Main Container: Auto fits screen without creating large empty gaps */
+/* Main Container */
 .container {
   max-width: 520px;
   width: 100%;
@@ -128,17 +128,16 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
 }
 
-/* Filter Card: Inputs are well-spaced and stretched down naturally */
+/* Filter Card */
 .filter-card {
   background: var(--card-bg);
   padding: 16px 16px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  margin-bottom: 8px;
+  margin-bottom: 0px;
 }
 
 .filter-grid {
@@ -178,15 +177,16 @@ body {
   border-color: var(--primary);
 }
 
-/* Results Section */
+/* Results Section: Donors found pushed down to marked position */
 .results-section {
   display: flex;
   flex-direction: column;
+  margin-top: 36px;
   margin-bottom: 6px;
 }
 
 .results-header {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .results-header h2 {
@@ -321,7 +321,7 @@ body {
   margin-top: 4px;
 }
 
-/* Footer: Attached neatly at the bottom with zero extra scrolling */
+/* Footer */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
