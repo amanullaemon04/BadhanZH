@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -130,14 +131,24 @@
       </div>
     </section>
 
+    <!-- Results Section -->
     <section class="results-section">
       <div class="results-header">
         <h2>Donors found: <span id="count">0</span></h2>
       </div>
       <div id="results" class="donor-grid"></div>
     </section>
+
+    <!-- Mark Kora Jaygay Shortcut Bar -->
+    <div class="quick-shortcuts">
+      <a href="stats.html" class="shortcut-chip">
+        📊 রক্তের পরিসংখ্যান
+      </a>
+    </div>
+
   </main>
 
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting.</p>
