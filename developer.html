@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Developer Profile - Amanulla Emon</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome CDN for exact official brand icons -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+    referrerpolicy="no-referrer" 
+  />
   <style>
     .profile-card {
       background: var(--card-bg);
@@ -14,20 +20,23 @@
       padding: 30px 20px;
       text-align: center;
     }
-    .profile-avatar {
-      width: 90px;
-      height: 90px;
-      background: #fee2e2;
-      color: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      font-weight: 800;
+    /* Profile Image Container */
+    .profile-avatar-wrap {
+      width: 110px;
+      height: 110px;
       margin: 0 auto 16px;
-      border: 3px solid #ffffff;
-      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+      border-radius: 50%;
+      padding: 3px;
+      border: 2px solid var(--primary);
+      box-shadow: 0 4px 12px rgba(211, 47, 47, 0.18);
+      background: #ffffff;
+    }
+    .profile-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
     }
     .profile-name {
       font-size: 1.4rem;
@@ -67,36 +76,57 @@
     .social-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 20px;
+      gap: 12px;
+      margin-top: 22px;
     }
     .social-btn {
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 600;
-      padding: 10px 12px;
+      padding: 11px 14px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
-      color: var(--text-main);
-      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s;
+      gap: 8px;
+      transition: all 0.2s ease;
+      background: #ffffff;
     }
-    .social-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: #fff5f5;
+    .social-btn i {
+      font-size: 1.15rem;
     }
+    /* Brand specific buttons */
     .btn-mail {
-      background: var(--primary);
+      background: #ea4335;
       color: #ffffff;
-      border-color: var(--primary);
+      border-color: #ea4335;
     }
     .btn-mail:hover {
-      background: var(--primary-hover);
+      background: #d33828;
+    }
+    .btn-whatsapp {
+      color: #128c7e;
+      border-color: #25d366;
+    }
+    .btn-whatsapp:hover {
+      background: #25d366;
+      color: #ffffff;
+    }
+    .btn-github {
+      color: #24292e;
+      border-color: #d1d5db;
+    }
+    .btn-github:hover {
+      background: #24292e;
+      color: #ffffff;
+    }
+    .btn-facebook {
+      color: #1877f2;
+      border-color: #1877f2;
+    }
+    .btn-facebook:hover {
+      background: #1877f2;
       color: #ffffff;
     }
   </style>
@@ -106,7 +136,7 @@
   <!-- Header -->
   <header class="header">
     <div class="header-container">
-      <h1 class="logo">🩸 BADHAN ZH</h1>
+      <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
       <a href="index.html" class="admin-link">← হোম পেজ</a>
     </div>
   </header>
@@ -114,7 +144,12 @@
   <!-- Main Container -->
   <main class="container">
     <div class="profile-card">
-      <div class="profile-avatar">👨‍💻</div>
+      
+      <!-- Developer Profile Picture -->
+      <div class="profile-avatar-wrap">
+        <img src="profile.jpg" alt="Amanulla Emon" class="profile-img" />
+      </div>
+
       <h2 class="profile-name">Amanulla Emon</h2>
       <p class="profile-title">Lead Developer & Maintainer</p>
       
@@ -137,19 +172,19 @@
         </div>
       </div>
 
-      <!-- Social & Contact Links -->
+      <!-- Social & Contact Links with Exact Brand Icons -->
       <div class="social-grid">
         <a href="mailto:amanullaemon04@gmail.com" class="social-btn btn-mail">
-          ✉️ Send Email
+          <i class="fa-solid fa-envelope"></i> Send Email
         </a>
-        <a href="https://wa.me/8801608575239" target="_blank" class="social-btn">
-          💬 WhatsApp
+        <a href="https://wa.me/8801608575239" target="_blank" class="social-btn btn-whatsapp">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="https://github.com/amanullaemon04" target="_blank" class="social-btn">
-          🐙 GitHub
+        <a href="https://github.com/amanullaemon04" target="_blank" class="social-btn btn-github">
+          <i class="fa-brands fa-github"></i> GitHub
         </a>
-        <a href="https://facebook.com/amanullaemon.5" target="_blank" class="social-btn">
-          👤 Facebook
+        <a href="https://facebook.com/amanullaemon.5" target="_blank" class="social-btn btn-facebook">
+          <i class="fa-brands fa-facebook"></i> Facebook
         </a>
       </div>
     </div>
