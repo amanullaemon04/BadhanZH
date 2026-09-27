@@ -1,218 +1,366 @@
-const { createClient } = window.supabase;
-const db = createClient(APP_CONFIG.SUPABASE_URL, APP_CONFIG.SUPABASE_ANON_KEY);
-const $ = id => document.getElementById(id);
+/* Hall Blood Donor - public site
+   UTF-8 safe version.
+   Keeps the existing HTML/CSS design unchanged.
+*/
 
-const MIN_DONATION_GAP_MONTHS = 3;
-let donors = [];
+(() => {
+  "use strict";
 
-function parseDate(v) {
-  if (!v) return null;
-  const [y, m, d] = String(v).slice(0, 10).split("-").map(Number);
-  return y && m && d ? new Date(y, m - 1, d) : null;
-}
+  const $ = (id) => document.getElementById(id);
 
-function addMonths(date, months) {
-  const day = date.getDate();
-  const d = new Date(date.getFullYear(), date.getMonth(), 1);
-  d.setMonth(d.getMonth() + months);
-  const last = new Date(
-    d.getFullYear(),
-    d.getMonth() + 1,
-    0
-  ).getDate();
-  d.setDate(Math.min(day, last));
-  return d;
-}
+  const bloodEl = $("blood");
+  const cityEl = $("city");
+  const locationEl = $("location");
+  const statusEl = $("status");
+  const sortEl = $("sort");
+  const resultsEl = $("results");
+  const countEl = $("count");
 
-function today() {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
+  // ---------- Safe text helpers ----------
 
-function eligibilityDate(lastDonation) {
-  const d = parseDate(lastDonation);
-  return d ? addMonths(d, MIN_DONATION_GAP_MONTHS) : null;
-}
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
-function effectiveAvailable(x) {
-  const e = eligibilityDate(x.last_donation);
+  function parseDate(value) {
+    if (!value) return null;
+
+    const d = value instanceof Date ? new Date(value) : new Date(String(value));
+
+    if (Number.isNaN(d.getTime())) return null;
+    return d;
+  }
+
+  function formatDate(value) {
+    const d = parseDate(value);
+    if (!d) return "Not specified";
+
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC"
+    });
+  }
+
+  // Uses calendar months, not a fixed 90-day approximation.
+  function eligibilityDate(lastDonation) {
+    const d = parseDate(lastDonation);
+    if (!d) return null;
+
+    const year = d.getUTCFullYear();
+    const month = d.getUTCMonth();
+    const day = d.getUTCDate();
+
+    // JS Date automatically handles month/year changes.
+    return new Date(Date.UTC(year, month + 3, day));
+  }
+
+  function today() {
+    const now = new Date();
+    return new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
+  }
 
   // Last donation à¦¥à¦¾à¦•à¦²à§‡ 3-month rule automatically applies.
-  if (e) return e <= today();
+  // Last donation à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ admin-à¦à¦° availability à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¬à§‡.
+  function effectiveAvailable(x) {
+    const e = eligibilityDate(x.last_donation);
 
-  // Last donation à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ admin-à¦à¦° availability à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¬à§‡à¥¤
-  return !!x.available;
-}
+    if (e) return e <= today();
 
-function fmtDate(v) {
-  const d = parseDate(v);
-  if (!d) return "Not specified";
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  });
-}
-
-function esc(v) {
-  return String(v ?? "").replace(/[&<>"']/g, m => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
-}
-
-async function load() {
-  const { data, error } = await db
-    .from("donors")
-    .select(
-      "id,name,blood_group,available,city,location,last_donation,verified_at,phone"
-    )
-    .order("available", { ascending: false })
-    .order("verified_at", { ascending: false });
-
-  if (error) {
-    console.error(error);
-    donors = [];
-    return;
+    return !!x.available;
   }
 
-  donors = data || [];
-}
+  function effectiveAvailableDate(x) {
+    const e = eligibilityDate(x.last_donation);
 
-function render() {
-  let d = [...donors];
+    if (e) return e;
 
-  const b = $("blood").value;
-  const city = $("city").value;
-  const l = $("location").value.trim().toLowerCase();
-  const s = $("status").value;
-  const sort = $("sort").value;
+    if (x.available_from) return parseDate(x.available_from);
 
-  if (b) {
-    d = d.filter(x => x.blood_group === b);
+    return null;
   }
 
-  if (city) {
-    d = d.filter(
-      x => (x.city || "").toLowerCase() === city.toLowerCase()
-    );
+  function normalize(value) {
+    return String(value ?? "").trim().toLowerCase();
   }
 
-  if (l) {
-    d = d.filter(
-      x =>
-        (x.location || "")
-          .toLowerCase()
-          .includes(l)
-    );
+  function getAvailabilityLabel(x) {
+    return effectiveAvailable(x) ? "Available" : "Unavailable";
   }
 
-  if (s) {
-    d = d.filter(x =>
-      s === "available"
-        ? effectiveAvailable(x)
-        : !effectiveAvailable(x)
-    );
+  // ---------- Supabase ----------
+
+  function getConfigValue(names) {
+    for (const name of names) {
+      if (typeof window[name] !== "undefined" && window[name]) {
+        return window[name];
+      }
+    }
+    return "";
   }
 
-  if (sort === "available") {
-    d.sort(
-      (a, b) =>
-        Number(effectiveAvailable(b)) -
-        Number(effectiveAvailable(a))
-    );
+  function createClient() {
+    if (!window.supabase || typeof window.supabase.createClient !== "function") {
+      throw new Error("Supabase library could not be loaded.");
+    }
+
+    const url = getConfigValue([
+      "SUPABASE_URL",
+      "supabaseUrl",
+      "SUPABASE_PROJECT_URL",
+      "PROJECT_URL"
+    ]);
+
+    const key = getConfigValue([
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_KEY",
+      "supabaseAnonKey",
+      "ANON_KEY",
+      "PUBLIC_SUPABASE_ANON_KEY"
+    ]);
+
+    if (!url || !key) {
+      throw new Error(
+        "Supabase configuration was not found. Check config.js."
+      );
+    }
+
+    return window.supabase.createClient(url, key);
   }
 
-  if (sort === "blood") {
-    d.sort((a, b) =>
-      a.blood_group.localeCompare(b.blood_group)
-    );
-  }
+  let supabaseClient = null;
+  let allDonors = [];
 
-  if (sort === "location") {
-    d.sort((a, b) =>
-      `${a.city || ""} ${a.location || ""}`.localeCompare(
-        `${b.city || ""} ${b.location || ""}`
-      )
-    );
-  }
+  // ---------- Donor data ----------
 
-  if (sort === "recent") {
-    d.sort((a, b) =>
-      String(b.verified_at || "").localeCompare(
-        String(a.verified_at || "")
-      )
-    );
-  }
+  async function loadDonors() {
+    try {
+      if (!supabaseClient) {
+        supabaseClient = createClient();
+      }
 
-  $("count").textContent =
-    `${d.length} donor${d.length === 1 ? "" : "s"}`;
+      const { data, error } = await supabaseClient
+        .from("donors")
+        .select("*");
 
-  $("results").innerHTML = d.length
-    ? d.map(x => {
-        const ok = effectiveAvailable(x);
-        const e = eligibilityDate(x.last_donation);
-        const cooldown =
-          x.available && e && e > today();
+      if (error) throw error;
 
-        return `
-          <article class="card">
-            <div class="card-top">
-              <div class="name">${esc(x.name)}</div>
-              <div class="blood">${esc(x.blood_group)}</div>
-            </div>
+      allDonors = Array.isArray(data) ? data : [];
+      populateCities(allDonors);
+      render();
+    } catch (error) {
+      console.error("Could not load donors:", error);
 
-            <span class="badge ${ok ? "yes" : "no"}">
-              ${ok ? "\u{1F7E2} Available" : "\u{1F534} Unavailable"}
-            </span>
+      if (countEl) countEl.textContent = "0 donors";
 
-            <div class="meta">
-              \u{1F4CD} ${esc(x.city || "Not specified")}${x.location ? ` â€¢ ${esc(x.location)}` : ""}<br>
-              \u{1F489} Last donation: ${esc(fmtDate(x.last_donation))}<br>
-              ${cooldown ? `\u{23F3} Available from: ${esc(fmtDate(e))}<br>` : ""}
-              \u{2714}\uFE0F Verified: ${esc(fmtDate(x.verified_at))}
-            </div>
-
-            ${
-              x.phone
-                ? `<a class="contact" href="tel:${encodeURIComponent(
-                    x.phone
-                  )}">Contact donor</a>`
-                : ""
-            }
-          </article>
+      if (resultsEl) {
+        resultsEl.innerHTML = `
+          <div class="empty-state">
+            <strong>Could not load donors.</strong>
+            <p>Please refresh the page and try again.</p>
+          </div>
         `;
-      }).join("")
-    : `
-      <div class="card">
-        <strong>No donors found.</strong>
-        <div class="meta">Try another filter.</div>
-      </div>
+      }
+    }
+  }
+
+  function populateCities(donors) {
+    if (!cityEl) return;
+
+    const current = cityEl.value;
+
+    const cities = [...new Set(
+      donors
+        .map((x) => String(x.city ?? "").trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+
+    // Keep the existing option/design, only update its options.
+    cityEl.innerHTML = "";
+
+    const all = document.createElement("option");
+    all.value = "";
+    all.textContent = "All locations";
+    cityEl.appendChild(all);
+
+    cities.forEach((city) => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      cityEl.appendChild(option);
+    });
+
+    if (cities.includes(current)) {
+      cityEl.value = current;
+    } else {
+      cityEl.value = "";
+    }
+  }
+
+  // ---------- Filtering & sorting ----------
+
+  function filteredDonors() {
+    const blood = normalize(bloodEl?.value);
+    const city = normalize(cityEl?.value);
+    const location = normalize(locationEl?.value);
+    const status = normalize(statusEl?.value);
+
+    let list = allDonors.filter((x) => {
+      const donorBlood = normalize(x.blood_group ?? x.blood);
+      const donorCity = normalize(x.city);
+      const donorLocation = normalize(x.location);
+
+      if (blood && donorBlood !== blood) return false;
+      if (city && donorCity !== city) return false;
+
+      if (location) {
+        const combinedLocation = `${donorCity} ${donorLocation}`;
+        if (!combinedLocation.includes(location)) return false;
+      }
+
+      const available = effectiveAvailable(x);
+
+      if (status === "available" && !available) return false;
+      if (status === "unavailable" && available) return false;
+
+      return true;
+    });
+
+    const sort = sortEl?.value || "available";
+
+    if (sort === "available") {
+      list.sort((a, b) => {
+        const av = effectiveAvailable(a) ? 0 : 1;
+        const bv = effectiveAvailable(b) ? 0 : 1;
+
+        if (av !== bv) return av - bv;
+
+        const an = normalize(a.name);
+        const bn = normalize(b.name);
+        return an.localeCompare(bn);
+      });
+    } else if (sort === "blood") {
+      list.sort((a, b) =>
+        normalize(a.blood_group ?? a.blood).localeCompare(
+          normalize(b.blood_group ?? b.blood)
+        )
+      );
+    } else if (sort === "location") {
+      list.sort((a, b) => {
+        const al = `${a.city ?? ""} ${a.location ?? ""}`;
+        const bl = `${b.city ?? ""} ${b.location ?? ""}`;
+        return al.localeCompare(bl);
+      });
+    } else if (sort === "recent") {
+      list.sort((a, b) => {
+        const ad = parseDate(a.verified_at)?.getTime() || 0;
+        const bd = parseDate(b.verified_at)?.getTime() || 0;
+        return bd - ad;
+      });
+    }
+
+    return list;
+  }
+
+  // ---------- Donor card ----------
+
+  function donorCard(x) {
+    const name = escapeHtml(x.name || "Unnamed donor");
+    const blood = escapeHtml(x.blood_group ?? x.blood ?? "â€”");
+    const city = escapeHtml(x.city || "â€”");
+    const location = escapeHtml(x.location || "Not specified");
+
+    const available = effectiveAvailable(x);
+    const statusClass = available ? "available" : "unavailable";
+    const statusText = available ? "Available" : "Unavailable";
+
+    const lastDonation = formatDate(x.last_donation);
+    const availableFrom = formatDate(effectiveAvailableDate(x));
+    const verified = formatDate(x.verified_at);
+
+    const phone = String(x.phone ?? "").trim();
+
+    const contactButton = phone
+      ? `<a class="contact-btn" href="tel:${escapeHtml(phone)}">Contact donor</a>`
+      : `<button class="contact-btn" type="button" disabled>Contact donor</button>`;
+
+    /*
+      IMPORTANT:
+      Keep these emoji strings as real UTF-8 characters.
+      The HTML file already declares UTF-8 and the existing CSS controls
+      the visual design, so this JS does not change the page layout.
+    */
+    return `
+      <article class="donor-card">
+        <div class="donor-card-head">
+          <h3>${name}</h3>
+          <strong class="blood-badge">${blood}</strong>
+        </div>
+
+        <span class="status ${statusClass}">${statusText}</span>
+
+        <div class="donor-location">
+          ðŸ“ ${city} â€¢ ${location}
+        </div>
+
+        <div class="donor-date">
+          ðŸ©¸ Last donation: ${lastDonation}
+        </div>
+
+        <div class="donor-available">
+          ðŸ“… Available from: ${availableFrom}
+        </div>
+
+        <div class="donor-verified">
+          ðŸ›¡ï¸ Verified: ${verified}
+        </div>
+
+        ${contactButton}
+      </article>
     `;
-}
-
-async function init() {
-  try {
-    await load();
-    render();
-  } catch (err) {
-    console.error(err);
-    donors = [];
-    render();
   }
-}
 
-["blood", "city", "location", "status", "sort"].forEach(id => {
-  const el = $(id);
-  if (el) el.addEventListener("input", render);
-  if (el && el.tagName === "SELECT") {
-    el.addEventListener("change", render);
+  function render() {
+    if (!resultsEl) return;
+
+    const donors = filteredDonors();
+
+    if (countEl) {
+      countEl.textContent = `${donors.length} ${
+        donors.length === 1 ? "donor" : "donors"
+      }`;
+    }
+
+    if (!donors.length) {
+      resultsEl.innerHTML = `
+        <div class="empty-state">
+          <strong>No donors found.</strong>
+          <p>Try another filter.</p>
+        </div>
+      `;
+      return;
+    }
+
+    resultsEl.innerHTML = donors.map(donorCard).join("");
   }
-});
 
-(async () => {
-  await init();
+  // ---------- Events ----------
+
+  [bloodEl, cityEl, locationEl, statusEl, sortEl].forEach((element) => {
+    if (!element) return;
+
+    element.addEventListener("input", render);
+    element.addEventListener("change", render);
+  });
+
+  // Initial load.
+  loadDonors();
 })();
