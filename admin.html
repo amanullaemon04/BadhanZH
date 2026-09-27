@@ -3,362 +3,267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel - BADHAN ZH</title>
+  <title>Admin Dashboard - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .admin-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      padding: 16px;
+      margin: auto 0;
+    }
+    .admin-title {
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .admin-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .admin-table-wrap {
+      overflow-x: auto;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .admin-table th, .admin-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    .admin-table th {
+      background-color: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .action-btn-group {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-verify {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-delete {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
+  <!-- Header with Universal Slogan & Right-Aligned Main Site button -->
   <header class="header">
     <div class="header-container">
-      <h1 class="logo">🩸 BADHAN ZH — Admin</h1>
-      <a href="index.html" class="admin-link">← মেইন সাইট</a>
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH – Admin</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← মেইন সাইট</a>
+          <button id="btnLogout" class="admin-link" style="display: none; cursor: pointer;">Logout</button>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="container">
     
-    <!-- Login Section -->
-    <div id="loginCard" class="filter-card" style="max-width: 420px; margin: 40px auto;">
-      <h3 style="margin-bottom: 16px; text-align: center; color: var(--primary);">অ্যাডমিন লগইন</h3>
-      
-      <form id="loginForm" style="display: flex; flex-direction: column; gap: 12px;">
+    <!-- Login Form Card -->
+    <div id="loginSection" class="form-card" style="margin: auto 0;">
+      <h2 class="form-title">অ্যাডমিন লগইন</h2>
+      <form id="loginForm" class="filter-grid">
         <div class="filter-group">
-          <label for="adminEmail">ইমেইল (Email)</label>
-          <input type="email" id="adminEmail" required placeholder="admin@example.com" />
+          <label>ইমেইল (Email)</label>
+          <input type="email" id="adminEmail" placeholder="admin@example.com" required autocomplete="off" />
         </div>
-
         <div class="filter-group">
-          <label for="adminPassword">পাসওয়ার্ড (Password)</label>
-          <input type="password" id="adminPassword" required placeholder="••••••••" />
+          <label>পাসওয়ার্ড (Password)</label>
+          <input type="password" id="adminPassword" placeholder="••••••••" required />
         </div>
-
-        <button type="submit" id="loginBtn" class="contact-btn" style="border: none; cursor: pointer; margin-top: 8px;">
-          লগইন করুন
-        </button>
-
-        <p id="loginError" style="color: var(--danger); font-size: 0.9rem; text-align: center; display: none;"></p>
+        <button type="submit" id="btnLogin" class="submit-btn">লগইন করুন</button>
       </form>
     </div>
 
-    <!-- Admin Dashboard (After Login) -->
-    <div id="adminContent" style="display: none;">
+    <!-- Admin Dashboard Section (Visible after login) -->
+    <div id="dashboardSection" class="admin-card" style="display: none; width: 100%;">
+      <h2 class="admin-title">ডোনার ম্যানেজমেন্ট</h2>
       
-      <!-- Top Bar -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-        <div>
-          <h2 style="font-size: 1.25rem;">স্বাগতম, <span id="userEmailBadge" style="color: var(--primary);"></span></h2>
-          <span id="roleBadge" class="donor-status" style="margin-top: 4px;"></span>
-        </div>
-        <button id="logoutBtn" style="padding: 8px 16px; background: #64748b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          লগআউট
-        </button>
+      <div class="admin-controls">
+        <input type="text" id="adminSearch" placeholder="নাম, রক্ত বা জেলা দিয়ে সার্চ করুন..." class="filter-group" style="padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem;" />
       </div>
 
-      <!-- Super Admin Panel: Add Sub-Admin Section -->
-      <div id="superAdminSection" class="filter-card" style="display: none; margin-bottom: 24px; border: 1px solid #cbd5e1; background: #f1f5f9;">
-        <h3 style="margin-bottom: 10px; color: var(--text-main); font-size: 1.1rem;">নতুন সাব-অ্যাডমিন যোগ করুন (Main Admin Only)</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">যাকে সাব-অ্যাডমিন বানাতে চান, তার ইমেইল দিন।</p>
-        
-        <form id="addSubAdminForm" style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <input type="email" id="subAdminEmail" placeholder="subadmin@gmail.com" required style="flex: 1; min-width: 200px; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);" />
-          <button type="submit" class="contact-btn" style="border: none; cursor: pointer; padding: 10px 18px;">অ্যাডমিন বানান</button>
-        </form>
-        <p id="subAdminMsg" style="font-size: 0.9rem; margin-top: 8px; display: none;"></p>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>নাম</th>
+              <th>গ্রুপ</th>
+              <th>মোবাইল</th>
+              <th>জেলা</th>
+              <th>অবস্থা</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="adminDonorList">
+            <!-- Dynamic rows will appear here -->
+          </tbody>
+        </table>
       </div>
-
-      <!-- Admin Search & Sorting Card -->
-      <div class="filter-card" style="margin-bottom: 20px; padding: 16px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-          
-          <!-- Search Box -->
-          <div class="filter-group">
-            <label for="adminSearch">নাম / ফোন / এলাকা দিয়ে খুঁজুন</label>
-            <input type="text" id="adminSearch" placeholder="Type name, phone or hall..." />
-          </div>
-
-          <!-- Blood Filter -->
-          <div class="filter-group">
-            <label for="adminBloodFilter">রক্তের গ্রুপ ফিল্টার</label>
-            <select id="adminBloodFilter">
-              <option value="">সকল গ্রুপ (All)</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-            </select>
-          </div>
-
-          <!-- Sort Dropdown -->
-          <div class="filter-group">
-            <label for="adminSort">সাজান (Sorting)</label>
-            <select id="adminSort">
-              <option value="recent">নতুন ডোনার আগে (Recent)</option>
-              <option value="name_asc">নাম অনুযায়ী (A to Z)</option>
-              <option value="blood">রক্তের গ্রুপ অনুযায়ী</option>
-              <option value="unverified">আন-ভেরিফাইড আগে</option>
-            </select>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Donors Section Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>রেজিস্টার্ড ডোনার তালিকা (<span id="totalCount">0</span>)</h3>
-      </div>
-
-      <!-- Donor Cards List -->
-      <div id="donorList" style="display: flex; flex-direction: column; gap: 14px;"></div>
     </div>
 
   </main>
 
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — অ্যাডমিন কন্ট্রোল প্যানেল</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
+
   <script>
     const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentRole = null;
-    let currentUserEmail = null;
-    let allAdminDonors = [];
+    const loginSection = document.getElementById("loginSection");
+    const dashboardSection = document.getElementById("dashboardSection");
+    const btnLogout = document.getElementById("btnLogout");
 
-    // DOM Elements
-    const loginCard = document.getElementById("loginCard");
-    const adminContent = document.getElementById("adminContent");
-    const loginForm = document.getElementById("loginForm");
-    const loginError = document.getElementById("loginError");
-    const loginBtn = document.getElementById("loginBtn");
-    const userEmailBadge = document.getElementById("userEmailBadge");
-    const roleBadge = document.getElementById("roleBadge");
-    const superAdminSection = document.getElementById("superAdminSection");
-    const addSubAdminForm = document.getElementById("addSubAdminForm");
-    const subAdminEmail = document.getElementById("subAdminEmail");
-    const subAdminMsg = document.getElementById("subAdminMsg");
-    const totalCount = document.getElementById("totalCount");
-    const donorList = document.getElementById("donorList");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // Search & Sort Elements
-    const adminSearch = document.getElementById("adminSearch");
-    const adminBloodFilter = document.getElementById("adminBloodFilter");
-    const adminSort = document.getElementById("adminSort");
-
-    function normalizeText(val) {
-      return String(val ?? "").trim().toLowerCase();
+    // Check Active Auth Session
+    async function checkUser() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        showDashboard();
+      }
     }
+    checkUser();
 
-    // Login Form Submit
-    loginForm.addEventListener("submit", async (e) => {
+    // Login Handler
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      loginError.style.display = "none";
-      loginBtn.disabled = true;
-      loginBtn.textContent = "যাচাই করা হচ্ছে...";
+      const btn = document.getElementById("btnLogin");
+      btn.disabled = true;
+      btn.innerText = "যাচাই হচ্ছে...";
 
-      const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+      const email = document.getElementById("adminEmail").value.trim();
       const password = document.getElementById("adminPassword").value;
 
-      try {
-        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (authError) throw authError;
-
-        const { data: roleData, error: roleError } = await supabaseClient
-          .from("admin_users")
-          .select("role")
-          .eq("email", email)
-          .single();
-
-        if (roleError || !roleData) {
-          await supabaseClient.auth.signOut();
-          throw new Error("আপনার অ্যাকাউন্টটি অ্যাডমিন হিসেবে অনুমোদিত নয়।");
-        }
-
-        currentUserEmail = email;
-        currentRole = roleData.role;
-        showDashboard();
-
-      } catch (err) {
-        loginError.style.display = "block";
-        loginError.textContent = err.message || "লগইন ব্যর্থ হয়েছে!";
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "লগইন করুন";
-      }
-    });
-
-    // Show Dashboard
-    function showDashboard() {
-      loginCard.style.display = "none";
-      adminContent.style.display = "block";
-      userEmailBadge.textContent = currentUserEmail;
-
-      if (currentRole === "super_admin") {
-        roleBadge.className = "donor-status status-available";
-        roleBadge.textContent = "MAIN ADMIN";
-        superAdminSection.style.display = "block";
+      if (error) {
+        alert("ভুল তথ্য: " + error.message);
+        btn.disabled = false;
+        btn.innerText = "লগইন করুন";
       } else {
-        roleBadge.className = "donor-status status-unavailable";
-        roleBadge.textContent = "SUB ADMIN";
-        superAdminSection.style.display = "none";
-      }
-
-      loadAdminDonors();
-    }
-
-    // Add Sub-Admin
-    addSubAdminForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const targetEmail = subAdminEmail.value.trim().toLowerCase();
-      subAdminMsg.style.display = "none";
-
-      try {
-        const { error } = await supabaseClient
-          .from("admin_users")
-          .insert([{ email: targetEmail, role: "admin" }]);
-
-        if (error) throw error;
-
-        subAdminMsg.style.display = "block";
-        subAdminMsg.style.color = "var(--success)";
-        subAdminMsg.textContent = `${targetEmail} কে সফলভাবে সাব-অ্যাডমিন বানানো হয়েছে!`;
-        subAdminEmail.value = "";
-      } catch (err) {
-        subAdminMsg.style.display = "block";
-        subAdminMsg.style.color = "var(--danger)";
-        subAdminMsg.textContent = "ব্যর্থ হয়েছে: " + err.message;
+        showDashboard();
       }
     });
 
-    // Logout
-    logoutBtn.addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      adminContent.style.display = "none";
-      loginCard.style.display = "block";
-      loginForm.reset();
+    // Logout Handler
+    btnLogout.addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.reload();
     });
 
-    // Filter & Sort Logic for Admin Panel
-    function getProcessedDonors() {
-      const q = normalizeText(adminSearch.value);
-      const bFilter = normalizeText(adminBloodFilter.value);
-      const sortMode = adminSort.value;
-
-      let list = allAdminDonors.filter(donor => {
-        const name = normalizeText(donor.name);
-        const phone = normalizeText(donor.phone);
-        const location = normalizeText(donor.location);
-        const city = normalizeText(donor.city);
-        const blood = normalizeText(donor.blood_group);
-
-        if (bFilter && blood !== bFilter) return false;
-
-        if (q) {
-          const matchName = name.includes(q);
-          const matchPhone = phone.includes(q);
-          const matchLoc = location.includes(q) || city.includes(q);
-          if (!matchName && !matchPhone && !matchLoc) return false;
-        }
-
-        return true;
-      });
-
-      // Sorting
-      list.sort((a, b) => {
-        if (sortMode === "name_asc") {
-          return String(a.name || "").localeCompare(String(b.name || ""));
-        } else if (sortMode === "blood") {
-          return String(a.blood_group || "").localeCompare(String(b.blood_group || ""));
-        } else if (sortMode === "unverified") {
-          const vA = a.verified_at ? 1 : 0;
-          const vB = b.verified_at ? 1 : 0;
-          return vA - vB;
-        } else {
-          // recent (created_at desc)
-          const tA = new Date(a.created_at || 0).getTime();
-          const tB = new Date(b.created_at || 0).getTime();
-          return tB - tA;
-        }
-      });
-
-      return list;
+    function showDashboard() {
+      loginSection.style.display = "none";
+      dashboardSection.style.display = "block";
+      btnLogout.style.display = "inline-flex";
+      loadDonors();
     }
 
-    // Render Admin Donors
-    function renderAdminList() {
-      const list = getProcessedDonors();
-      totalCount.textContent = list.length;
+    // Load Donors for Admin
+    async function loadDonors() {
+      const tbody = document.getElementById("adminDonorList");
+      tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>লোড হচ্ছে...</td></tr>";
 
-      if (list.length === 0) {
-        donorList.innerHTML = `<div class="no-results">কোনো ডোনার পাওয়া যায়নি।</div>`;
+      const { data, error } = await supabase.from("donors").select("*").order("created_at", { ascending: false });
+
+      if (error || !data) {
+        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>ডাটা লোড করা যায়নি!</td></tr>";
         return;
       }
 
-      donorList.innerHTML = list.map(donor => `
-        <div class="donor-card" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <h3 style="margin-bottom: 4px;">${donor.name} <span class="blood-badge">${donor.blood_group}</span></h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">ফোন: <strong>${donor.phone || 'N/A'}</strong> | জেলা: ${donor.city} | এলাকা: ${donor.location || 'N/A'}</p>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">শেষ রক্তদান: ${donor.last_donation || 'N/A'} | ভেরিফাইড: ${donor.verified_at ? '<span style="color:var(--success);font-weight:bold;">হ্যাঁ</span>' : '<span style="color:var(--danger);font-weight:bold;">না</span>'}</p>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            ${!donor.verified_at ? `<button onclick="verifyDonor('${donor.id}')" style="padding: 8px 14px; background: var(--success); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight:600;">Verify</button>` : ''}
-            ${currentRole === 'super_admin' ? `<button onclick="deleteDonor('${donor.id}')" style="padding: 8px 14px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight:600;">Delete</button>` : ''}
-          </div>
-        </div>
+      renderTable(data);
+
+      // Search functionality
+      document.getElementById("adminSearch").addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = data.filter(d => 
+          d.name.toLowerCase().includes(term) || 
+          d.blood.toLowerCase().includes(term) || 
+          d.city.toLowerCase().includes(term)
+        );
+        renderTable(filtered);
+      });
+    }
+
+    function renderTable(donors) {
+      const tbody = document.getElementById("adminDonorList");
+      if (donors.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>কোনো ডোনার পাওয়া যায়নি।</td></tr>";
+        return;
+      }
+
+      tbody.innerHTML = donors.map(d => `
+        <tr>
+          <td><strong>${d.name}</strong></td>
+          <td><span style="color:var(--primary); font-weight:bold;">${d.blood}</span></td>
+          <td>${d.phone}</td>
+          <td>${d.city}</td>
+          <td>${d.verified ? '<span style="color:var(--success);">Verified</span>' : '<span style="color:var(--danger);">Pending</span>'}</td>
+          <td>
+            <div class="action-btn-group">
+              ${!d.verified ? `<button class="btn-verify" onclick="verifyDonor('${d.id}')">Approve</button>` : ''}
+              <button class="btn-delete" onclick="deleteDonor('${d.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
       `).join("");
     }
 
-    // Load Donors from Supabase
-    async function loadAdminDonors() {
-      donorList.innerHTML = "<p>ডোনার তালিকা লোড হচ্ছে...</p>";
-
-      const { data, error } = await supabaseClient
-        .from("donors")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        donorList.innerHTML = "<p>Error: " + error.message + "</p>";
-        return;
+    // Approve Donor
+    window.verifyDonor = async (id) => {
+      if (confirm("এই ডোনারকে ভেরিফাই করতে চান?")) {
+        await supabase.from("donors").update({ verified: true }).eq("id", id);
+        loadDonors();
       }
-
-      allAdminDonors = data || [];
-      renderAdminList();
-    }
-
-    // Search and Sort event listeners
-    [adminSearch, adminBloodFilter, adminSort].forEach(el => {
-      if (el) {
-        el.addEventListener("input", renderAdminList);
-        el.addEventListener("change", renderAdminList);
-      }
-    });
-
-    // Verify Donor Action
-    window.verifyDonor = async function(id) {
-      const todayDate = new Date().toISOString().split('T')[0];
-      const { error } = await supabaseClient.from("donors").update({ verified_at: todayDate }).eq("id", id);
-      if (error) alert("Error: " + error.message);
-      else loadAdminDonors();
     };
 
-    // Delete Donor Action
-    window.deleteDonor = async function(id) {
-      if (confirm("আপনি কি নিশ্চিত এই ডোনারকে ডিলিট করতে চান?")) {
-        const { error } = await supabaseClient.from("donors").delete().eq("id", id);
-        if (error) alert("Error: " + error.message);
-        else loadAdminDonors();
+    // Delete Donor
+    window.deleteDonor = async (id) => {
+      if (confirm("এই ডোনারের তথ্য মুছে ফেলতে চান?")) {
+        await supabase.from("donors").delete().eq("id", id);
+        loadDonors();
       }
     };
   </script>
 </body>
 </html>
-
