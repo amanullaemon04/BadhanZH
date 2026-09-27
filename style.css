@@ -131,7 +131,7 @@ body {
   justify-content: flex-start;
 }
 
-/* Filter Card: Niche porjonto expand kora */
+/* Filter Card */
 .filter-card {
   background: var(--card-bg);
   padding: 20px 18px;
@@ -300,17 +300,17 @@ body {
   background-color: var(--primary-hover);
 }
 
-/* Quick Shortcuts Bar (Footer-er thik upore fixed position) */
+/* Quick Shortcuts Bar (Auto-Compact & Responsive) */
 .quick-shortcuts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  padding: 6px 16px;
+  justify-content: center;
+  padding: 4px 10px;
   max-width: 520px;
   width: 100%;
-  margin: 10px auto 4px auto;
-  gap: 10px;
+  margin: 8px auto 4px auto;
+  gap: 6px 10px;
 }
 
 .shortcut-chip {
@@ -318,12 +318,13 @@ body {
   background: transparent;
   color: #1e40af;
   border-bottom: 1.5px solid #3b82f6;
-  padding: 2px 4px;
-  font-size: 0.88rem;
+  padding: 2px 3px;
+  font-size: clamp(0.74rem, 2.7vw, 0.85rem);
   font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -361,7 +362,7 @@ body {
   margin-top: 6px;
 }
 
-/* Footer: Bottom-e visible */
+/* Footer */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
@@ -403,4 +404,4 @@ body {
     flex-direction: row;
     justify-content: space-between;
   }
-}
+  }
