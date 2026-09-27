@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer Profile - Amanulla Emon</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .profile-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .profile-avatar {
+      width: 90px;
+      height: 90px;
+      background: #fee2e2;
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 0 auto 16px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+    }
+    .profile-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .profile-title {
+      font-size: 0.95rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .info-list {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+    .info-item strong {
+      color: var(--text-main);
+      margin-left: 8px;
+    }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .social-btn {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .social-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #fff5f5;
+    }
+    .btn-mail {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+    .btn-mail:hover {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <h1 class="logo">🩸 BADHAN ZH</h1>
+      <a href="index.html" class="admin-link">← হোম পেজ</a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="profile-card">
+      <div class="profile-avatar">👨‍💻</div>
+      <h2 class="profile-name">Amanulla Emon</h2>
+      <p class="profile-title">Lead Developer & Maintainer</p>
+      
+      <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5;">
+        BADHAN ZH ব্লাড ডোনার প্ল্যাটফর্মের ডেভলপার। জরুরি রক্তের প্রয়োজনে মানুষের পাশে দাঁড়াতে ও যোগাযোগ সহজ করতেই এই প্ল্যাটফর্মের সূচনা।
+      </p>
+
+      <div class="info-list">
+        <div class="info-item">
+          <span>ইমেইল:</span>
+          <strong>amanullaemon04@gmail.com</strong>
+        </div>
+        <div class="info-item">
+          <span>হোয়াটসঅ্যাপ:</span>
+          <strong>01608575239</strong>
+        </div>
+        <div class="info-item">
+          <span>স্ট্যাটাস:</span>
+          <strong style="color: var(--success);">Active Developer</strong>
+        </div>
+      </div>
+
+      <!-- Social & Contact Links -->
+      <div class="social-grid">
+        <a href="mailto:amanullaemon04@gmail.com" class="social-btn btn-mail">
+          ✉️ Send Email
+        </a>
+        <a href="https://wa.me/8801608575239" target="_blank" class="social-btn">
+          💬 WhatsApp
+        </a>
+        <a href="https://github.com/amanullaemon04" target="_blank" class="social-btn">
+          🐙 GitHub
+        </a>
+        <a href="https://facebook.com/amanullaemon.5" target="_blank" class="social-btn">
+          👤 Facebook
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — Service to Humanity</p>
+    </div>
+  </footer>
+
+</body>
+</html>
