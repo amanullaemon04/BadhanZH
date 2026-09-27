@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
   <title>BADHAN ZH</title>
 
   <meta
     name="description"
-    content="Find available blood donors by blood group, city, and donation location."
+    content="Find blood donors by blood group, city, availability, and donation location."
   >
 
   <link rel="stylesheet" href="style.css">
@@ -16,144 +20,149 @@
 
 <body>
 
-  <!-- Header -->
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
   <header class="topbar">
-    <div class="brand">🩸 BADHAN ZH</div>
+
+    <div class="brand">
+      🩸 BADHAN ZH
+    </div>
 
     <nav class="nav">
-      <a class="admin-link" href="admin.html">Admin</a>
+      <a
+        class="admin-link"
+        href="admin.html"
+      >
+        Admin
+      </a>
     </nav>
+
   </header>
 
 
-  <!-- Main -->
+  <!-- =====================================================
+       MAIN
+       ===================================================== -->
+
   <main>
 
-    <!-- Hero -->
-    <section class="hero">
-      <p class="eyebrow">BADHAN ZH BLOOD DONOR DIRECTORY</p>
+    <!-- ===================================================
+         HERO
+         =================================================== -->
 
-      <h1>Find a blood donor quickly.</h1>
+    <section class="hero">
+
+      <p class="eyebrow">
+        BADHAN ZH BLOOD DONOR DIRECTORY
+      </p>
+
+      <h1>
+        Find a blood donor quickly.
+      </h1>
 
       <p>
-        Search by blood group, city, availability, and donation location.
+        Search by blood group, city, availability,
+        and donation location.
       </p>
+
     </section>
 
 
-    <!-- Search / Filter -->
+    <!-- ===================================================
+         SEARCH / FILTER CARD
+         =================================================== -->
+
     <section class="search-card">
 
-      <!-- Blood group -->
+      <!-- Blood Group -->
+
       <div class="field">
-        <label for="blood">Blood group</label>
+
+        <label for="blood">
+          Blood group
+        </label>
 
         <select id="blood">
-          <option value="">All groups</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
+
+          <option value="">
+            All groups
+          </option>
+
+          <option value="A+">
+            A+
+          </option>
+
+          <option value="A-">
+            A-
+          </option>
+
+          <option value="B+">
+            B+
+          </option>
+
+          <option value="B-">
+            B-
+          </option>
+
+          <option value="AB+">
+            AB+
+          </option>
+
+          <option value="AB-">
+            AB-
+          </option>
+
+          <option value="O+">
+            O+
+          </option>
+
+          <option value="O-">
+            O-
+          </option>
+
         </select>
+
       </div>
 
 
-      <!-- City / District -->
+      <!-- =================================================
+           CITY / DISTRICT
+           ================================================= -->
+
       <div class="field">
-        <label for="city">City / District</label>
+
+        <label for="city">
+          City / District
+        </label>
 
         <select id="city">
-          <option value="">All locations</option>
 
-          <option value="Bagerhat">Bagerhat</option>
-          <option value="Bandarban">Bandarban</option>
-          <option value="Barguna">Barguna</option>
-          <option value="Barishal">Barishal</option>
-          <option value="Bhola">Bhola</option>
-          <option value="Bogura">Bogura</option>
-          <option value="Brahmanbaria">Brahmanbaria</option>
+          <!--
+            app.js will automatically populate
+            the available cities/districts from
+            the donor database.
+          -->
 
-          <option value="Chandpur">Chandpur</option>
-          <option value="Chattogram">Chattogram</option>
-          <option value="Chuadanga">Chuadanga</option>
+          <option value="">
+            All locations
+          </option>
 
-          <option value="Cumilla">Cumilla</option>
-
-          <option value="Dhaka">Dhaka</option>
-          <option value="Dinajpur">Dinajpur</option>
-
-          <option value="Faridpur">Faridpur</option>
-          <option value="Feni">Feni</option>
-
-          <option value="Gaibandha">Gaibandha</option>
-          <option value="Gazipur">Gazipur</option>
-          <option value="Gopalganj">Gopalganj</option>
-
-          <option value="Habiganj">Habiganj</option>
-
-          <option value="Jamalpur">Jamalpur</option>
-          <option value="Jashore">Jashore</option>
-          <option value="Jhalokati">Jhalokati</option>
-          <option value="Jhenaidah">Jhenaidah</option>
-          <option value="Joypurhat">Joypurhat</option>
-
-          <option value="Khagrachhari">Khagrachhari</option>
-          <option value="Khulna">Khulna</option>
-          <option value="Kishoreganj">Kishoreganj</option>
-          <option value="Kurigram">Kurigram</option>
-          <option value="Kushtia">Kushtia</option>
-
-          <option value="Lakshmipur">Lakshmipur</option>
-          <option value="Lalmonirhat">Lalmonirhat</option>
-          <option value="Lalmonirhat">Lalmonirhat</option>
-
-          <option value="Madaripur">Madaripur</option>
-          <option value="Magura">Magura</option>
-          <option value="Manikganj">Manikganj</option>
-          <option value="Meherpur">Meherpur</option>
-          <option value="Moulvibazar">Moulvibazar</option>
-          <option value="Munshiganj">Munshiganj</option>
-          <option value="Mymensingh">Mymensingh</option>
-
-          <option value="Naogaon">Naogaon</option>
-          <option value="Narail">Narail</option>
-          <option value="Narayanganj">Narayanganj</option>
-          <option value="Narsingdi">Narsingdi</option>
-          <option value="Natore">Natore</option>
-          <option value="Netrokona">Netrokona</option>
-          <option value="Nilphamari">Nilphamari</option>
-          <option value="Noakhali">Noakhali</option>
-
-          <option value="Pabna">Pabna</option>
-          <option value="Panchagarh">Panchagarh</option>
-          <option value="Patuakhali">Patuakhali</option>
-          <option value="Pirojpur">Pirojpur</option>
-
-          <option value="Rajbari">Rajbari</option>
-          <option value="Rajshahi">Rajshahi</option>
-          <option value="Rangamati">Rangamati</option>
-          <option value="Rangpur">Rangpur</option>
-
-          <option value="Satkhira">Satkhira</option>
-          <option value="Shariatpur">Shariatpur</option>
-          <option value="Sherpur">Sherpur</option>
-          <option value="Sirajganj">Sirajganj</option>
-          <option value="Sunamganj">Sunamganj</option>
-          <option value="Sylhet">Sylhet</option>
-
-          <option value="Tangail">Tangail</option>
-          <option value="Thakurgaon">Thakurgaon</option>
         </select>
+
       </div>
 
 
-      <!-- Specific location -->
+      <!-- =================================================
+           SPECIFIC LOCATION
+           ================================================= -->
+
       <div class="field">
-        <label for="location">Specific location</label>
+
+        <label for="location">
+          Specific location
+        </label>
 
         <input
           id="location"
@@ -161,68 +170,163 @@
           placeholder="e.g. Zahurul Huq Hall"
           autocomplete="off"
         >
+
       </div>
 
 
-      <!-- Availability -->
+      <!-- =================================================
+           AVAILABILITY
+           ================================================= -->
+
       <div class="field">
-        <label for="status">Availability</label>
+
+        <label for="status">
+          Availability
+        </label>
 
         <select id="status">
-          <option value="available">Available</option>
-          <option value="">All</option>
-          <option value="unavailable">Unavailable</option>
+
+          <!-- Default: show available donors -->
+
+          <option value="available">
+            Available
+          </option>
+
+          <!-- Show both available and unavailable -->
+
+          <option value="">
+            All
+          </option>
+
+          <!-- Show only unavailable -->
+
+          <option value="unavailable">
+            Unavailable
+          </option>
+
         </select>
+
       </div>
 
 
-      <!-- Sort -->
+      <!-- =================================================
+           SORT
+           ================================================= -->
+
       <div class="field">
-        <label for="sort">Sort</label>
+
+        <label for="sort">
+          Sort
+        </label>
 
         <select id="sort">
-          <option value="available">Available first</option>
-          <option value="blood">Blood group</option>
-          <option value="location">Location</option>
-          <option value="recent">Recently verified</option>
+
+          <option value="available">
+            Available first
+          </option>
+
+          <option value="blood">
+            Blood group
+          </option>
+
+          <option value="location">
+            Location
+          </option>
+
+          <option value="recent">
+            Recently verified
+          </option>
+
         </select>
+
       </div>
 
     </section>
 
 
-    <!-- Results -->
+    <!-- ===================================================
+         RESULTS HEADER
+         =================================================== -->
+
     <section class="results-head">
-      <h2>Donors</h2>
-      <span id="count">0 donors</span>
+
+      <h2>
+        Donors
+      </h2>
+
+      <span id="count">
+        0 donors
+      </span>
+
     </section>
 
-    <section id="results" class="grid">
+
+    <!-- ===================================================
+         DONOR RESULTS
+         =================================================== -->
+
+    <section
+      id="results"
+      class="grid"
+    >
+
+      <!-- Initial loading message -->
+
       <div class="empty-state">
-        <strong>Loading donors...</strong>
-        <p>Please wait.</p>
+
+        <strong>
+          Loading donors...
+        </strong>
+
+        <p>
+          Please wait.
+        </p>
+
       </div>
+
     </section>
 
   </main>
 
 
-  <!-- Footer -->
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
   <footer>
-    Use donor information responsibly. Confirm availability before contacting a donor.
+
+    Use donor information responsibly.
+    Confirm availability before contacting a donor.
+
   </footer>
 
 
-  <!-- Configuration -->
+  <!-- =====================================================
+       CONFIGURATION
+       ===================================================== -->
+
   <script src="config.js"></script>
 
-  <!-- Supabase -->
+
+  <!-- =====================================================
+       SUPABASE
+       ===================================================== -->
+
   <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
   ></script>
 
-  <!-- Application -->
-  <script src="app.js?v=20260927-3"></script>
+
+  <!-- =====================================================
+       APPLICATION
+       ===================================================== -->
+
+  <!--
+    Change the version number whenever necessary
+    to prevent browser cache from loading an old app.js.
+  -->
+
+  <script src="app.js?v=20260927-5"></script>
 
 </body>
 </html>
