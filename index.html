@@ -1,567 +1,169 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-  <meta charset="utf-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BADHAN ZH</title>
-
-  <meta
-    name="description"
-    content="Find available blood donors by blood group, district, and donation location."
-  >
-
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================== -->
-  <header class="topbar">
-
-    <div class="brand">
-      🩸 BADHAN ZH
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <h1 class="logo">🩸 BADHAN ZH</h1>
+      <div style="display: flex; gap: 8px;">
+        <a href="register.html" class="admin-link" style="background: var(--primary); color: white; border-color: var(--primary);">+ রক্তদাতা হন</a>
+        <a href="admin.html" class="admin-link">Admin</a>
+      </div>
     </div>
-
-    <nav class="nav">
-      <a
-        class="admin-link"
-        href="admin.html"
-      >
-        Admin
-      </a>
-    </nav>
-
   </header>
 
+  <!-- Main Container -->
+  <main class="container">
+    
+    <!-- Filter Section -->
+    <section class="filter-card">
+      <div class="filter-grid">
+        
+        <!-- Blood Group Filter -->
+        <div class="filter-group">
+          <label for="blood">রক্তের গ্রুপ (Blood Group)</label>
+          <select id="blood">
+            <option value="">All Blood Groups</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
 
-  <!-- =========================
-       MAIN CONTENT
-  ========================== -->
-  <main>
+        <!-- City Filter (64 Districts Alphabetical A-Z) -->
+        <div class="filter-group">
+          <label for="city">জেলা / শহর (City / District)</label>
+          <select id="city">
+            <option value="">All locations</option>
+            <option value="Bagerhat">Bagerhat</option>
+            <option value="Bandarban">Bandarban</option>
+            <option value="Barguna">Barguna</option>
+            <option value="Barishal">Barishal</option>
+            <option value="Bhola">Bhola</option>
+            <option value="Bogura">Bogura</option>
+            <option value="Brahmanbaria">Brahmanbaria</option>
+            <option value="Chandpur">Chandpur</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Chuadanga">Chuadanga</option>
+            <option value="Cox's Bazar">Cox's Bazar</option>
+            <option value="Cumilla">Cumilla</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Dinajpur">Dinajpur</option>
+            <option value="Faridpur">Faridpur</option>
+            <option value="Feni">Feni</option>
+            <option value="Gaibandha">Gaibandha</option>
+            <option value="Gazipur">Gazipur</option>
+            <option value="Gopalganj">Gopalganj</option>
+            <option value="Habiganj">Habiganj</option>
+            <option value="Jamalpur">Jamalpur</option>
+            <option value="Jashore">Jashore</option>
+            <option value="Jhalokati">Jhalokati</option>
+            <option value="Jhenaidah">Jhenaidah</option>
+            <option value="Joypurhat">Joypurhat</option>
+            <option value="Khagrachhari">Khagrachhari</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Kishoreganj">Kishoreganj</option>
+            <option value="Kurigram">Kurigram</option>
+            <option value="Kushtia">Kushtia</option>
+            <option value="Lakshmipur">Lakshmipur</option>
+            <option value="Lalmonirhat">Lalmonirhat</option>
+            <option value="Madaripur">Madaripur</option>
+            <option value="Magura">Magura</option>
+            <option value="Manikganj">Manikganj</option>
+            <option value="Meherpur">Meherpur</option>
+            <option value="Moulvibazar">Moulvibazar</option>
+            <option value="Munshiganj">Munshiganj</option>
+            <option value="Mymensingh">Mymensingh</option>
+            <option value="Naogaon">Naogaon</option>
+            <option value="Narail">Narail</option>
+            <option value="Narayanganj">Narayanganj</option>
+            <option value="Narsingdi">Narsingdi</option>
+            <option value="Natore">Natore</option>
+            <option value="Netrokona">Netrokona</option>
+            <option value="Nilphamari">Nilphamari</option>
+            <option value="Noakhali">Noakhali</option>
+            <option value="Pabna">Pabna</option>
+            <option value="Panchagarh">Panchagarh</option>
+            <option value="Patuakhali">Patuakhali</option>
+            <option value="Pirojpur">Pirojpur</option>
+            <option value="Rajbari">Rajbari</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Rangamati">Rangamati</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Satkhira">Satkhira</option>
+            <option value="Shariatpur">Shariatpur</option>
+            <option value="Sherpur">Sherpur</option>
+            <option value="Sirajganj">Sirajganj</option>
+            <option value="Sunamganj">Sunamganj</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Tangail">Tangail</option>
+            <option value="Thakurgaon">Thakurgaon</option>
+          </select>
+        </div>
 
-    <!-- =========================
-         HERO
-    ========================== -->
-    <section class="hero">
+        <!-- Specific Location Filter -->
+        <div class="filter-group">
+          <label for="location">নির্দিষ্ট এলাকা / হল (Specific Location)</label>
+          <input 
+            type="text" 
+            id="location" 
+            placeholder="e.g. Zahurul Huq Hall" 
+            autocomplete="off" 
+          />
+        </div>
 
-      <p class="eyebrow">
-        BADHAN ZH BLOOD DONOR DIRECTORY
-      </p>
+        <!-- Availability Filter -->
+        <div class="filter-group">
+          <label for="status">স্ট্যাটাস (Availability)</label>
+          <select id="status">
+            <option value="">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
 
-      <h1>
-        Find a blood donor quickly.
-      </h1>
-
-      <p>
-        Search by blood group, district,
-        availability, and donation location.
-      </p>
-
+      </div>
     </section>
 
-
-    <!-- =========================
-         SEARCH / FILTER CARD
-    ========================== -->
-    <section class="search-card">
-
-
-      <!-- =====================
-           BLOOD GROUP
-      ====================== -->
-      <div class="field">
-
-        <label for="blood">
-          Blood group
-        </label>
-
-        <select id="blood">
-
-          <option value="">
-            All groups
-          </option>
-
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-
-        </select>
-
+    <!-- Results Section -->
+    <section class="results-section">
+      <div class="results-header">
+        <h2>Donors found: <span id="count">0</span></h2>
       </div>
-
-
-      <!-- =====================
-           CITY / DISTRICT
-      ====================== -->
-      <div class="field">
-
-        <label for="city">
-          City / District
-        </label>
-
-        <select id="city">
-
-          <!-- No district selected -->
-          <option value="">
-            All locations
-          </option>
-
-
-          <!-- A -->
-          <option value="Bagerhat">
-            Bagerhat
-          </option>
-
-          <option value="Bandarban">
-            Bandarban
-          </option>
-
-          <option value="Barguna">
-            Barguna
-          </option>
-
-          <option value="Barishal">
-            Barishal
-          </option>
-
-          <option value="Bhola">
-            Bhola
-          </option>
-
-          <option value="Bogura">
-            Bogura
-          </option>
-
-          <option value="Brahmanbaria">
-            Brahmanbaria
-          </option>
-
-
-          <!-- C -->
-          <option value="Chandpur">
-            Chandpur
-          </option>
-
-          <option value="Chapainawabganj">
-            Chapainawabganj
-          </option>
-
-          <option value="Chattogram">
-            Chattogram
-          </option>
-
-          <option value="Chuadanga">
-            Chuadanga
-          </option>
-
-          <option value="Cox's Bazar">
-            Cox's Bazar
-          </option>
-
-          <option value="Cumilla">
-            Cumilla
-          </option>
-
-
-          <!-- D -->
-          <option value="Dhaka">
-            Dhaka
-          </option>
-
-          <option value="Dinajpur">
-            Dinajpur
-          </option>
-
-
-          <!-- F -->
-          <option value="Faridpur">
-            Faridpur
-          </option>
-
-          <option value="Feni">
-            Feni
-          </option>
-
-
-          <!-- G -->
-          <option value="Gaibandha">
-            Gaibandha
-          </option>
-
-          <option value="Gazipur">
-            Gazipur
-          </option>
-
-          <option value="Gopalganj">
-            Gopalganj
-          </option>
-
-
-          <!-- H -->
-          <option value="Habiganj">
-            Habiganj
-          </option>
-
-
-          <!-- J -->
-          <option value="Jamalpur">
-            Jamalpur
-          </option>
-
-          <option value="Jashore">
-            Jashore
-          </option>
-
-          <option value="Jhalokati">
-            Jhalokati
-          </option>
-
-          <option value="Jhenaidah">
-            Jhenaidah
-          </option>
-
-          <option value="Joypurhat">
-            Joypurhat
-          </option>
-
-
-          <!-- K -->
-          <option value="Khagrachhari">
-            Khagrachhari
-          </option>
-
-          <option value="Khulna">
-            Khulna
-          </option>
-
-          <option value="Kishoreganj">
-            Kishoreganj
-          </option>
-
-          <option value="Kurigram">
-            Kurigram
-          </option>
-
-          <option value="Kushtia">
-            Kushtia
-          </option>
-
-
-          <!-- L -->
-          <option value="Lakshmipur">
-            Lakshmipur
-          </option>
-
-          <option value="Lalmonirhat">
-            Lalmonirhat
-          </option>
-
-
-          <!-- M -->
-          <option value="Madaripur">
-            Madaripur
-          </option>
-
-          <option value="Magura">
-            Magura
-          </option>
-
-          <option value="Manikganj">
-            Manikganj
-          </option>
-
-          <option value="Meherpur">
-            Meherpur
-          </option>
-
-          <option value="Moulvibazar">
-            Moulvibazar
-          </option>
-
-          <option value="Munshiganj">
-            Munshiganj
-          </option>
-
-          <option value="Mymensingh">
-            Mymensingh
-          </option>
-
-
-          <!-- N -->
-          <option value="Naogaon">
-            Naogaon
-          </option>
-
-          <option value="Narail">
-            Narail
-          </option>
-
-          <option value="Narayanganj">
-            Narayanganj
-          </option>
-
-          <option value="Narsingdi">
-            Narsingdi
-          </option>
-
-          <option value="Natore">
-            Natore
-          </option>
-
-          <option value="Netrokona">
-            Netrokona
-          </option>
-
-          <option value="Nilphamari">
-            Nilphamari
-          </option>
-
-          <option value="Noakhali">
-            Noakhali
-          </option>
-
-
-          <!-- P -->
-          <option value="Pabna">
-            Pabna
-          </option>
-
-          <option value="Panchagarh">
-            Panchagarh
-          </option>
-
-          <option value="Patuakhali">
-            Patuakhali
-          </option>
-
-          <option value="Pirojpur">
-            Pirojpur
-          </option>
-
-
-          <!-- R -->
-          <option value="Rajbari">
-            Rajbari
-          </option>
-
-          <option value="Rajshahi">
-            Rajshahi
-          </option>
-
-          <option value="Rangamati">
-            Rangamati
-          </option>
-
-          <option value="Rangpur">
-            Rangpur
-          </option>
-
-
-          <!-- S -->
-          <option value="Satkhira">
-            Satkhira
-          </option>
-
-          <option value="Shariatpur">
-            Shariatpur
-          </option>
-
-          <option value="Sherpur">
-            Sherpur
-          </option>
-
-          <option value="Sirajganj">
-            Sirajganj
-          </option>
-
-          <option value="Sunamganj">
-            Sunamganj
-          </option>
-
-          <option value="Sylhet">
-            Sylhet
-          </option>
-
-
-          <!-- T -->
-          <option value="Tangail">
-            Tangail
-          </option>
-
-          <option value="Thakurgaon">
-            Thakurgaon
-          </option>
-
-        </select>
-
+      <div id="results" class="donor-grid">
+        <!-- Donor Cards will appear here -->
       </div>
-
-
-      <!-- =====================
-           SPECIFIC LOCATION
-      ====================== -->
-      <div class="field">
-
-        <label for="location">
-          Specific location
-        </label>
-
-        <input
-          id="location"
-          type="text"
-          placeholder="e.g. Zahurul Huq Hall"
-          autocomplete="off"
-        >
-
-      </div>
-
-
-      <!-- =====================
-           AVAILABILITY
-      ====================== -->
-      <div class="field">
-
-        <label for="status">
-          Availability
-        </label>
-
-        <select id="status">
-
-          <option value="available">
-            Available
-          </option>
-
-          <option value="">
-            All
-          </option>
-
-          <option value="unavailable">
-            Unavailable
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <!-- =====================
-           SORT
-      ====================== -->
-      <div class="field">
-
-        <label for="sort">
-          Sort
-        </label>
-
-        <select id="sort">
-
-          <option value="available">
-            Available first
-          </option>
-
-          <option value="blood">
-            Blood group
-          </option>
-
-          <option value="location">
-            Location
-          </option>
-
-          <option value="recent">
-            Recently verified
-          </option>
-
-        </select>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         RESULTS HEADER
-    ========================== -->
-    <section class="results-head">
-
-      <h2>
-        Donors
-      </h2>
-
-      <span id="count">
-        0 donors
-      </span>
-
-    </section>
-
-
-    <!-- =========================
-         RESULTS
-    ========================== -->
-    <section
-      id="results"
-      class="grid"
-    >
-
-      <div class="empty-state">
-
-        <strong>
-          Loading donors...
-        </strong>
-
-        <p>
-          Please wait.
-        </p>
-
-      </div>
-
     </section>
 
   </main>
 
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-  <footer>
-
-    Use donor information responsibly.
-    Confirm availability before contacting a donor.
-
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Use donor information responsibly. Confirm availability before contacting a donor.</p>
   </footer>
 
+  <!-- Supabase Credentials Connected -->
+  <script>
+    window.SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    window.SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+  </script>
 
-  <!-- =========================
-       CONFIGURATION
-  ========================== -->
-  <script src="config.js"></script>
-
-
-  <!-- =========================
-       SUPABASE
-  ========================== -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-  ></script>
-
-
-  <!-- =========================
-       APPLICATION
-  ========================== -->
-  <script src="app.js?v=20260927-3"></script>
-
+  <!-- Application Logic -->
+  <script src="app.js"></script>
 </body>
 </html>
+
