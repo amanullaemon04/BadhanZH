@@ -1,4 +1,4 @@
-/* Reset & Fonts */
+/* Reset & Base Fonts */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,7 +16,7 @@
   --border-color: #e2e8f0;
   --success: #16a34a;
   --danger: #dc2626;
-  --radius: 12px;
+  --radius: 10px;
 }
 
 body {
@@ -31,11 +31,11 @@ body {
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 20px;
+  padding: 8px 16px;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   width: 100%;
 }
 
@@ -44,41 +44,40 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .logo {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   white-space: nowrap;
-  letter-spacing: -0.3px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .admin-link {
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -100,58 +99,55 @@ body {
   border-color: var(--primary) !important;
 }
 
-.btn-primary-action:hover {
-  background: var(--primary-hover) !important;
-}
-
-/* Slogan Row */
+/* Universal Slogan Row */
 .header-slogan-wrap {
   text-align: center;
-  padding-top: 4px;
+  padding-top: 3px;
   border-top: 1px dashed #f1f5f9;
 }
 
 .header-slogan {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.1px;
 }
 
-/* Main Container: Compact Registration Style */
+/* Compact Container (Zero-Scroll Scaling) */
 .container {
-  max-width: 550px;
+  max-width: 500px;
   width: 100%;
-  margin: 22px auto;
-  padding: 0 16px;
+  margin: 8px auto;
+  padding: 0 12px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Filter Card */
 .filter-card {
   background: var(--card-bg);
-  padding: 22px;
+  padding: 12px 14px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 8px;
 }
 
-/* Filters: Niche Niche (Single Column Flow) */
 .filter-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.filter-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .filter-group label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -159,29 +155,33 @@ body {
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 6px 10px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   background-color: #ffffff;
   color: var(--text-main);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
 }
 
 /* Results Section */
+.results-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .results-header {
-  margin-bottom: 16px;
+  margin-bottom: 6px;
 }
 
 .results-header h2 {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -190,23 +190,32 @@ body {
   color: var(--primary);
 }
 
-/* Donor Cards List */
 .donor-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
-/* Donor Card */
+.no-results {
+  text-align: center;
+  padding: 14px 10px;
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-color);
+  font-size: 0.82rem;
+}
+
+/* Donor Card Compact */
 .donor-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 12px 14px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .donor-header {
@@ -216,28 +225,26 @@ body {
 }
 
 .donor-header h3 {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--text-main);
 }
 
 .blood-badge {
   background-color: #fee2e2;
   color: var(--primary);
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 0.85rem;
 }
 
 .donor-status {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 .status-available {
@@ -251,21 +258,15 @@ body {
 }
 
 .donor-details {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  line-height: 1.45;
+  gap: 3px;
 }
 
 .donor-details strong {
   color: var(--text-main);
-}
-
-.donor-actions {
-  margin-top: auto;
-  padding-top: 10px;
 }
 
 .contact-btn {
@@ -274,33 +275,50 @@ body {
   background-color: var(--primary);
   color: #ffffff;
   text-decoration: none;
-  padding: 10px 14px;
+  padding: 7px 12px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   border-radius: 6px;
-  transition: background-color 0.2s;
 }
 
-.contact-btn:hover {
-  background-color: var(--primary-hover);
-}
-
-.no-results {
-  text-align: center;
-  padding: 36px 16px;
-  color: var(--text-muted);
+/* Registration Form Specific Compact Styling */
+.form-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  border: 1px dashed var(--border-color);
-  font-size: 0.95rem;
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Footer */
+.form-title {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.submit-btn {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  padding: 9px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* Footer: Always Clean & Visible without scroll */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
-  padding: 20px 24px;
-  margin-top: 40px;
+  padding: 8px 14px;
+  margin-top: auto;
   width: 100%;
 }
 
@@ -309,42 +327,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 3px;
 }
 
 .footer-notice {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   text-align: center;
+  line-height: 1.2;
 }
 
 .footer-credit {
-  font-size: 0.85rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
   font-weight: 500;
 }
 
-.footer-credit span {
+.footer-credit a {
   color: var(--primary);
   font-weight: 700;
+  text-decoration: none;
 }
 
-@media (min-width: 650px) {
-  .logo {
-    font-size: 1.25rem;
-  }
-  .header-slogan {
-    font-size: 0.88rem;
-  }
+@media (min-width: 600px) {
+  .logo { font-size: 1.25rem; }
+  .header-slogan { font-size: 0.85rem; }
+  .container { max-width: 550px; margin: 16px auto; }
+  .filter-card { padding: 18px; }
+  .filter-group select, .filter-group input { padding: 8px 12px; font-size: 0.9rem; }
   .footer-container {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-  }
-  .footer-notice {
-    text-align: left;
-  }
-  .footer-credit {
-    text-align: right;
   }
 }
