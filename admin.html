@@ -398,27 +398,51 @@
       `).join("");
     }
 
-    // Approve Donor
+    // Approve Donor (With error feedback)
     window.verifyDonor = async (id) => {
       if (confirm("এই ডোনারকে অনুমোদন করতে চান?")) {
-        await client.from("donors").update({ verified: true }).eq("id", id);
-        loadDonors();
+        const { error } = await client
+          .from("donors")
+          .update({ verified: true })
+          .eq("id", id);
+
+        if (error) {
+          alert("অনুমোদন ব্যর্থ হয়েছে: " + error.message);
+        } else {
+          loadDonors();
+        }
       }
     };
 
-    // Delete Donor
+    // Delete Donor (With error feedback)
     window.deleteDonor = async (id) => {
       if (confirm("আপনি কি নিশ্চিতভাবে এই ডোনারের তথ্য মুছে ফেলতে চান?")) {
-        await client.from("donors").delete().eq("id", id);
-        loadDonors();
+        const { error } = await client
+          .from("donors")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          alert("ডিলিট ব্যর্থ হয়েছে: " + error.message);
+        } else {
+          loadDonors();
+        }
       }
     };
 
-    // Delete Feedback
+    // Delete Feedback (With error feedback)
     window.deleteFeedback = async (id) => {
       if (confirm("এই মতামতটি মুছে ফেলতে চান?")) {
-        await client.from("feedbacks").delete().eq("id", id);
-        loadFeedbacks();
+        const { error } = await client
+          .from("feedbacks")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          alert("মুছে ফেলতে সমস্যা হয়েছে: " + error.message);
+        } else {
+          loadFeedbacks();
+        }
       }
     };
   </script>
