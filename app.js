@@ -254,10 +254,17 @@
   // ---------- Filtering & sorting ----------
 
   function filteredDonors() {
+
     const blood = normalize(bloodEl?.value);
     const city = normalize(cityEl?.value);
     const location = normalize(locationEl?.value);
     const status = normalize(statusEl?.value);
+
+    // LOCATION IS THE MAIN FILTER.
+    // No city and no specific location = show no donors.
+    if (!city && !location) {
+      return [];
+    }
 
     const list = allDonors.filter((x) => {
       const donorBlood = normalize(
@@ -267,25 +274,22 @@
       const donorCity = normalize(x.city);
       const donorLocation = normalize(x.location);
 
-      // 1. Blood group
+      // Blood group is an optional secondary filter.
       if (blood && donorBlood !== blood) {
         return false;
       }
 
-      // 2. City / District
-      // Only filters when a city is actually selected.
+      // City/District is a main location filter.
       if (city && donorCity !== city) {
         return false;
       }
 
-      // 3. Specific location
-      // Empty = no location filter.
-      // Typed text = match the donor's location only.
+      // Specific location narrows the selected city further.
       if (location && !textMatches(location, donorLocation)) {
         return false;
       }
 
-      // 4. Availability
+      // Availability is applied after location filtering.
       const available = effectiveAvailable(x);
 
       if (status === "available" && !available) {
@@ -298,6 +302,7 @@
 
       return true;
     });
+
 
     const sort = sortEl?.value || "available";
 
