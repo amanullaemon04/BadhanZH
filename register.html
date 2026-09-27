@@ -3,32 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ডোনার রেজিস্ট্রেশন - BADHAN ZH</title>
+  <title>রক্তদাতা রেজিস্ট্রেশন - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
+  <!-- Header with Universal Slogan & Right-Aligned Home button -->
   <header class="header">
     <div class="header-container">
-      <h1 class="logo">🩸 BADHAN ZH</h1>
-      <a href="index.html" class="admin-link">← হোম পেজ</a>
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="container">
-    <section class="filter-card" style="max-width: 550px; margin: 0 auto;">
-      <h2 style="margin-bottom: 18px; color: var(--primary); text-align: center;">রক্তদাতা রেজিস্ট্রেশন</h2>
+    <div class="form-card">
+      <h2 class="form-title">রক্তদাতা রেজিস্ট্রেশন</h2>
       
-      <form id="registerForm" style="display: flex; flex-direction: column; gap: 14px;">
+      <form id="regForm" class="filter-grid">
         <div class="filter-group">
-          <label for="name">আপনার পুরো নাম *</label>
-          <input type="text" id="name" required placeholder="e.g. Amanulla Emon" />
+          <label>আপনার পুরো নাম *</label>
+          <input type="text" id="name" placeholder="e.g. Amanulla Emon" required />
         </div>
 
         <div class="filter-group">
-          <label for="blood_group">রক্তের গ্রুপ *</label>
-          <select id="blood_group" required>
+          <label>রক্তের গ্রুপ *</label>
+          <select id="blood" required>
             <option value="">সিলেক্ট করুন</option>
             <option value="A+">A+</option>
             <option value="A-">A-</option>
@@ -42,32 +51,27 @@
         </div>
 
         <div class="filter-group">
-          <label for="phone">মোবাইল নম্বর *</label>
-          <input type="tel" id="phone" required placeholder="01XXXXXXXXX" pattern="[0-9]{11}" />
+          <label>মোবাইল নম্বর *</label>
+          <input type="tel" id="phone" placeholder="01XXXXXXXXX" required />
         </div>
 
         <div class="filter-group">
-          <label for="city">জেলা / শহর *</label>
+          <label>জেলা / শহর *</label>
           <select id="city" required>
             <option value="">জেলা নির্বাচন করুন</option>
-            <option value="Dhaka">Dhaka</option>
-            <option value="Chattogram">Chattogram</option>
-            <option value="Khulna">Khulna</option>
-            <option value="Rajshahi">Rajshahi</option>
-            <option value="Barishal">Barishal</option>
-            <option value="Sylhet">Sylhet</option>
-            <option value="Rangpur">Rangpur</option>
-            <option value="Mymensingh">Mymensingh</option>
             <option value="Bagerhat">Bagerhat</option>
             <option value="Bandarban">Bandarban</option>
             <option value="Barguna">Barguna</option>
+            <option value="Barishal">Barishal</option>
             <option value="Bhola">Bhola</option>
             <option value="Bogura">Bogura</option>
             <option value="Brahmanbaria">Brahmanbaria</option>
             <option value="Chandpur">Chandpur</option>
+            <option value="Chattogram">Chattogram</option>
             <option value="Chuadanga">Chuadanga</option>
             <option value="Cox's Bazar">Cox's Bazar</option>
             <option value="Cumilla">Cumilla</option>
+            <option value="Dhaka">Dhaka</option>
             <option value="Dinajpur">Dinajpur</option>
             <option value="Faridpur">Faridpur</option>
             <option value="Feni">Feni</option>
@@ -81,6 +85,7 @@
             <option value="Jhenaidah">Jhenaidah</option>
             <option value="Joypurhat">Joypurhat</option>
             <option value="Khagrachhari">Khagrachhari</option>
+            <option value="Khulna">Khulna</option>
             <option value="Kishoreganj">Kishoreganj</option>
             <option value="Kurigram">Kurigram</option>
             <option value="Kushtia">Kushtia</option>
@@ -92,6 +97,7 @@
             <option value="Meherpur">Meherpur</option>
             <option value="Moulvibazar">Moulvibazar</option>
             <option value="Munshiganj">Munshiganj</option>
+            <option value="Mymensingh">Mymensingh</option>
             <option value="Naogaon">Naogaon</option>
             <option value="Narail">Narail</option>
             <option value="Narayanganj">Narayanganj</option>
@@ -105,7 +111,9 @@
             <option value="Patuakhali">Patuakhali</option>
             <option value="Pirojpur">Pirojpur</option>
             <option value="Rajbari">Rajbari</option>
+            <option value="Rajshahi">Rajshahi</option>
             <option value="Rangamati">Rangamati</option>
+            <option value="Rangpur">Rangpur</option>
             <option value="Satkhira">Satkhira</option>
             <option value="Shariatpur">Shariatpur</option>
             <option value="Sherpur">Sherpur</option>
@@ -118,76 +126,59 @@
         </div>
 
         <div class="filter-group">
-          <label for="location">নির্দিষ্ট এলাকা / হল / রুম নম্বর</label>
+          <label>নির্দিষ্ট এলাকা / হল / রুম নম্বর</label>
           <input type="text" id="location" placeholder="e.g. Zahurul Huq Hall, Room 24" />
         </div>
 
         <div class="filter-group">
-          <label for="last_donation">সর্বশেষ রক্তদানের তারিখ (যদি পূর্বে দিয়ে থাকেন)</label>
-          <input type="date" id="last_donation" />
+          <label>সর্বশেষ রক্তদানের তারিখ (যদি পূর্বে দিয়ে থাকেন)</label>
+          <input type="date" id="lastDonation" />
         </div>
 
-        <button type="submit" id="submitBtn" class="contact-btn" style="border: none; cursor: pointer; margin-top: 10px;">
-          রেজিস্ট্রেশন সম্পন্ন করুন
-        </button>
-
-        <p id="msg" style="text-align: center; font-weight: 600; display: none;"></p>
+        <button type="submit" id="btnSubmit" class="submit-btn">রেজিস্ট্রেশন সম্পন্ন করুন</button>
       </form>
-    </section>
+    </div>
   </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — মানবসেবায় আমরা প্রতিজ্ঞাবদ্ধ</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
 
   <script>
     const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const form = document.getElementById("registerForm");
-    const msg = document.getElementById("msg");
-    const submitBtn = document.getElementById("submitBtn");
-
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("regForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = "সাবমিট হচ্ছে...";
-      msg.style.display = "none";
+      const btn = document.getElementById("btnSubmit");
+      btn.disabled = true;
+      btn.innerText = "অপেক্ষা করুন...";
 
-      const name = document.getElementById("name").value.trim();
-      const blood_group = document.getElementById("blood_group").value;
-      const phone = document.getElementById("phone").value.trim();
-      const city = document.getElementById("city").value;
-      const location = document.getElementById("location").value.trim();
-      const last_donation = document.getElementById("last_donation").value || null;
+      const donor = {
+        name: document.getElementById("name").value.trim(),
+        blood: document.getElementById("blood").value,
+        phone: document.getElementById("phone").value.trim(),
+        city: document.getElementById("city").value,
+        location: document.getElementById("location").value.trim() || null,
+        last_donation: document.getElementById("lastDonation").value || null,
+        verified: false
+      };
 
-      try {
-        const { error } = await supabaseClient.from("donors").insert([
-          {
-            name,
-            blood_group,
-            phone,
-            city,
-            location,
-            last_donation,
-            available: true
-          }
-        ]);
+      const { error } = await supabase.from("donors").insert([donor]);
 
-        if (error) throw error;
-
-        msg.style.display = "block";
-        msg.style.color = "var(--success)";
-        msg.textContent = "সফলভাবে রেজিস্ট্রেশন সম্পন্ন হয়েছে! ধন্যবাদ।";
-        form.reset();
-      } catch (err) {
-        msg.style.display = "block";
-        msg.style.color = "var(--danger)";
-        msg.textContent = "ভুল হয়েছে: " + err.message;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "রেজিস্ট্রেশন সম্পন্ন করুন";
+      if (error) {
+        alert("ত্রুটি: রেজিস্ট্রেশন সফল হয়নি! আবার চেষ্টা করুন।");
+        btn.disabled = false;
+        btn.innerText = "রেজিস্ট্রেশন সম্পন্ন করুন";
+      } else {
+        alert("ধন্যবাদ! আপনার রেজিস্ট্রেশন সফলভাবে সম্পন্ন হয়েছে। অ্যাডমিন ভেরিফিকেশনের পর আপনার নাম প্রদর্শিত হবে।");
+        window.location.href = "index.html";
       }
     });
   </script>
 </body>
 </html>
-
-
