@@ -27,6 +27,30 @@
     .admin-search-box:focus {
       border-color: var(--primary);
     }
+    /* Tab buttons */
+    .admin-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      justify-content: center;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
     /* Donor item card matching original design */
     .admin-donor-card {
       background: var(--card-bg);
@@ -99,6 +123,17 @@
     .btn-approve:hover {
       opacity: 0.9;
     }
+    /* Feedback card */
+    .feedback-message-box {
+      background: #f8fafc;
+      border-left: 3px solid var(--primary);
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -140,19 +175,28 @@
 
     <!-- Admin Dashboard Section -->
     <div id="dashboardSection" class="admin-card-container" style="display: none; margin-top: 10px;">
-      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); text-align: center;">ডোনার ম্যানেজমেন্ট</h2>
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); text-align: center;">অ্যাডমিন কন্ট্রোল</h2>
 
-      <!-- Search Input -->
-      <input 
-        type="text" 
-        id="adminSearch" 
-        class="admin-search-box" 
-        placeholder="নাম, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
-      />
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs">
+        <button type="button" id="tabDonors" class="tab-btn active" onclick="switchTab('donors')">👥 ডোনার ম্যানেজমেন্ট</button>
+        <button type="button" id="tabFeedbacks" class="tab-btn" onclick="switchTab('feedbacks')">💬 ইউজার মতামত</button>
+      </div>
 
-      <!-- Donor Cards List -->
-      <div id="adminDonorList" style="display: flex; flex-direction: column; gap: 12px;">
-        <!-- Dynamic donor cards load here -->
+      <!-- Donors View -->
+      <div id="donorsView" style="display: flex; flex-direction: column; gap: 12px;">
+        <input 
+          type="text" 
+          id="adminSearch" 
+          class="admin-search-box" 
+          placeholder="নাম, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
+        />
+        <div id="adminDonorList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      </div>
+
+      <!-- Feedbacks View -->
+      <div id="feedbacksView" style="display: none; flex-direction: column; gap: 12px;">
+        <div id="adminFeedbackList" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
     </div>
 
@@ -223,6 +267,28 @@
       loadDonors();
     }
 
+    // Tab Switch
+    window.switchTab = (tab) => {
+      const tabDonors = document.getElementById("tabDonors");
+      const tabFeedbacks = document.getElementById("tabFeedbacks");
+      const donorsView = document.getElementById("donorsView");
+      const feedbacksView = document.getElementById("feedbacksView");
+
+      if (tab === "donors") {
+        tabDonors.classList.add("active");
+        tabFeedbacks.classList.remove("active");
+        donorsView.style.display = "flex";
+        feedbacksView.style.display = "none";
+        loadDonors();
+      } else {
+        tabFeedbacks.classList.add("active");
+        tabDonors.classList.remove("active");
+        feedbacksView.style.display = "flex";
+        donorsView.style.display = "none";
+        loadFeedbacks();
+      }
+    };
+
     // Load Donors
     async function loadDonors() {
       const container = document.getElementById("adminDonorList");
@@ -237,7 +303,6 @@
 
       renderDonors(data);
 
-      // Realtime search
       document.getElementById("adminSearch").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = data.filter(d => 
@@ -250,7 +315,7 @@
       });
     }
 
-    // Render donor cards
+    // Render Donor Cards
     function renderDonors(donors) {
       const container = document.getElementById("adminDonorList");
       if (donors.length === 0) {
@@ -286,7 +351,43 @@
       `).join("");
     }
 
-    // Approve
+    // Load User Feedbacks
+    async function loadFeedbacks() {
+      const container = document.getElementById("adminFeedbackList");
+      container.innerHTML = "<p style='text-align:center; color:var(--text-muted); padding:20px;'>মতামত লোড হচ্ছে...</p>";
+
+      const { data, error } = await client.from("feedbacks").select("*").order("created_at", { ascending: false });
+
+      if (error || !data) {
+        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>মতামত লোড করা যায়নি! (Table তৈরি আছে কিনা চেক করুন)</p>";
+        return;
+      }
+
+      if (data.length === 0) {
+        container.innerHTML = "<p class='no-results'>এখনও কোনো ব্যবহারকারী মতামত পাঠাননি।</p>";
+        return;
+      }
+
+      container.innerHTML = data.map(f => `
+        <div class="admin-donor-card">
+          <div class="admin-donor-header">
+            <span class="admin-donor-name">${f.name || 'বেনামী'}</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">${f.created_at ? new Date(f.created_at).toLocaleDateString('bn-BD') : ''}</span>
+          </div>
+
+          <div class="admin-donor-info">
+            ${f.contact ? `<div>📞 যোগাযোগ: <strong>${f.contact}</strong></div>` : ''}
+            <div class="feedback-message-box">"${f.message || ''}"</div>
+          </div>
+
+          <div class="admin-card-actions" style="justify-content: flex-end;">
+            <button class="btn-remove" onclick="deleteFeedback('${f.id}')">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // Approve Donor
     window.verifyDonor = async (id) => {
       if (confirm("এই ডোনারকে অনুমোদন করতে চান?")) {
         await client.from("donors").update({ verified: true }).eq("id", id);
@@ -294,11 +395,19 @@
       }
     };
 
-    // Delete
+    // Delete Donor
     window.deleteDonor = async (id) => {
       if (confirm("আপনি কি নিশ্চিতভাবে এই ডোনারের তথ্য মুছে ফেলতে চান?")) {
         await client.from("donors").delete().eq("id", id);
         loadDonors();
+      }
+    };
+
+    // Delete Feedback
+    window.deleteFeedback = async (id) => {
+      if (confirm("এই মতামতটি মুছে ফেলতে চান?")) {
+        await client.from("feedbacks").delete().eq("id", id);
+        loadFeedbacks();
       }
     };
   </script>
