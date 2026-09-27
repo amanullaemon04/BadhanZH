@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -20,7 +19,6 @@
           <a href="admin.html" class="admin-link">Admin</a>
         </div>
       </div>
-      <!-- Slogan row (Separately below in its own row) -->
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
       </div>
@@ -29,12 +27,8 @@
 
   <!-- Main Container -->
   <main class="container">
-    
-    <!-- Filter Section (Niche niche / One by one) -->
     <section class="filter-card">
       <div class="filter-grid">
-        
-        <!-- Blood Group Filter -->
         <div class="filter-group">
           <label for="blood">রক্তের গ্রুপ (Blood Group)</label>
           <select id="blood">
@@ -50,7 +44,6 @@
           </select>
         </div>
 
-        <!-- City Filter (64 Districts Alphabetical A-Z) -->
         <div class="filter-group">
           <label for="city">জেলা / শহর (City / District)</label>
           <select id="city">
@@ -121,18 +114,11 @@
           </select>
         </div>
 
-        <!-- Specific Location Filter -->
         <div class="filter-group">
           <label for="location">নির্দিষ্ট এলাকা / হল (Specific Location)</label>
-          <input 
-            type="text" 
-            id="location" 
-            placeholder="e.g. Zahurul Huq Hall" 
-            autocomplete="off" 
-          />
+          <input type="text" id="location" placeholder="e.g. Zahurul Huq Hall" autocomplete="off" />
         </div>
 
-        <!-- Availability Filter -->
         <div class="filter-group">
           <label for="status">স্ট্যাটাস (Availability)</label>
           <select id="status">
@@ -141,39 +127,30 @@
             <option value="unavailable">Unavailable</option>
           </select>
         </div>
-
       </div>
     </section>
 
-    <!-- Results Section -->
     <section class="results-section">
       <div class="results-header">
         <h2>Donors found: <span id="count">0</span></h2>
       </div>
-      <div id="results" class="donor-grid">
-        <!-- Donor Cards will appear here -->
-      </div>
+      <div id="results" class="donor-grid"></div>
     </section>
-
   </main>
 
-  <!-- Footer with Clickable Developer Profile -->
   <footer class="footer">
     <div class="footer-container">
-      <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting a donor.</p>
+      <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting.</p>
       <p class="footer-credit">
-        Designed & Developed by <a href="developer.html" style="color: var(--primary); font-weight: 700; text-decoration: none; border-bottom: 1.5px dashed var(--primary); padding-bottom: 1px;">Amanulla Emon</a>
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
       </p>
     </div>
   </footer>
 
-  <!-- Supabase Credentials Connected -->
   <script>
     window.SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
     window.SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
   </script>
-
-  <!-- Application Logic -->
   <script src="app.js"></script>
 </body>
 </html>
