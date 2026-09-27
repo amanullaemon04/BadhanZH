@@ -4,64 +4,50 @@ const db = createClient(
   APP_CONFIG.SUPABASE_ANON_KEY
 );
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 // Minimum gap between blood donations.
-// Change to 4 if you want a strict 4-month rule.
+// The public site automatically calculates availability from last_donation.
 const MIN_DONATION_GAP_MONTHS = 3;
 
 let donors = [];
 
-/* ---------- Date helpers ---------- */
+function parseDate(v) {
+  if (!v) return null;
 
-function parseDate(value) {
-  if (!value) return null;
-
-  const text = String(value).slice(0, 10);
-  const parts = text.split("-").map(Number);
-
+  const parts = String(v).slice(0, 10).split("-").map(Number);
   if (parts.length !== 3) return null;
 
   const [y, m, d] = parts;
-
-  if (!y || !m || !d) return null;
-
-  return new Date(y, m - 1, d);
+  return y && m && d ? new Date(y, m - 1, d) : null;
 }
 
 function addMonths(date, months) {
-  const d = new Date(date);
-  const originalDay = d.getDate();
+  const day = date.getDate();
 
-  // Go to the first day to avoid month overflow.
   const first = new Date(
-    d.getFullYear(),
-    d.getMonth(),
+    date.getFullYear(),
+    date.getMonth(),
     1
   );
 
   first.setMonth(first.getMonth() + months);
 
-  // Last valid day of the target month.
+  // Prevent dates such as Jan 31 + 1 month from rolling into March.
   const lastDay = new Date(
     first.getFullYear(),
     first.getMonth() + 1,
     0
   ).getDate();
 
-  d.setFullYear(
-    first.getFullYear(),
-    first.getMonth(),
-    Math.min(originalDay, lastDay)
-  );
+  first.setDate(Math.min(day, lastDay));
 
-  return d;
+  return first;
 }
 
 function today() {
   const d = new Date();
 
-  // Remove time so date comparison is consistent.
   return new Date(
     d.getFullYear(),
     d.getMonth(),
@@ -71,32 +57,36 @@ function today() {
 
 function eligibilityDate(lastDonation) {
   const d = parseDate(lastDonation);
-  return d ? addMonths(d, MIN_DONATION_GAP_MONTHS) : null;
+
+  return d
+    ? addMonths(d, MIN_DONATION_GAP_MONTHS)
+    : null;
 }
 
 /*
- * A donor is effectively available only when:
- * 1. Their database 'available' field is true
- * 2. Their donation cooldown has ended
+ * Availability rule:
  *
- * If there is no last_donation date, the donor can be available
- * according to the database flag.
+ * If a donor has a last donation date, that date controls availability.
+ * This prevents the database "available" checkbox from incorrectly
+ * showing someone as unavailable/available when the 3-month period
+ * says otherwise.
+ *
+ * Examples:
+ *   Sep 2, 2026 + 3 months = Dec 2, 2026 -> Unavailable today
+ *   Apr 15, 2026 + 3 months = Jul 15, 2026 -> Available today
+ *
+ * If there is no last donation date, use the admin's available value.
  */
-function effectiveAvailable(donor) {
-  if (!donor.available) return false;
+function effectiveAvailable(x) {
+  const e = eligibilityDate(x.last_donation);
 
-  const eligible = eligibilityDate(donor.last_donation);
+  if (e) return e <= today();
 
-  // No previous donation date -> rely on database availability.
-  if (!eligible) return true;
-
-  return eligible <= today();
+  return !!x.available;
 }
 
-/* ---------- Formatting / security ---------- */
-
-function fmtDate(value) {
-  const d = parseDate(value);
+function fmtDate(v) {
+  const d = parseDate(v);
 
   if (!d) return "Not specified";
 
@@ -107,85 +97,89 @@ function fmtDate(value) {
   });
 }
 
-function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g, m => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
     "'": "&#039;"
-  }[char]));
+  }[m]));
 }
-
-/* ---------- Database ---------- */
 
 async function load() {
   const { data, error } = await db
     .from("donors")
-    .select(`
-      id,
-      name,
-      blood_group,
-      available,
-      city,
-      location,
-      last_donation,
-      verified_at,
-      phone
-    `)
+    .select(
+      "id,name,blood_group,available,city,location,last_donation,verified_at,phone"
+    )
     .order("available", { ascending: false })
     .order("verified_at", { ascending: false });
 
   if (error) {
-    console.error("Supabase donor load error:", error);
+    console.error("Could not load donors:", error);
     donors = [];
+
+    const results = $("results");
+    if (results) {
+      results.innerHTML = `
+        <div class="card">
+          <strong>Could not load donors.</strong>
+          <div class="meta">
+            ${esc(error.message || "Database error")}
+          </div>
+        </div>
+      `;
+    }
+
+    if ($("count")) {
+      $("count").textContent = "0 donors";
+    }
+
     return;
   }
 
   donors = data || [];
 }
 
-/* ---------- Rendering ---------- */
-
 function render() {
   let d = [...donors];
 
-  const blood = $("blood")?.value?.trim() || "";
-  const city = $("city")?.value?.trim() || "";
-  const location = $("location")?.value?.trim().toLowerCase() || "";
+  const blood = $("blood")?.value || "";
+  const city = $("city")?.value || "";
+  const location = ($("location")?.value || "").trim().toLowerCase();
   const status = $("status")?.value || "";
   const sort = $("sort")?.value || "available";
 
-  // Blood group
+  // Blood group filter
   if (blood) {
+    d = d.filter(x => x.blood_group === blood);
+  }
+
+  // City/District filter
+  if (city) {
     d = d.filter(
-      (x) => String(x.blood_group || "").toLowerCase() === blood.toLowerCase()
+      x => String(x.city || "").trim().toLowerCase() === city.toLowerCase()
     );
   }
 
-  // City / district
-  // Empty or "all" means no city filter.
-  if (city && city.toLowerCase() !== "all") {
-    d = d.filter(
-      (x) =>
-        String(x.city || "").trim().toLowerCase() ===
-        city.toLowerCase()
-    );
-  }
-
-  // Specific location is OPTIONAL.
-  // If empty, donors from the selected city are still shown.
+  // Specific location filter
   if (location) {
-    d = d.filter((x) =>
-      String(x.location || "").toLowerCase().includes(location)
+    d = d.filter(
+      x =>
+        String(x.location || "")
+          .toLowerCase()
+          .includes(location)
     );
   }
 
-  // Availability
+  // Availability filter
   if (status === "available") {
-    d = d.filter((x) => effectiveAvailable(x));
-  } else if (status === "unavailable") {
-    d = d.filter((x) => !effectiveAvailable(x));
+    d = d.filter(x => effectiveAvailable(x));
+  }
+
+  if (status === "unavailable") {
+    d = d.filter(x => !effectiveAvailable(x));
   }
 
   // Sorting
@@ -206,11 +200,11 @@ function render() {
   }
 
   if (sort === "location") {
-    d.sort((a, b) =>
-      `${a.location || ""} ${a.city || ""}`.localeCompare(
-        `${b.location || ""} ${b.city || ""}`
-      )
-    );
+    d.sort((a, b) => {
+      const la = `${a.location || ""} ${a.city || ""}`;
+      const lb = `${b.location || ""} ${b.city || ""}`;
+      return la.localeCompare(lb);
+    });
   }
 
   if (sort === "recent") {
@@ -221,10 +215,9 @@ function render() {
     );
   }
 
-  // Donor count
-  const countEl = $("count");
-  if (countEl) {
-    countEl.textContent = `${d.length} donor${d.length === 1 ? "" : "s"}`;
+  if ($("count")) {
+    $("count").textContent =
+      `${d.length} donor${d.length === 1 ? "" : "s"}`;
   }
 
   const results = $("results");
@@ -234,26 +227,21 @@ function render() {
     results.innerHTML = `
       <div class="card">
         <strong>No donors found.</strong>
-        <div class="meta">
-          Try another filter.
-        </div>
+        <div class="meta">Try another filter.</div>
       </div>
     `;
     return;
   }
 
   results.innerHTML = d
-    .map((x) => {
+    .map(x => {
       const ok = effectiveAvailable(x);
-      const eligible = eligibilityDate(x.last_donation);
+      const eligibility = eligibilityDate(x.last_donation);
 
-      let cooldownText = "";
-
-      if (x.last_donation && !ok && eligible) {
-        cooldownText = `
-          <br>â³ Available from: ${esc(fmtDate(eligible))}
-        `;
-      }
+      const cooldown =
+        !ok && eligibility
+          ? `Available from: ${esc(fmtDate(eligibility))}`
+          : "";
 
       const phone = String(x.phone || "").trim();
 
@@ -261,36 +249,25 @@ function render() {
         <article class="card">
           <div class="card-top">
             <div class="name">${esc(x.name)}</div>
-
-            <div class="blood">
-              ${esc(x.blood_group)}
-            </div>
+            <div class="blood">${esc(x.blood_group)}</div>
           </div>
 
-          <span class="badge ${ok ? "yes" : "no"}">
-            ${ok ? "ðŸŸ¢ Available" : "ðŸ”´ Unavailable"}
-          </span>
+          <div class="badge ${ok ? "yes" : "no"}">
+            ${ok ? "Available" : "Unavailable"}
+          </div>
 
           <div class="meta">
-            ðŸ“ ${esc(x.city || "Not specified")}
-            ${x.location ? ` Â· ${esc(x.location)}` : ""}
-
+            Location: ${esc(x.city || "Not specified")}${x.location ? ` â€¢ ${esc(x.location)}` : ""}
             <br>
-            ðŸ©¸ Last donation:
-            ${esc(fmtDate(x.last_donation))}
-
-            ${cooldownText}
-
+            Last donation: ${esc(fmtDate(x.last_donation))}
+            ${cooldown ? `<br>${cooldown}` : ""}
             <br>
-            âœ“ Verified:
-            ${esc(fmtDate(x.verified_at))}
+            Verified: ${esc(fmtDate(x.verified_at))}
           </div>
 
           ${
             phone
-              ? `<a class="contact" href="tel:${encodeURIComponent(phone)}">
-                   Contact donor
-                 </a>`
+              ? `<a class="contact" href="tel:${encodeURIComponent(phone)}">Contact donor</a>`
               : ""
           }
         </article>
@@ -299,24 +276,14 @@ function render() {
     .join("");
 }
 
-/* ---------- Event listeners ---------- */
+["blood", "city", "location", "status", "sort"].forEach(id => {
+  const el = $(id);
 
-[
-  "blood",
-  "city",
-  "location",
-  "status",
-  "sort"
-].forEach((id) => {
-  const element = $(id);
-
-  if (!element) return;
-
-  element.addEventListener("input", render);
-  element.addEventListener("change", render);
+  if (el) {
+    el.addEventListener("input", render);
+    el.addEventListener("change", render);
+  }
 });
-
-/* ---------- Start ---------- */
 
 (async () => {
   await load();
