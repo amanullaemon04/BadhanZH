@@ -27,11 +27,11 @@ body {
   flex-direction: column;
 }
 
-/* Header: Badhan ZH on Extreme Left, Actions on Extreme Right */
+/* Header */
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 24px;
+  padding: 12px 20px;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -41,16 +41,22 @@ body {
 
 .header-container {
   width: 100%;
-  max-width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  width: 100%;
 }
 
 .logo {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
@@ -72,7 +78,7 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 7px 12px;
+  padding: 6px 12px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -98,11 +104,25 @@ body {
   background: var(--primary-hover) !important;
 }
 
-/* Main Container: Compact Registration-card Style */
+/* Slogan Row */
+.header-slogan-wrap {
+  text-align: center;
+  padding-top: 4px;
+  border-top: 1px dashed #f1f5f9;
+}
+
+.header-slogan {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.1px;
+}
+
+/* Main Container: Compact Registration Style */
 .container {
   max-width: 550px;
   width: 100%;
-  margin: 24px auto;
+  margin: 22px auto;
   padding: 0 16px;
   flex: 1;
 }
@@ -117,7 +137,7 @@ body {
   margin-bottom: 24px;
 }
 
-/* Filters: Niche Niche (Single Column Vertical Flow) */
+/* Filters: Niche Niche (Single Column Flow) */
 .filter-grid {
   display: flex;
   flex-direction: column;
@@ -275,12 +295,12 @@ body {
   font-size: 0.95rem;
 }
 
-/* Footer: Credits on Extreme Right */
+/* Footer */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
   padding: 20px 24px;
-  margin-top: 50px;
+  margin-top: 40px;
   width: 100%;
 }
 
@@ -310,6 +330,12 @@ body {
 }
 
 @media (min-width: 650px) {
+  .logo {
+    font-size: 1.25rem;
+  }
+  .header-slogan {
+    font-size: 0.88rem;
+  }
   .footer-container {
     flex-direction: row;
     justify-content: space-between;
@@ -321,4 +347,4 @@ body {
   .footer-credit {
     text-align: right;
   }
-                             }
+}
