@@ -9,14 +9,14 @@
 :root {
   --primary: #d32f2f;
   --primary-hover: #b71c1c;
-  --bg-color: #f8fafc;
+  --bg-color: #f1f5f9;
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --border-color: #cbd5e1;
+  --border-color: #e2e8f0;
   --success: #16a34a;
   --danger: #dc2626;
-  --radius: 10px;
+  --radius: 12px;
 }
 
 body {
@@ -25,72 +25,52 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
-/* Watermark Transparent Background Logo */
-body::before {
-  content: "";
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 320px;
-  height: 320px;
-  background-image: url('logo.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  opacity: 0.07;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Header (Mobile & Desktop Responsive) */
+/* Header */
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 16px;
+  padding: 14px 20px;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .header-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .logo {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
-  flex-shrink: 0;
+  letter-spacing: -0.5px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 10px;
 }
 
 .admin-link {
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
   background: #ffffff;
   white-space: nowrap;
@@ -117,29 +97,35 @@ body::before {
 
 /* Main Container */
 .container {
-  max-width: 900px;
+  max-width: 1100px;
   width: 100%;
-  margin: 20px auto;
-  padding: 0 16px;
+  margin: 28px auto;
+  padding: 0 20px;
   flex: 1;
-  position: relative;
-  z-index: 1;
 }
 
 /* Filter Card */
 .filter-card {
   background: var(--card-bg);
-  padding: 20px;
+  padding: 24px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 28px;
 }
 
 .filter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Desktop: 4 Columns Clean Filter Bar */
+@media (min-width: 860px) {
+  .filter-grid {
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+  }
 }
 
 .filter-group {
@@ -157,9 +143,9 @@ body::before {
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 14px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   background-color: #ffffff;
   color: var(--text-main);
@@ -170,39 +156,62 @@ body::before {
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
 }
 
-/* Results Section */
+/* Results Header */
 .results-header {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .results-header h2 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .results-header span {
   color: var(--primary);
 }
 
+/* Donor Cards Grid */
 .donor-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 18px;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .donor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .donor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* Donor Cards */
 .donor-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 20px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.donor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
 }
 
 .donor-header {
@@ -228,12 +237,13 @@ body::before {
 
 .donor-status {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 20px;
   width: fit-content;
+  letter-spacing: 0.5px;
 }
 
 .status-available {
@@ -251,8 +261,8 @@ body::before {
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  line-height: 1.4;
+  gap: 6px;
+  line-height: 1.45;
 }
 
 .donor-details strong {
@@ -261,7 +271,7 @@ body::before {
 
 .donor-actions {
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
 .contact-btn {
@@ -270,10 +280,10 @@ body::before {
   background-color: var(--primary);
   color: #ffffff;
   text-decoration: none;
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-weight: 600;
   font-size: 0.95rem;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: background-color 0.2s;
 }
 
@@ -284,42 +294,21 @@ body::before {
 .no-results {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 40px 16px;
+  padding: 50px 20px;
   color: var(--text-muted);
   background: var(--card-bg);
   border-radius: var(--radius);
   border: 1px dashed var(--border-color);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /* Footer */
 .footer {
   text-align: center;
-  padding: 24px 16px;
+  padding: 26px 20px;
   font-size: 0.85rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-color);
   background: #ffffff;
-  margin-top: 40px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Responsive adjustments */
-@media (min-width: 600px) {
-  .logo {
-    font-size: 1.35rem;
-  }
-  .admin-link {
-    font-size: 0.95rem;
-    padding: 7px 14px;
-  }
-}
-
-@media (min-width: 768px) {
-  body::before {
-    width: 480px;
-    height: 480px;
-    opacity: 0.06;
-  }
+  margin-top: 50px;
 }
