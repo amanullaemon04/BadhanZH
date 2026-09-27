@@ -1,4 +1,4 @@
-/* Reset & Fonts */
+/* Reset & Base Fonts */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -31,11 +31,11 @@ body {
 .header {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 18px;
+  padding: 10px 16px;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   width: 100%;
 }
 
@@ -44,7 +44,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .header-top {
@@ -56,28 +56,28 @@ body {
 }
 
 .logo {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--primary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   white-space: nowrap;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .admin-link {
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -99,64 +99,62 @@ body {
   border-color: var(--primary) !important;
 }
 
-.btn-primary-action:hover {
-  background: var(--primary-hover) !important;
-}
-
 /* Slogan */
 .header-slogan-wrap {
   text-align: center;
-  padding-top: 4px;
+  padding-top: 2px;
   border-top: 1px dashed #e2e8f0;
 }
 
 .header-slogan {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-muted);
 }
 
-/* Main Container */
+/* Main Container: Compact margin to eliminate extra scrolling */
 .container {
-  max-width: 550px;
+  max-width: 520px;
   width: 100%;
-  margin: 18px auto;
-  padding: 0 16px;
+  margin: 10px auto;
+  padding: 0 14px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Cards (Filter & Form) */
+/* Filter Card: Compact padding & gaps so font stays normal/large */
 .filter-card, .form-card {
   background: var(--card-bg);
-  padding: 20px;
+  padding: 14px 16px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  margin-bottom: 10px;
 }
 
 .form-title {
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--primary);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .filter-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
 .filter-group label {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -164,14 +162,13 @@ body {
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   background-color: #ffffff;
   color: var(--text-main);
   outline: none;
-  transition: border-color 0.2s;
 }
 
 .filter-group select:focus,
@@ -183,26 +180,27 @@ body {
   background: var(--primary);
   color: #ffffff;
   border: none;
-  padding: 11px;
+  padding: 10px;
   font-weight: 700;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 6px;
-  transition: background-color 0.2s;
-}
-
-.submit-btn:hover {
-  background: var(--primary-hover);
+  margin-top: 4px;
 }
 
 /* Results Section */
+.results-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .results-header {
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
 .results-header h2 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -214,29 +212,29 @@ body {
 .donor-grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .no-results {
   text-align: center;
-  padding: 28px 16px;
+  padding: 18px 14px;
   color: var(--text-muted);
   background: var(--card-bg);
   border-radius: var(--radius);
   border: 1px dashed var(--border-color);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 /* Donor Card */
 .donor-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 14px 16px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .donor-header {
@@ -246,7 +244,7 @@ body {
 }
 
 .donor-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -255,19 +253,18 @@ body {
   background-color: #fee2e2;
   color: var(--primary);
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .donor-status {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 20px;
-  width: fit-content;
 }
 
 .status-available {
@@ -281,11 +278,11 @@ body {
 }
 
 .donor-details {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .donor-details strong {
@@ -298,18 +295,18 @@ body {
   background-color: var(--primary);
   color: #ffffff;
   text-decoration: none;
-  padding: 10px 14px;
+  padding: 9px 12px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   border-radius: 6px;
 }
 
-/* Footer */
+/* Footer: Always visible right below without scrolling */
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
-  padding: 16px 20px;
-  margin-top: 30px;
+  padding: 10px 16px;
+  margin-top: auto;
   width: 100%;
 }
 
@@ -318,17 +315,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .footer-notice {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   text-align: center;
 }
 
 .footer-credit {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   font-weight: 500;
 }
