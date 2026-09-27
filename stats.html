@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>রক্তের পরিসংখ্যান - BADHAN ZH</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .stats-title {
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 18px 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .stat-group {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .stat-count {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="form-card">
+      <h2 class="stats-title">রক্তের গ্রুপভিত্তিক পরিসংখ্যান</h2>
+      
+      <div class="stats-grid" id="statsContainer">
+        <!-- Dynamic Counts Will Load Here -->
+        <div class="stat-card" style="grid-column: span 2;"><div class="stat-count">লোডিং হচ্ছে...</div></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — রিয়েল-টাইম ডাটা আপডেট</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+    async function fetchStats() {
+      const container = document.getElementById("statsContainer");
+      
+      // Fetch only verified donors count
+      const { data, error } = await client
+        .from("donors")
+        .select("blood")
+        .eq("verified", true);
+
+      if (error) {
+        container.innerHTML = "<div class='stat-card' style='grid-column: span 2;'><div class='stat-count' style='color:var(--danger);'>ডাটা লোড করতে সমস্যা হয়েছে!</div></div>";
+        return;
+      }
+
+      // Count occurrences of each blood group
+      const counts = {};
+      bloodGroups.forEach(bg => counts[bg] = 0);
+      
+      if (data) {
+        data.forEach(d => {
+          if (counts[d.blood] !== undefined) {
+            counts[d.blood]++;
+          }
+        });
+      }
+
+      // Render cards
+      container.innerHTML = bloodGroups.map(bg => `
+        <div class="stat-card">
+          <div class="stat-group">${bg}</div>
+          <div class="stat-count">${counts[bg]}</div>
+        </div>
+      `).join("");
+    }
+
+    fetchStats();
+  </script>
+</body>
+</html>
