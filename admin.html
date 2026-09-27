@@ -51,7 +51,7 @@
       color: #ffffff;
       border-color: var(--primary);
     }
-    /* Donor item card matching original design */
+    /* Donor item card */
     .admin-donor-card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -189,7 +189,7 @@
           type="text" 
           id="adminSearch" 
           class="admin-search-box" 
-          placeholder="নাম, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
+          placeholder="নাম, হল, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
         />
         <div id="adminDonorList" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
@@ -219,7 +219,7 @@
     const dashboardSection = document.getElementById("dashboardSection");
     const btnLogout = document.getElementById("btnLogout");
 
-    // Session verification
+    // Session check
     async function checkAuth() {
       const { data: { session } } = await client.auth.getSession();
       if (session) {
@@ -228,7 +228,7 @@
     }
     checkAuth();
 
-    // Login process
+    // Login
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnLogin");
@@ -303,14 +303,22 @@
 
       renderDonors(data);
 
+      // Search matching Name, Hall/Location, Blood Group, City, or Phone
       document.getElementById("adminSearch").addEventListener("input", (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = data.filter(d => 
-          (d.name && d.name.toLowerCase().includes(term)) || 
-          (d.blood && d.blood.toLowerCase().includes(term)) || 
-          (d.city && d.city.toLowerCase().includes(term)) ||
-          (d.phone && d.phone.includes(term))
-        );
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = data.filter(d => {
+          const name = (d.name || "").toLowerCase();
+          const blood = (d.blood || d.blood_group || d.group || "").toLowerCase();
+          const city = (d.city || "").toLowerCase();
+          const location = (d.location || "").toLowerCase();
+          const phone = (d.phone || "");
+
+          return name.includes(term) || 
+                 location.includes(term) || 
+                 blood.includes(term) || 
+                 city.includes(term) || 
+                 phone.includes(term);
+        });
         renderDonors(filtered);
       });
     }
@@ -323,32 +331,35 @@
         return;
       }
 
-      container.innerHTML = donors.map(d => `
-        <div class="admin-donor-card">
-          <div class="admin-donor-header">
-            <span class="admin-donor-name">${d.name || 'অজ্ঞাত'}</span>
-            <span class="blood-badge">${d.blood || '-'}</span>
-          </div>
-
-          <div class="admin-donor-info">
-            <div>📞 মোবাইল: <strong><a href="tel:${d.phone}" style="color:var(--text-main); text-decoration:none;">${d.phone || '-'}</a></strong></div>
-            <div>📍 জেলা: <strong>${d.city || '-'}</strong> ${d.location ? `(${d.location})` : ''}</div>
-            ${d.last_donation ? `<div>🗓️ শেষ রক্তদান: <strong>${d.last_donation}</strong></div>` : ''}
-          </div>
-
-          <div class="admin-card-actions">
-            <div>
-              ${d.verified 
-                ? '<span class="donor-status status-available">অনুমোদিত (Verified)</span>' 
-                : '<span class="donor-status status-unavailable">অপেক্ষমান (Pending)</span>'}
+      container.innerHTML = donors.map(d => {
+        const blood = d.blood || d.blood_group || d.group || "-";
+        return `
+          <div class="admin-donor-card">
+            <div class="admin-donor-header">
+              <span class="admin-donor-name">${d.name || 'অজ্ঞাত'}</span>
+              <span class="blood-badge">${blood}</span>
             </div>
-            <div class="btn-action-group">
-              ${!d.verified ? `<button class="btn-approve" onclick="verifyDonor('${d.id}')">Approve</button>` : ''}
-              <button class="btn-remove" onclick="deleteDonor('${d.id}')">Delete</button>
+
+            <div class="admin-donor-info">
+              <div>📞 মোবাইল: <strong><a href="tel:${d.phone}" style="color:var(--text-main); text-decoration:none;">${d.phone || '-'}</a></strong></div>
+              <div>📍 জেলা: <strong>${d.city || '-'}</strong> ${d.location ? `(${d.location})` : ''}</div>
+              ${d.last_donation ? `<div>🗓️ শেষ রক্তদান: <strong>${d.last_donation}</strong></div>` : ''}
+            </div>
+
+            <div class="admin-card-actions">
+              <div>
+                ${d.verified 
+                  ? '<span class="donor-status status-available">অনুমোদিত (Verified)</span>' 
+                  : '<span class="donor-status status-unavailable">অপেক্ষমান (Pending)</span>'}
+              </div>
+              <div class="btn-action-group">
+                ${!d.verified ? `<button class="btn-approve" onclick="verifyDonor('${d.id}')">Approve</button>` : ''}
+                <button class="btn-remove" onclick="deleteDonor('${d.id}')">Delete</button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     // Load User Feedbacks
@@ -359,7 +370,7 @@
       const { data, error } = await client.from("feedbacks").select("*").order("created_at", { ascending: false });
 
       if (error || !data) {
-        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>মতামত লোড করা যায়নি! (Table তৈরি আছে কিনা চেক করুন)</p>";
+        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>মতামত লোড করা যায়নি!</p>";
         return;
       }
 
