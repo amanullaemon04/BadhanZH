@@ -231,7 +231,7 @@
 </head>
 <body>
 
-  <!-- Unified Header -->
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -253,7 +253,6 @@
     </div>
   </header>
 
-  <!-- Main Container -->
   <main class="container">
     
     <!-- Login Section -->
@@ -312,8 +311,10 @@
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    const SUPER_ADMIN_EMAIL = "amanullaemon04@gmail.com";
+
     let currentTab = 'donors';
-    let currentUserRole = 'superadmin'; // 'superadmin' | 'subadmin'
+    let currentUserRole = 'superadmin';
     let allDonorsCache = [];
     let allReportsCache = [];
     let allFeedbackCache = [];
@@ -348,7 +349,6 @@
       return { isAvailable, nextDateStr };
     }
 
-    // Unified Login: Supabase Auth (Super Admin) OR admin_users table (Sub-Admin)
     async function handleAdminLogin(e) {
       e.preventDefault();
       const email = document.getElementById('adminEmail').value.trim();
@@ -359,7 +359,6 @@
       btn.textContent = "যাচাই করা হচ্ছে...";
 
       try {
-        // 1. Try Super Admin Auth
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         
         if (!error && data?.session) {
@@ -369,7 +368,6 @@
           return;
         }
 
-        // 2. Try Sub-Admin Table
         const { data: subadmins, error: subErr } = await supabaseClient
           .from('admin_users')
           .select('*')
@@ -407,7 +405,6 @@
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('logoutBtn').style.display = 'inline-flex';
 
-      // Hide Sub-Admin creation tab if current logged-in user is a sub-admin
       if (currentUserRole === 'subadmin') {
         const subTab = document.getElementById('tabSubadmins');
         if (subTab) subTab.style.display = 'none';
@@ -479,7 +476,8 @@
 
         try {
           const { data: subData } = await supabaseClient.from('admin_users').select('*').order('id', { ascending: false });
-          allSubadminsCache = subData || [];
+          // Super admin email list theke filter out kora
+          allSubadminsCache = (subData || []).filter(s => s.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase());
         } catch(e) { allSubadminsCache = []; }
 
         const pendingCount = allDonorsCache.filter(d => !d.verified).length;
@@ -497,7 +495,6 @@
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
 
-      // TAB: DONORS or PENDING
       if (currentTab === 'donors' || currentTab === 'pending') {
         let donors = allDonorsCache;
         if (currentTab === 'pending') donors = donors.filter(d => !d.verified);
@@ -550,7 +547,6 @@
           `;
         }).join('');
 
-      // TAB: REPORTS
       } else if (currentTab === 'reports') {
         let reports = allReportsCache;
         if (query) {
@@ -579,7 +575,6 @@
           </div>
         `).join('');
 
-      // TAB: FEEDBACK
       } else if (currentTab === 'feedback') {
         let feedbacks = allFeedbackCache;
         if (query) {
@@ -608,7 +603,6 @@
           </div>
         `).join('');
 
-      // TAB: SUBADMINS (নতুন সাব-এডমিন তৈরি ও ব্যবস্থাপনা)
       } else if (currentTab === 'subadmins') {
         let subadmins = allSubadminsCache;
         if (query) {
@@ -621,7 +615,7 @@
             <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">সাব-এডমিন ডোনার ভেরিফাই ও স্ট্যাটাস ম্যানেজ করতে পারবে।</p>
             <input type="email" id="newSubEmail" class="subadmin-input" placeholder="সাব-এডমিনের ইমেইল..." required />
             <input type="text" id="newSubPassword" class="subadmin-input" placeholder="সাব-এডমিনের পাসওয়ার্ড..." required />
-            <button onclick="createSubAdmin()" class="btn-action" style="margin-top: 4px; height: 38px; font-size: 0.88rem;">সাব-এডমিন তৈরি করুন</button>
+            <button onclick="createSubAdmin()" class="btn-action" style="margin-top: 4px; height: 38px; font-size: 0.88rem; background: var(--primary); color: #fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">সাব-এডমিন তৈরি করুন</button>
           </div>
         `;
 
@@ -654,13 +648,17 @@
       renderAdminList();
     }
 
-    // Create Sub-Admin
     async function createSubAdmin() {
       const email = document.getElementById('newSubEmail').value.trim();
       const password = document.getElementById('newSubPassword').value.trim();
 
       if (!email || !password) {
         alert("ইমেইল এবং পাসওয়ার্ড উভয়ই পূরণ করুন!");
+        return;
+      }
+
+      if (email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
+        alert("এটি আপনার সুপার এডমিন ইমেইল! এটি সাব-এডমিন তালিকায় যুক্ত করা যাবে না।");
         return;
       }
 
@@ -675,7 +673,6 @@
       }
     }
 
-    // Delete Sub-Admin
     async function deleteSubAdmin(id) {
       if (!confirm("আপনি কি নিশ্চিতভাবে এই সাব-এডমিনের অ্যাক্সেস বাতিল করতে চান?")) return;
       try {
@@ -687,7 +684,6 @@
       }
     }
 
-    // Verify All Pending Donors
     async function verifyAllPendingDonors() {
       const pendingDonors = allDonorsCache.filter(d => !d.verified);
       if (pendingDonors.length === 0) {
