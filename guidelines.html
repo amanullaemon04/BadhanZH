@@ -3,79 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>রক্তদানের নির্দেশিকা - BADHAN ZH</title>
+  <title>নির্দেশিকা - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .guide-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
+    .guideline-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
       border-radius: var(--radius);
-      padding: 16px 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-    }
-    .guide-card h3 {
-      font-size: 1.05rem;
-      color: var(--primary);
+      padding: 14px 14px;
+      margin-top: 6px;
       margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-    .guide-list {
-      list-style-type: none;
-      padding-left: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 0.92rem;
-      color: var(--text-main);
-      line-height: 1.45;
-    }
-    .guide-list li {
-      position: relative;
-      padding-left: 18px;
-    }
-    .guide-list li::before {
-      content: "•";
-      position: absolute;
-      left: 4px;
+    .guideline-title {
+      font-size: 1.2rem;
+      font-weight: 800;
       color: var(--primary);
-      font-weight: bold;
-      font-size: 1.1rem;
-      line-height: 1;
+      text-align: center;
+      margin-bottom: 2px;
     }
-    .guide-list li strong {
-      color: var(--text-main);
+    .guideline-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 12px;
     }
-    .sub-tag {
-      display: inline-block;
-      font-size: 0.75rem;
+    .guide-box {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .guide-box h3 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .guide-box ul {
+      padding-left: 18px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: #334155;
+    }
+    .badge-tag {
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      margin-right: 6px;
+      margin-right: 4px;
     }
-    .tag-temp {
-      background: #fef3c7;
-      color: #b45309;
-    }
-    .tag-perm {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
+    .badge-temp { background: #fef3c7; color: #b45309; }
+    .badge-perm { background: #fee2e2; color: #b91c1c; }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <header class="header">
     <div class="header-container">
-      <div class="header-top">
-        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
-        <div class="header-actions">
-          <a href="index.html" class="admin-link">← হোম পেজ</a>
-        </div>
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN</span>
+          <span class="logo-zh-badge">ZH</span>
+        </a>
+      </div>
+      <div class="header-nav-row">
+        <a href="index.html" class="nav-chip">← হোম পেজ</a>
       </div>
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
@@ -83,82 +76,41 @@
     </div>
   </header>
 
-  <!-- Main Container -->
   <main class="container">
-    <div style="margin-top: 8px; margin-bottom: 12px; text-align: center;">
-      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">রক্তদাতার নির্দেশিকা</h2>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-        নিরাপদ ও সুস্থ রক্তদানের জন্য প্রয়োজনীয় তথ্য ও নিয়মাবলী
-      </p>
-    </div>
+    <div class="guideline-card">
+      <h2 class="guideline-title">রক্তদাতার নির্দেশিকা</h2>
+      <p class="guideline-sub">নিরাপদ ও সুস্থ রক্তদানের জন্য প্রয়োজনীয় তথ্য ও নিয়মাবলী</p>
 
-    <!-- Section 1 -->
-    <div class="guide-card">
-      <h3>✅ রক্তদানের প্রাথমিক যোগ্যতা</h3>
-      <ul class="guide-list">
-        <li><strong>বয়স:</strong> ১৮ থেকে ৬০ বছরের যেকোনো সুস্থ পুরুষ বা নারী।</li>
-        <li><strong>ওজন:</strong> ন্যূনতম ৫০ কেজি (১১০ পাউন্ড) হতে হবে।</li>
-        <li><strong>রক্তদানের বিরতি:</strong> পূর্ববর্তী রক্তদানের পর পুরুষদের ক্ষেত্রে কমপক্ষে ৩ মাস এবং নারীদের ক্ষেত্রে ৪ মাস অতিবাহিত হতে হবে।</li>
-        <li><strong>হিমোগ্লোবিন:</strong> পুরুষদের ক্ষেত্রে ন্যূনতম ১২.৫ g/dL এবং নারীদের ক্ষেত্রে ১২.০ g/dL থাকা বাঞ্ছনীয়।</li>
-        <li><strong>শারীরিক সুস্থতা:</strong> রক্তচাপ ও শরীরের তাপমাত্রা স্বাভাবিক থাকতে হবে।</li>
-      </ul>
-    </div>
+      <div class="guide-box">
+        <h3 style="color: var(--success);">✅ রক্তদানের প্রাথমিক যোগ্যতা</h3>
+        <ul>
+          <li><strong>বয়স:</strong> ১৮ থেকে ৬০ বছরের যেকোনো সুস্থ পুরুষ বা নারী।</li>
+          <li><strong>ওজন:</strong> ন্যূনতম ৫০ কেজি (১১০ পাউন্ড) হতে হবে।</li>
+          <li><strong>রক্তদানের বিরতি:</strong> পূর্ববর্তী রক্তদানের পর পুরুষের ক্ষেত্রে কমপক্ষে ৩ মাস এবং নারীদের ক্ষেত্রে ৪ মাস অতিবাহিত হতে হবে।</li>
+          <li><strong>হিমোগ্লোবিন:</strong> ন্যূনতম ১২.৫ g/dL থাকা বাঞ্ছনীয়।</li>
+          <li><strong>শারীরিক সুস্থতা:</strong> রক্তচাপ ও শরীরের তাপমাত্রা স্বাভাবিক থাকতে হবে।</li>
+        </ul>
+      </div>
 
-    <!-- Section 2 -->
-    <div class="guide-card">
-      <h3>⚠️ কারা রক্ত দিতে পারবেন না?</h3>
-      <ul class="guide-list">
-        <li><span class="sub-tag tag-temp">সাময়িক</span> জ্বর, সর্দি-কাশি বা পেটের সমস্যা থাকলে (২৪ ঘণ্টার মধ্যে)।</li>
-        <li><span class="sub-tag tag-temp">সাময়িক</span> গত ৭ দিনের মধ্যে অ্যান্টিবায়োটিক সেবন করলে।</li>
-        <li><span class="sub-tag tag-temp">সাময়িক</span> গর্ভাবস্থায় এবং সন্তানকে বুকের দুধ পান করানোর সময়ে।</li>
-        <li><span class="sub-tag tag-temp">সাময়িক</span> বিগত ৬ মাসের মধ্যে বড় অপারেশন, দাঁত তোলা বা ট্যাটু আঁকালে।</li>
-        <li><span class="sub-tag tag-perm">স্থায়ী</span> হেপাটাইটিস বি/সি, এইচআইভি বা সিফিলিসের সংক্রমণ থাকলে।</li>
-        <li><span class="sub-tag tag-perm">স্থায়ী</span> অনিয়ন্ত্রিত হার্ট বা কিডনির জটিল রোগ থাকলে।</li>
-      </ul>
-    </div>
-
-    <!-- Section 3 -->
-    <div class="guide-card">
-      <h3>⏰ রক্তদানের পূর্বে করণীয়</h3>
-      <ul class="guide-list">
-        <li>রক্তদানের আগের রাতে অন্তত ৭-৮ ঘণ্টা পর্যাপ্ত ঘুম নিশ্চিত করুন।</li>
-        <li>কখনোই খালি পেটে রক্ত দেবেন না; ১-২ ঘণ্টা আগে পুষ্টিকর হালকা খাবার গ্রহণ করুন।</li>
-        <li>রক্তদানের পূর্বে পর্যাপ্ত পানি বা ফলের শরবত পান করুন।</li>
-        <li>রক্তদানের ঠিক আগে ধূমপান সম্পূর্ণ পরিহার করুন।</li>
-      </ul>
-    </div>
-
-    <!-- Section 4 -->
-    <div class="guide-card">
-      <h3>🛌 রক্তদানের পরে করণীয়</h3>
-      <ul class="guide-list">
-        <li>রক্তদান শেষে সাথে সাথে না উঠে বিছানায় ৫-১০ মিনিট বিশ্রাম নিন।</li>
-        <li>পর্যাপ্ত পরিমাণে তরল খাবার (পানি, স্যালাইন, জুস) ও খাবার গ্রহণ করুন।</li>
-        <li>যে হাত থেকে রক্ত নেওয়া হয়েছে, সেই হাতে কয়েক ঘণ্টা ভারী বস্তু বহন করবেন না।</li>
-        <li>রক্তদানের পর ১-২ ঘণ্টা কায়িক পরিশ্রম ও ধূমপান এড়িয়ে চলুন।</li>
-        <li>মাথা ঘুরলে কিছুক্ষণ শুয়ে দুই পা সামান্য উঁচু করে রাখুন।</li>
-      </ul>
-    </div>
-
-    <!-- Section 5 -->
-    <div class="guide-card">
-      <h3>❤️ রক্তদানের উপকারিতা</h3>
-      <ul class="guide-list">
-        <li>শরীরে নতুন রক্তকণিকা তৈরির প্রক্রিয়া সক্রিয় ও দ্রুততর হয়।</li>
-        <li>অতিরিক্ত আয়রন কমে হার্ট অ্যাটাকের ঝুঁকি বহুলাংশে হ্রাস পায়।</li>
-        <li>রক্তদানের মাধ্যমে রক্তে থাকা প্রধান রোগগুলোর প্রাথমিক স্ক্রিনিং হয়ে যায়।</li>
-        <li>সর্বোপরি, আপনার এক ব্যাগ রক্ত একটি মুমূর্ষু মানুষের প্রাণ বাঁচায়।</li>
-      </ul>
+      <div class="guide-box">
+        <h3 style="color: var(--danger);">⚠️ কারা রক্ত দিতে পারবেন না?</h3>
+        <ul>
+          <li><span class="badge-tag badge-temp">সাময়িক</span> জ্বর, সর্দি-কাশি বা পেটের সমস্যা থাকলে (২৪ ঘণ্টার মধ্যে)।</li>
+          <li><span class="badge-tag badge-temp">সাময়িক</span> গত ৭ দিনের মধ্যে অ্যান্টিবায়োটিক সেবন করলে।</li>
+          <li><span class="badge-tag badge-temp">সাময়িক</span> গর্ভাবস্থায় এবং সন্তানকে বুকের দুধ পান করানোর সময়ে।</li>
+          <li><span class="badge-tag badge-temp">সাময়িক</span> বিগত ৬ মাসের মধ্যে বড় অপারেশন বা ট্যাটু আঁকালে।</li>
+          <li><span class="badge-tag badge-perm">স্থায়ী</span> হেপাটাইটিস বি/সি, এইচআইভি বা সিফিলিসের সংক্রমণ থাকলে।</li>
+          <li><span class="badge-tag badge-perm">স্থায়ী</span> অনিয়ন্ত্রিত হার্ট বা কিডনির জটিল রোগ থাকলে।</li>
+        </ul>
+      </div>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <p class="footer-notice">BADHAN ZH — রক্ত দিন, জীবন বাঁচান</p>
+      <p class="footer-notice">BADHAN ZH — রক্তদানে সচেতনতা আমাদের লক্ষ্য</p>
       <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
-
 </body>
 </html>
