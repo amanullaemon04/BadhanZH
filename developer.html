@@ -3,70 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developer - BADHAN ZH</title>
+  <title>Developer Info - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .dev-card {
-      background: rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(2px);
-      border: 1.5px solid rgba(255, 255, 255, 0.65);
-      border-radius: var(--radius);
-      padding: 20px 14px 16px 14px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      text-align: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    .dev-container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 10px 14px 40px;
     }
 
-    .dev-avatar-wrapper {
-      display: inline-block;
+    .dev-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius, 12px);
+      padding: 24px 18px;
+      margin-top: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      text-align: center;
       position: relative;
-      margin-bottom: 10px;
+    }
+
+    .dev-avatar-wrap {
+      margin-bottom: 12px;
     }
 
     .dev-avatar {
-      width: 104px;
-      height: 104px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      border: 2.5px solid var(--primary);
+      border: 3px solid #dc2626;
       object-fit: cover;
-      display: block;
-      box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
     }
 
     .dev-name {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 2px;
+      color: #0f172a;
+      margin: 0 0 2px 0;
     }
 
     .dev-role {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
+      color: #b91c1c;
+      margin: 0 0 10px 0;
     }
 
-    .dev-bio {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-      margin-bottom: 14px;
-      padding: 0 6px;
+    .dev-desc {
+      font-size: 0.84rem;
+      color: #475569;
+      line-height: 1.5;
+      margin: 0 auto 14px;
+      max-width: 95%;
     }
 
-    .dev-info-box {
-      background: rgba(255, 255, 255, 0.45);
-      border: 1.5px solid rgba(203, 213, 225, 0.85);
+    /* Bio / About Button - Compatible & Aesthetic */
+    .btn-bio-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      height: 40px;
+      background: rgba(220, 38, 38, 0.06);
+      color: #b91c1c;
+      border: 1.5px dashed #fca5a5;
       border-radius: 8px;
-      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-decoration: none;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-bio-link:hover, .btn-bio-link:active {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    /* Details Box */
+    .dev-info-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
       text-align: left;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 14px;
+      background: rgba(255, 255, 255, 0.6);
     }
 
     .dev-info-row {
@@ -75,60 +103,83 @@
       align-items: center;
     }
 
-    .dev-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+    .dev-info-label {
+      font-weight: 700;
+      color: #334155;
     }
 
-    .dev-btn {
+    .dev-info-val {
+      font-weight: 600;
+      color: #0f172a;
       text-decoration: none;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 0.84rem;
+    }
+
+    .status-active-badge {
+      color: #16a34a;
+      font-weight: 800;
+    }
+
+    /* Primary Action Buttons */
+    .primary-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .btn-primary-action {
+      height: 40px;
+      border-radius: 8px;
+      font-size: 0.88rem;
       font-weight: 700;
-      text-align: center;
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.2s ease;
+      text-decoration: none;
+      border: none;
     }
 
-    .dev-btn svg {
-      width: 17px;
-      height: 17px;
-      fill: currentColor;
-      flex-shrink: 0;
+    .btn-email {
+      background: #dc2626;
     }
 
-    .btn-red {
-      background: var(--primary);
-      color: #ffffff;
-      border: 1px solid var(--primary);
-    }
-
-    .btn-green {
+    .btn-whatsapp {
       background: #16a34a;
-      color: #ffffff;
-      border: 1px solid #16a34a;
     }
 
-    .btn-outline {
-      background: rgba(255, 255, 255, 0.75);
-      border: 1.5px solid #cbd5e1;
-      color: var(--text-main);
+    /* Social Links Grid */
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
-    .btn-outline:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+    .btn-social {
+      height: 38px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .btn-social:active {
+      background: #f1f5f9;
     }
   </style>
 </head>
 <body>
 
-  <!-- Unified Header -->
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -149,92 +200,77 @@
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="container">
+  <main class="dev-container">
     <div class="dev-card">
-      <div class="dev-avatar-wrapper">
-        <img 
-          src="profile.jpg" 
-          alt="Amanulla Emon" 
-          class="dev-avatar"
-          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Amanulla+Emon&background=d32f2f&color=fff&size=200'"
-        />
+      
+      <!-- Developer Avatar -->
+      <div class="dev-avatar-wrap">
+        <!-- Chhobir link ba file thik rekho -->
+        <img src="https://via.placeholder.com/150" alt="Amanulla Emon" class="dev-avatar" />
       </div>
 
-      <h2 class="dev-name">Amanulla Emon</h2>
-      <p class="dev-role">Lead Developer & Maintainer</p>
-      <p class="dev-bio">
+      <h1 class="dev-name">Amanulla Emon</h1>
+      <div class="dev-role">Lead Developer & Maintainer</div>
+      <p class="dev-desc">
         BADHAN ZH ব্লাড ডোনার প্ল্যাটফর্মের ডেভেলপার। জরুরি রক্তের প্রয়োজনে মানুষের পাশে দাঁড়াতে ও যোগাযোগ সহজ করতেই এই প্ল্যাটফর্মের সূচনা।
       </p>
 
+      <!-- New Compatible Button for Biography -->
+      <a href="bio.html" class="btn-bio-link">
+        📖 সংক্ষিপ্ত পরিচিতি ও বায়ো (About / Bio) →
+      </a>
+
+      <!-- Info Table Box -->
       <div class="dev-info-box">
         <div class="dev-info-row">
-          <span><strong>ইমেইল:</strong></span>
-          <span style="font-weight: 600;">amanullaemon04@gmail.com</span>
+          <span class="dev-info-label">ইমেইল:</span>
+          <a href="mailto:amanullaemon04@gmail.com" class="dev-info-val">amanullaemon04@gmail.com</a>
         </div>
         <div class="dev-info-row">
-          <span><strong>হোয়াটসঅ্যাপ:</strong></span>
-          <span style="font-weight: 600;">01608575239</span>
+          <span class="dev-info-label">হোয়াটসঅ্যাপ:</span>
+          <a href="https://wa.me/8801608575239" class="dev-info-val">01608575239</a>
         </div>
         <div class="dev-info-row">
-          <span><strong>স্ট্যাটাস:</strong></span>
-          <span style="color: var(--success); font-weight: 800;">Active Developer</span>
+          <span class="dev-info-label">স্ট্যাটাস:</span>
+          <span class="status-active-badge">Active Developer</span>
         </div>
       </div>
 
-      <div class="dev-actions">
-        <!-- Send Email -->
-        <a href="mailto:amanullaemon04@gmail.com" class="dev-btn btn-red">
-          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          <span>Send Email</span>
+      <!-- Send Email & WhatsApp -->
+      <div class="primary-actions-grid">
+        <a href="mailto:amanullaemon04@gmail.com" class="btn-primary-action btn-email">
+          ✉️ Send Email
         </a>
-
-        <!-- WhatsApp -->
-        <a href="https://wa.me/8801608575239" target="_blank" class="dev-btn btn-green">
-          <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.56 0 8.25 3.69 8.25 8.24 0 2.2-.86 4.28-2.42 5.83a8.215 8.215 0 0 1-5.83 2.41c-1.46 0-2.91-.39-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.55 3.69-8.24 8.25-8.24m4.54 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.42 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.3"/></svg>
-          <span>WhatsApp</span>
-        </a>
-
-        <!-- GitHub -->
-        <a href="https://github.com/Amanullaemon" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #24292e;" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
-          <span>GitHub</span>
-        </a>
-
-        <!-- Facebook -->
-        <a href="https://facebook.com" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #1877f2;" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          <span>Facebook</span>
-        </a>
-
-        <!-- Telegram -->
-        <a href="https://t.me/amanullaemon" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #229ED9;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-          <span>Telegram</span>
-        </a>
-
-        <!-- Instagram -->
-        <a href="https://www.instagram.com/_amanulla__emon_?stkn=Y2x0a2VoOHpkNmk2" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #E4405F;" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          <span>Instagram</span>
-        </a>
-
-        <!-- X (formerly Twitter) -->
-        <a href="https://x.com/amanulla_emon" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #000000;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          <span>X</span>
-        </a>
-
-        <!-- Discord -->
-        <a href="https://discord.com/users/amanulla_emon" target="_blank" class="dev-btn btn-outline">
-          <svg style="color: #5865F2;" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-          <span>Discord</span>
+        <a href="https://wa.me/8801608575239" target="_blank" class="btn-primary-action btn-whatsapp">
+          💬 WhatsApp
         </a>
       </div>
+
+      <!-- Social Media Grid -->
+      <div class="social-grid">
+        <a href="https://github.com" target="_blank" class="btn-social">
+          🐱 GitHub
+        </a>
+        <a href="https://facebook.com" target="_blank" class="btn-social">
+          🌐 Facebook
+        </a>
+        <a href="https://t.me" target="_blank" class="btn-social">
+          ✈️ Telegram
+        </a>
+        <a href="https://instagram.com" target="_blank" class="btn-social">
+          📷 Instagram
+        </a>
+        <a href="https://x.com" target="_blank" class="btn-social">
+          𝕏 X
+        </a>
+        <a href="https://discord.com" target="_blank" class="btn-social">
+          👾 Discord
+        </a>
+      </div>
+
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — Service to Humanity</p>
