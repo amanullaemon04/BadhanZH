@@ -1,481 +1,185 @@
-/* Reset & Base Fonts */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>রক্তের পরিসংখ্যান - BADHAN ZH</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Stats Card - Sheer Glass Transparency */
+    .stats-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
 
-:root {
-  --primary: #d32f2f;
-  --primary-hover: #b71c1c;
-  --bg-color: #f8fafc;
-  --text-main: #0f172a;
-  --text-muted: #475569;
-  --border-color: #cbd5e1;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --radius: 12px;
-}
+    .stats-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 18px;
+    }
 
-html, body {
-  height: 100%;
-}
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow-x: hidden;
-  position: relative;
-}
+    /* Individual Blood Group Box - Sheer Glass */
+    .stat-box {
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(3px);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
+    }
 
-/* Background Watermark Logo (Opacity 0.10) */
-body::before {
-  content: "";
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(88vw, 440px);
-  height: min(88vw, 440px);
-  background-image: url('https://lh3.googleusercontent.com/d/1ynfT2kM9ZgEAHmc_wS24MfwWRziomdPa');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  opacity: 0.15;
-  pointer-events: none;
-  z-index: 0;
-}
+    .stat-box:hover {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: var(--primary);
+    }
 
-/* Main Sections over Watermark */
-.header, .container, .footer, .quick-shortcuts {
-  position: relative;
-  z-index: 1;
-}
+    .stat-blood {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
 
-/* Header */
-.header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(203, 213, 225, 0.8);
-  padding: 8px 16px;
-  position: sticky;
-  top: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  width: 100%;
-}
+    .stat-count {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
 
-.header-container {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
+    </div>
+  </header>
 
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
+  <!-- Main Container -->
+  <main class="container">
+    <div class="stats-card">
+      <h2 class="stats-title">রক্তের গ্রুপভিত্তিক পরিসংখ্যান</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-blood">A+</div>
+          <div class="stat-count" id="count-A-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">A-</div>
+          <div class="stat-count" id="count-A-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B+</div>
+          <div class="stat-count" id="count-B-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B-</div>
+          <div class="stat-count" id="count-B-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB+</div>
+          <div class="stat-count" id="count-AB-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB-</div>
+          <div class="stat-count" id="count-AB-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O+</div>
+          <div class="stat-count" id="count-O-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O-</div>
+          <div class="stat-count" id="count-O-neg">0</div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-.logo {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — রিয়েল-টাইম ডাটা আপডেট</p>
+      <p class="footer-credit">
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
+      </p>
+    </div>
+  </footer>
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
+  <script>
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-.admin-link {
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.7);
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
+    async function loadStats() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('blood_group, verified');
 
-.admin-link:hover {
-  color: var(--primary);
-  border-color: var(--primary);
-}
+        if (error) throw error;
 
-.btn-primary-action {
-  background: var(--primary) !important;
-  color: #ffffff !important;
-  border-color: var(--primary) !important;
-}
+        // Group counting
+        const counts = {
+          "A+": 0, "A-": 0,
+          "B+": 0, "B-": 0,
+          "AB+": 0, "AB-": 0,
+          "O+": 0, "O-": 0
+        };
 
-/* Slogan */
-.header-slogan-wrap {
-  text-align: center;
-  padding-top: 2px;
-  border-top: 1px dashed #e2e8f0;
-}
+        if (data) {
+          data.forEach(donor => {
+            // Count verified donors or all valid groups
+            const bg = (donor.blood_group || "").trim().toUpperCase();
+            if (counts.hasOwnProperty(bg)) {
+              counts[bg]++;
+            }
+          });
+        }
 
-.header-slogan {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
+        // Map to IDs
+        document.getElementById('count-A-pos').textContent = counts["A+"];
+        document.getElementById('count-A-neg').textContent = counts["A-"];
+        document.getElementById('count-B-pos').textContent = counts["B+"];
+        document.getElementById('count-B-neg').textContent = counts["B-"];
+        document.getElementById('count-AB-pos').textContent = counts["AB+"];
+        document.getElementById('count-AB-neg').textContent = counts["AB-"];
+        document.getElementById('count-O-pos').textContent = counts["O+"];
+        document.getElementById('count-O-neg').textContent = counts["O-"];
 
-/* Main Container */
-.container {
-  max-width: 520px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 8px 14px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
+      } catch (err) {
+        console.error("Error loading stats:", err);
+      }
+    }
 
-/* Outer Card (35% White, 65% Transparent Glass) */
-.filter-card,
-.stats-card,
-.form-card {
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(2px);
-  padding: 20px 18px;
-  border-radius: var(--radius);
-  border: 1.5px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  margin-bottom: 12px;
-}
-
-.filter-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.filter-group label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-/* Inner Inputs & Selects (45% White, 55% Transparent) */
-.filter-group select,
-.filter-group input {
-  width: 100%;
-  height: 48px;
-  padding: 10px 14px;
-  border: 1.5px solid rgba(203, 213, 225, 0.85);
-  border-radius: 8px;
-  font-size: 0.98rem;
-  font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.45);
-  color: var(--text-main);
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.filter-group select option {
-  background: #ffffff;
-  color: #0f172a;
-}
-
-.filter-group select:focus,
-.filter-group input:focus {
-  border-color: var(--primary);
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15);
-}
-
-/* Stats Page Grid & Boxes (Same Transparent Ratio) */
-.stats-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--primary);
-  text-align: center;
-  margin-bottom: 18px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.stat-box {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(2px);
-  border: 1.5px solid rgba(203, 213, 225, 0.85);
-  border-radius: 12px;
-  padding: 14px 10px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  transition: all 0.2s ease;
-}
-
-.stat-box:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: var(--primary);
-}
-
-.stat-blood {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 2px;
-}
-
-.stat-count {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text-main);
-}
-
-/* Results Section */
-.results-section {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 6px;
-}
-
-.results-header {
-  margin-bottom: 6px;
-}
-
-.results-header h2 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.results-header span {
-  color: var(--primary);
-}
-
-.donor-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.no-results {
-  text-align: center;
-  padding: 14px 12px;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(2px);
-  border-radius: var(--radius);
-  border: 1px dashed rgba(203, 213, 225, 0.9);
-  font-size: 0.88rem;
-  line-height: 1.4;
-}
-
-/* Donor Card */
-.donor-card {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(3px);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.donor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.donor-header h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.blood-badge {
-  background-color: #fee2e2;
-  color: var(--primary);
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-}
-
-.donor-status {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  width: fit-content;
-}
-
-.status-available {
-  background-color: #dcfce7;
-  color: var(--success);
-}
-
-.status-unavailable {
-  background-color: #fee2e2;
-  color: var(--danger);
-}
-
-.donor-details {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.donor-details strong {
-  color: var(--text-main);
-}
-
-.contact-btn {
-  display: block;
-  text-align: center;
-  background-color: var(--primary);
-  color: #ffffff;
-  text-decoration: none;
-  padding: 10px 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-  margin-top: 4px;
-}
-
-.contact-btn:hover {
-  background-color: var(--primary-hover);
-}
-
-/* Quick Shortcuts Bar (Auto-Compact & Responsive) */
-.quick-shortcuts {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 10px;
-  max-width: 520px;
-  width: 100%;
-  margin: 8px auto 4px auto;
-  gap: 6px 10px;
-}
-
-.shortcut-chip {
-  text-decoration: none;
-  background: transparent;
-  color: #1e40af;
-  border-bottom: 1.5px solid #3b82f6;
-  padding: 2px 3px;
-  font-size: clamp(0.74rem, 2.7vw, 0.85rem);
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.shortcut-chip:hover {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-/* Form Styles */
-.form-title {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 12px;
-}
-
-.submit-btn {
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
-  padding: 11px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 6px;
-}
-
-/* Footer */
-.footer {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
-  border-top: 1px solid var(--border-color);
-  padding: 8px 16px;
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.footer-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.footer-notice {
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 1.2;
-}
-
-.footer-credit {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.footer-credit a {
-  color: var(--primary);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-@media (min-width: 650px) {
-  .logo { font-size: 1.25rem; }
-  .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-}
+    document.addEventListener('DOMContentLoaded', loadStats);
+  </script>
+</body>
+</html>
