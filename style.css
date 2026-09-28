@@ -10,7 +10,7 @@
   --primary: #d32f2f;
   --primary-hover: #b71c1c;
   --bg-color: #f8fafc;
-  --card-bg: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.85);
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border-color: #cbd5e1;
@@ -35,7 +35,7 @@ body {
   position: relative;
 }
 
-/* Background Watermark Logo */
+/* Background Watermark Logo (Opacity 0.10) */
 body::before {
   content: "";
   position: fixed;
@@ -61,7 +61,8 @@ body::before {
 
 /* Header */
 .header {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--border-color);
   padding: 8px 16px;
   position: sticky;
@@ -111,7 +112,7 @@ body::before {
   padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -155,13 +156,14 @@ body::before {
   justify-content: flex-start;
 }
 
-/* Filter Card */
+/* Filter Card (Semi-transparent with Glassmorphism) */
 .filter-card {
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
   padding: 20px 18px;
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
   margin-bottom: 12px;
 }
 
@@ -191,7 +193,7 @@ body::before {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.98rem;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.9);
   color: var(--text-main);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -234,20 +236,22 @@ body::before {
   text-align: center;
   padding: 14px 12px;
   color: var(--text-muted);
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
   border-radius: var(--radius);
-  border: 1px dashed var(--border-color);
+  border: 1px dashed rgba(203, 213, 225, 0.8);
   font-size: 0.88rem;
   line-height: 1.4;
 }
 
 /* Donor Card */
 .donor-card {
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
   border-radius: var(--radius);
   padding: 16px 18px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -359,10 +363,11 @@ body::before {
 
 /* Form Card */
 .form-card {
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
   padding: 18px;
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(203, 213, 225, 0.7);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
@@ -388,7 +393,8 @@ body::before {
 
 /* Footer */
 .footer {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
   border-top: 1px solid var(--border-color);
   padding: 8px 16px;
   width: 100%;
