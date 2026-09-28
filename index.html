@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,14 +12,19 @@
   <!-- Header -->
   <header class="header">
     <div class="header-container">
-      <div class="header-top">
-        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
-        <div class="header-actions">
-          <a href="register.html" class="admin-link btn-primary-action">+ রক্তদাতা হন</a>
-          <a href="update-profile.html" class="admin-link">প্রোফাইল</a>
-          <a href="admin.html" class="admin-link">Admin</a>
-        </div>
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN <span class="logo-sub">ZH</span></span>
+        </a>
       </div>
+
+      <div class="header-nav-row">
+        <a href="register.html" class="nav-chip nav-chip-primary">+ রক্তদাতা হন</a>
+        <a href="update-profile.html" class="nav-chip">👤 প্রোফাইল</a>
+        <a href="admin.html" class="nav-chip">⚙️ Admin</a>
+      </div>
+
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
       </div>
@@ -49,24 +54,30 @@
           <label for="city">জেলা / শহর (City / District)</label>
           <select id="city">
             <option value="">All locations</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Barishal">Barishal</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Mymensingh">Mymensingh</option>
+            <option value="Cumilla">Cumilla</option>
+            <option value="Gazipur">Gazipur</option>
+            <option value="Narayanganj">Narayanganj</option>
             <option value="Bagerhat">Bagerhat</option>
             <option value="Bandarban">Bandarban</option>
             <option value="Barguna">Barguna</option>
-            <option value="Barishal">Barishal</option>
             <option value="Bhola">Bhola</option>
             <option value="Bogura">Bogura</option>
             <option value="Brahmanbaria">Brahmanbaria</option>
             <option value="Chandpur">Chandpur</option>
-            <option value="Chattogram">Chattogram</option>
             <option value="Chuadanga">Chuadanga</option>
             <option value="Cox's Bazar">Cox's Bazar</option>
-            <option value="Cumilla">Cumilla</option>
-            <option value="Dhaka">Dhaka</option>
             <option value="Dinajpur">Dinajpur</option>
             <option value="Faridpur">Faridpur</option>
             <option value="Feni">Feni</option>
             <option value="Gaibandha">Gaibandha</option>
-            <option value="Gazipur">Gazipur</option>
             <option value="Gopalganj">Gopalganj</option>
             <option value="Habiganj">Habiganj</option>
             <option value="Jamalpur">Jamalpur</option>
@@ -75,7 +86,6 @@
             <option value="Jhenaidah">Jhenaidah</option>
             <option value="Joypurhat">Joypurhat</option>
             <option value="Khagrachhari">Khagrachhari</option>
-            <option value="Khulna">Khulna</option>
             <option value="Kishoreganj">Kishoreganj</option>
             <option value="Kurigram">Kurigram</option>
             <option value="Kushtia">Kushtia</option>
@@ -87,10 +97,8 @@
             <option value="Meherpur">Meherpur</option>
             <option value="Moulvibazar">Moulvibazar</option>
             <option value="Munshiganj">Munshiganj</option>
-            <option value="Mymensingh">Mymensingh</option>
             <option value="Naogaon">Naogaon</option>
             <option value="Narail">Narail</option>
-            <option value="Narayanganj">Narayanganj</option>
             <option value="Narsingdi">Narsingdi</option>
             <option value="Natore">Natore</option>
             <option value="Netrokona">Netrokona</option>
@@ -101,15 +109,12 @@
             <option value="Patuakhali">Patuakhali</option>
             <option value="Pirojpur">Pirojpur</option>
             <option value="Rajbari">Rajbari</option>
-            <option value="Rajshahi">Rajshahi</option>
             <option value="Rangamati">Rangamati</option>
-            <option value="Rangpur">Rangpur</option>
             <option value="Satkhira">Satkhira</option>
             <option value="Shariatpur">Shariatpur</option>
             <option value="Sherpur">Sherpur</option>
             <option value="Sirajganj">Sirajganj</option>
             <option value="Sunamganj">Sunamganj</option>
-            <option value="Sylhet">Sylhet</option>
             <option value="Tangail">Tangail</option>
             <option value="Thakurgaon">Thakurgaon</option>
           </select>
