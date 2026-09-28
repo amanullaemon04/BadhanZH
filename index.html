@@ -7,7 +7,16 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Card & Action Button Styling perfectly matched with screenshots */
+    /* Highlighted Red Button for Donor Registration */
+    .nav-chip-primary {
+      background: #d32f2f !important;
+      color: #ffffff !important;
+      border-color: #b91c1c !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.25);
+    }
+
+    /* Card & Action Button Styling */
     .donor-card {
       background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(4px);
@@ -139,7 +148,7 @@
       </div>
 
       <div class="header-nav-row">
-        <a href="register.html" class="nav-chip">+ রক্তদাতা হন</a>
+        <a href="register.html" class="nav-chip nav-chip-primary">+ রক্তদাতা হন</a>
         <a href="profile.html" class="nav-chip">👤 প্রোফাইল</a>
         <a href="admin.html" class="nav-chip">⚙️ Admin</a>
       </div>
@@ -253,8 +262,12 @@
       </div>
     </div>
 
-    <div class="donors-count" id="donorsCount">Donors found: 0</div>
-    <div id="donorsList"></div>
+    <div class="donors-count" id="donorsCount" style="display: none;">Donors found: 0</div>
+    <div id="donorsList">
+      <div class="initial-prompt-box">
+        🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
+      </div>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -316,7 +329,7 @@
 
         if (error) throw error;
         allDonors = data || [];
-        filterDonors();
+        // Intentionally NOT calling filterDonors() here so list stays empty until user selects
       } catch (err) {
         console.error(err);
       }
@@ -327,6 +340,22 @@
       const city = document.getElementById('cityFilter').value;
       const loc = document.getElementById('locationFilter').value.trim().toLowerCase();
       const status = document.getElementById('statusFilter').value;
+
+      const donorsCountEl = document.getElementById('donorsCount');
+      const listContainer = document.getElementById('donorsList');
+
+      // Check if user has picked any filter criteria
+      const isFilterActive = (blood !== 'All' || city !== 'All' || loc !== '' || status !== 'All');
+
+      if (!isFilterActive) {
+        donorsCountEl.style.display = 'none';
+        listContainer.innerHTML = `
+          <div class="initial-prompt-box">
+            🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
+          </div>
+        `;
+        return;
+      }
 
       let filtered = allDonors.filter(d => {
         const matchesBlood = (blood === 'All' || d.blood_group === blood);
@@ -342,7 +371,8 @@
         return matchesBlood && matchesCity && matchesLoc && matchesStatus;
       });
 
-      document.getElementById('donorsCount').textContent = `Donors found: ${filtered.length}`;
+      donorsCountEl.style.display = 'block';
+      donorsCountEl.textContent = `Donors found: ${filtered.length}`;
       renderDonors(filtered);
     }
 
@@ -394,7 +424,7 @@
       }).join('');
     }
 
-    // UPDATED REPORT DONOR PROMPT (1, 2, 3 & 4 OTHER)
+    // 1, 2, 3 & 4 (Other) prompt
     async function reportDonor(donorId, donorName, donorPhone) {
       const promptMessage = 
 `${donorName}-এর বিষয়ে রিপোর্ট জানান:
