@@ -3,100 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>তথ্য আপডেট করুন - BADHAN ZH</title>
+  <title>ডোনার তথ্য আপডেট - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .profile-card {
-      background: rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(2px);
-      border: 1.5px solid rgba(255, 255, 255, 0.65);
-      border-radius: var(--radius);
-      padding: 16px 14px;
+    .form-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius, 12px);
+      padding: 22px 18px;
+      margin-top: 10px;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-      margin-top: 8px;
-      margin-bottom: 14px;
-    }
-
-    .form-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-align: center;
-      margin-bottom: 2px;
-    }
-
-    .form-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.35;
-      margin-bottom: 14px;
     }
 
     .form-group {
+      margin-bottom: 14px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      margin-bottom: 11px;
+      gap: 5px;
     }
 
     .form-group label {
-      font-size: 0.84rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      color: #1e293b;
+      color: #334155;
     }
 
-    .form-group input, 
-    .form-group select {
-      width: 100%;
-      height: 40px;
-      padding: 6px 12px;
-      border: 1.5px solid rgba(203, 213, 225, 0.85);
-      border-radius: 8px;
-      font-size: 0.92rem;
-      background-color: rgba(255, 255, 255, 0.45);
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .form-group input:focus, 
-    .form-group select:focus {
-      border-color: var(--primary);
-      background-color: #ffffff;
-    }
-
-    .btn-action {
+    .form-control {
       width: 100%;
       height: 42px;
-      background: var(--primary);
+      padding: 8px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+      background: #ffffff;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: #d32f2f;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: #d32f2f;
       color: #ffffff;
-      font-size: 0.98rem;
-      font-weight: 700;
       border: none;
       border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
       box-shadow: 0 2px 6px rgba(211, 47, 47, 0.25);
-      transition: all 0.2s ease;
     }
 
-    .btn-action:hover {
-      background: var(--primary-hover);
+    .btn-submit:active {
+      background: #b91c1c;
     }
 
-    #editSection {
-      display: none;
-      border-top: 1.5px dashed rgba(203, 213, 225, 0.9);
-      padding-top: 14px;
-      margin-top: 14px;
+    .forgot-link-wrap {
+      text-align: right;
+      margin-top: -6px;
+      margin-bottom: 14px;
+    }
+
+    .forgot-link {
+      font-size: 0.8rem;
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .donor-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #fee2e2;
+      color: #dc2626;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 800;
     }
   </style>
 </head>
 <body>
 
-  <!-- Unified Header -->
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -117,157 +115,107 @@
     </div>
   </header>
 
-  <!-- Main Container -->
   <main class="container">
-    <div class="profile-card">
-      <h2 class="form-title">ডোনার তথ্য আপডেট</h2>
-      <p class="form-subtitle">আপনার নিবন্ধিত মোবাইল নম্বর ও গোপন পাসকি দিয়ে তথ্য পরিবর্তন করুন</p>
-
-      <!-- Step 1: Verification Form -->
-      <div id="searchGroup">
+    
+    <!-- 1. Donor Login Form -->
+    <div id="loginSection" class="form-card">
+      <h2 style="color: #d32f2f; font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; text-align: center;">ডোনার তথ্য আপডেট</h2>
+      <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 16px; text-align: center;">আপনার নিবন্ধিত মোবাইল নম্বর ও গোপন পাসকি দিয়ে তথ্য পরিবর্তন করুন</p>
+      
+      <form onsubmit="handleFindDonor(event)">
         <div class="form-group">
-          <label for="searchPhone">আপনার মোবাইল নম্বর *</label>
-          <input type="tel" id="searchPhone" placeholder="01XXXXXXXXX" pattern="[0-9]{11}" required />
+          <label>আপনার মোবাইল নম্বর *</label>
+          <input type="tel" id="lookupPhone" class="form-control" placeholder="01XXXXXXXXX" required />
         </div>
 
         <div class="form-group">
-          <label for="searchPasskey">গোপন পাসকি / পিন *</label>
-          <input type="password" id="searchPasskey" placeholder="রেজিস্ট্রেশনের সময় দেওয়া পাসকি বা পিন" />
-          <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 2px;">
-            (পূর্বে পাসকি সেট না করে থাকলে খালি রেখে খুঁজুন)
-          </span>
+          <label>গোপন পাসকি / পিন *</label>
+          <input type="password" id="lookupPin" class="form-control" placeholder="রেজিস্ট্রেশনের সময় দেওয়া পাসকি বা পিন" />
         </div>
 
-        <button type="button" class="btn-action" id="findBtn" onclick="findDonorProfile()">তথ্য খুঁজুন</button>
-      </div>
-
-      <!-- Step 2: Edit Form -->
-      <form id="editSection" onsubmit="saveUpdatedProfile(event)">
-        <input type="hidden" id="donorId" />
-
-        <div class="form-group">
-          <label for="editName">আপনার পুরো নাম *</label>
-          <input type="text" id="editName" required />
+        <div class="forgot-link-wrap">
+          <span class="forgot-link" onclick="openForgotSection()">পাসকি ভুলে গেছেন?</span>
         </div>
 
-        <div class="form-group">
-          <label for="editBlood">রক্তের গ্রুপ *</label>
-          <select id="editBlood" required>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
-        </div>
+        <p style="font-size: 0.78rem; color: #94a3b8; margin-top: -6px; margin-bottom: 12px;">(পূর্বে পাসকি সেট না করে থাকলে খালি রেখে খুঁজুন)</p>
 
-        <div class="form-group">
-          <label for="editPasskey">গোপন পাসকি / পিন (প্রোফাইল সুরক্ষার জন্য) *</label>
-          <input type="password" id="editPasskey" placeholder="নতুন পাসকি দিতে চাইলে পরিবর্তন করুন" required />
-        </div>
-
-        <div class="form-group">
-          <label for="editCity">জেলা / শহর (City / District) *</label>
-          <select id="editCity" required>
-            <option value="Bagerhat">Bagerhat</option>
-            <option value="Bandarban">Bandarban</option>
-            <option value="Barguna">Barguna</option>
-            <option value="Barishal">Barishal</option>
-            <option value="Bhola">Bhola</option>
-            <option value="Bogura">Bogura</option>
-            <option value="Brahmanbaria">Brahmanbaria</option>
-            <option value="Chandpur">Chandpur</option>
-            <option value="Chattogram">Chattogram</option>
-            <option value="Chuadanga">Chuadanga</option>
-            <option value="Cox's Bazar">Cox's Bazar</option>
-            <option value="Cumilla">Cumilla</option>
-            <option value="Dhaka">Dhaka</option>
-            <option value="Dinajpur">Dinajpur</option>
-            <option value="Faridpur">Faridpur</option>
-            <option value="Feni">Feni</option>
-            <option value="Gaibandha">Gaibandha</option>
-            <option value="Gazipur">Gazipur</option>
-            <option value="Gopalganj">Gopalganj</option>
-            <option value="Habiganj">Habiganj</option>
-            <option value="Jamalpur">Jamalpur</option>
-            <option value="Jashore">Jashore</option>
-            <option value="Jhalokati">Jhalokati</option>
-            <option value="Jhenaidah">Jhenaidah</option>
-            <option value="Joypurhat">Joypurhat</option>
-            <option value="Khagrachhari">Khagrachhari</option>
-            <option value="Khulna">Khulna</option>
-            <option value="Kishoreganj">Kishoreganj</option>
-            <option value="Kurigram">Kurigram</option>
-            <option value="Kushtia">Kushtia</option>
-            <option value="Lakshmipur">Lakshmipur</option>
-            <option value="Lalmonirhat">Lalmonirhat</option>
-            <option value="Madaripur">Madaripur</option>
-            <option value="Magura">Magura</option>
-            <option value="Manikganj">Manikganj</option>
-            <option value="Meherpur">Meherpur</option>
-            <option value="Moulvibazar">Moulvibazar</option>
-            <option value="Munshiganj">Munshiganj</option>
-            <option value="Mymensingh">Mymensingh</option>
-            <option value="Naogaon">Naogaon</option>
-            <option value="Narail">Narail</option>
-            <option value="Narayanganj">Narayanganj</option>
-            <option value="Narsingdi">Narsingdi</option>
-            <option value="Natore">Natore</option>
-            <option value="Netrokona">Netrokona</option>
-            <option value="Nilphamari">Nilphamari</option>
-            <option value="Noakhali">Noakhali</option>
-            <option value="Pabna">Pabna</option>
-            <option value="Panchagarh">Panchagarh</option>
-            <option value="Patuakhali">Patuakhali</option>
-            <option value="Pirojpur">Pirojpur</option>
-            <option value="Rajbari">Rajbari</option>
-            <option value="Rajshahi">Rajshahi</option>
-            <option value="Rangamati">Rangamati</option>
-            <option value="Rangpur">Rangpur</option>
-            <option value="Satkhira">Satkhira</option>
-            <option value="Shariatpur">Shariatpur</option>
-            <option value="Sherpur">Sherpur</option>
-            <option value="Sirajganj">Sirajganj</option>
-            <option value="Sunamganj">Sunamganj</option>
-            <option value="Sylhet">Sylhet</option>
-            <option value="Tangail">Tangail</option>
-            <option value="Thakurgaon">Thakurgaon</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="editLocation">বর্তমান এলাকা / হল / রুম নম্বর *</label>
-          <input type="text" id="editLocation" required />
-        </div>
-
-        <div class="form-group">
-          <label for="editLastDonation">সর্বশেষ রক্তদানের তারিখ</label>
-          <input type="date" id="editLastDonation" />
-        </div>
-
-        <div class="form-group">
-          <label for="editStatus">বর্তমান প্রাপ্যতা (Status) *</label>
-          <select id="editStatus" required>
-            <option value="available">Available (রক্তদানে সক্ষম)</option>
-            <option value="unavailable">Unavailable (অসুস্থ / রক্ত দিয়েছেন)</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn-action" id="saveBtn">পরিবর্তন সেভ করুন</button>
+        <button type="submit" class="btn-submit" id="btnLookup">তথ্য খুঁজুন</button>
       </form>
     </div>
+
+    <!-- 2. Forgot Passkey / Recovery Section via DOB -->
+    <div id="forgotSection" class="form-card" style="display: none;">
+      <h2 style="color: #d32f2f; font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; text-align: center;">পাসকি পুনরুদ্ধার (Reset PIN)</h2>
+      <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 14px; text-align: center;">নিরাপত্তার স্বার্থে রেজিস্ট্রেশনের সময় দেওয়া জন্মতারিখ প্রদান করুন</p>
+      
+      <form onsubmit="handleResetPasskey(event)">
+        <div class="form-group">
+          <label>নিবন্ধিত মোবাইল নম্বর *</label>
+          <input type="tel" id="resetPhone" class="form-control" placeholder="01XXXXXXXXX" required />
+        </div>
+
+        <div class="form-group">
+          <label>আপনার জন্মতারিখ (Date of Birth) *</label>
+          <input type="date" id="resetBirthDate" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+          <label>নতুন পাসকি / পিন দিন (৪-৬ ডিজিট) *</label>
+          <input type="password" id="resetNewPin" class="form-control" placeholder="নতুন পাসকি লিখুন" required />
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnResetSubmit">পাসকি পরিবর্তন করুন</button>
+        <button type="button" onclick="closeForgotSection()" style="width: 100%; height: 38px; background: transparent; border: none; color: #64748b; font-weight: 700; margin-top: 8px; cursor: pointer;">← লগইন ফর্মে ফিরে যান</button>
+      </form>
+    </div>
+
+    <!-- 3. Edit Profile Form -->
+    <div id="editSection" class="form-card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h2 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;" id="donorDisplayName">ডোনার তথ্য</h2>
+        <span class="donor-badge" id="donorBloodBadge">B+</span>
+      </div>
+
+      <form onsubmit="handleUpdateDonor(event)">
+        <div class="form-group">
+          <label>পূর্ণ নাম:</label>
+          <input type="text" id="editName" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+          <label>বর্তমান প্রাপ্যতা (Availability):</label>
+          <select id="editStatus" class="form-control">
+            <option value="available">AVAILABLE (রক্ত দিতে প্রস্তুত)</option>
+            <option value="unavailable">UNAVAILABLE (বর্তমানে অনুপলব্ধ)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>সর্বশেষ রক্তদানের তারিখ:</label>
+          <input type="date" id="editLastDonation" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label>নির্দিষ্ট এলাকা / হল:</label>
+          <input type="text" id="editLocation" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label>পাসকি / পিন পরিবর্তন (ঐচ্ছিক):</label>
+          <input type="password" id="editPasskey" class="form-control" placeholder="নতুন পাসকি দিতে চাইলে লিখুন" />
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnUpdate" style="margin-top: 8px;">পরিবর্তন সংরক্ষণ করুন</button>
+        <button type="button" onclick="cancelEdit()" style="width: 100%; height: 38px; background: transparent; border: none; color: #64748b; font-weight: 700; margin-top: 8px; cursor: pointer;">← লগআউট / ফিরে যান</button>
+      </form>
+    </div>
+
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — রক্তদানে সচেতনতা আমাদের লক্ষ্য</p>
-      <p class="footer-credit">
-        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
-      </p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
 
@@ -276,99 +224,173 @@
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function findDonorProfile() {
-      const phoneInput = document.getElementById("searchPhone").value.trim();
-      const passkeyInput = document.getElementById("searchPasskey").value.trim();
-      const findBtn = document.getElementById("findBtn");
+    let activeDonor = null;
 
-      if (!phoneInput) {
-        alert("অনুগ্রহ করে আপনার মোবাইল নম্বর প্রদান করুন!");
-        return;
-      }
+    function openForgotSection() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('forgotSection').style.display = 'block';
+    }
 
-      findBtn.disabled = true;
-      findBtn.textContent = "তথ্য খোঁজা হচ্ছে...";
+    function closeForgotSection() {
+      document.getElementById('forgotSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+    }
+
+    // Step 1: Donor Login
+    async function handleFindDonor(e) {
+      e.preventDefault();
+      const phone = document.getElementById('lookupPhone').value.trim();
+      const pin = document.getElementById('lookupPin').value.trim();
+      const btn = document.getElementById('btnLookup');
+
+      btn.disabled = true;
+      btn.textContent = "খোঁজা হচ্ছে...";
 
       try {
         const { data, error } = await supabaseClient
-          .from("donors")
-          .select("*")
-          .eq("phone", phoneInput);
+          .from('donors')
+          .select('*')
+          .eq('phone', phone)
+          .maybeSingle();
 
         if (error) throw error;
-        if (!data || data.length === 0) {
-          alert("এই নম্বরে কোনো ডোনারের তথ্য পাওয়া যায়নি!");
+        if (!data) {
+          alert("এই নম্বরে কোনো নিবন্ধিত রক্তদাতা পাওয়া যায়নি!");
           return;
         }
 
-        const donor = data[0];
-
-        // Passkey Check: If DB already has a passkey, verify it
-        if (donor.passkey && donor.passkey !== passkeyInput) {
-          alert("ভুল পাসকি! আপনার প্রোফাইলটি সুরক্ষিত। সঠিক পাসকি দিয়ে পুনরায় চেষ্টা করুন।");
-          return;
+        if (data.passkey && data.passkey.trim() !== '') {
+          if (!pin || data.passkey.trim() !== pin) {
+            alert("ভুল পাসকি / পিন প্রদান করেছেন! পাসকি মনে না থাকলে 'পাসকি ভুলে গেছেন?' অপশন ব্যবহার করুন।");
+            return;
+          }
         }
 
-        // Populate fields
-        document.getElementById("donorId").value = donor.id;
-        document.getElementById("editName").value = donor.name || "";
-        document.getElementById("editBlood").value = (donor.blood_group || "").trim().toUpperCase();
-        document.getElementById("editPasskey").value = donor.passkey || "";
-        document.getElementById("editCity").value = donor.city || "Dhaka";
-        document.getElementById("editLocation").value = donor.location || "";
-        document.getElementById("editLastDonation").value = donor.last_donation || "";
-        document.getElementById("editStatus").value = (donor.status || "available").toLowerCase();
+        activeDonor = data;
 
-        // Show edit section and hide search box
-        document.getElementById("editSection").style.display = "block";
-        document.getElementById("searchGroup").style.display = "none";
+        document.getElementById('donorDisplayName').textContent = activeDonor.name;
+        document.getElementById('donorBloodBadge').textContent = activeDonor.blood_group;
+        document.getElementById('editName').value = activeDonor.name || '';
+        document.getElementById('editStatus').value = (activeDonor.status && activeDonor.status.toLowerCase() === 'unavailable') ? 'unavailable' : 'available';
+        document.getElementById('editLastDonation').value = activeDonor.last_donation || '';
+        document.getElementById('editLocation').value = activeDonor.location || '';
+        document.getElementById('editPasskey').value = '';
+
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('editSection').style.display = 'block';
 
       } catch (err) {
         alert("সমস্যা হয়েছে: " + err.message);
       } finally {
-        findBtn.disabled = false;
-        findBtn.textContent = "তথ্য খুঁজুন";
+        btn.disabled = false;
+        btn.textContent = "তথ্য খুঁজুন";
       }
     }
 
-    async function saveUpdatedProfile(e) {
+    // Step 2: Reset Passkey via Birth Date Verification
+    async function handleResetPasskey(e) {
       e.preventDefault();
-      const saveBtn = document.getElementById("saveBtn");
-      saveBtn.disabled = true;
-      saveBtn.textContent = "সেভ হচ্ছে...";
+      const phone = document.getElementById('resetPhone').value.trim();
+      const birthDate = document.getElementById('resetBirthDate').value;
+      const newPin = document.getElementById('resetNewPin').value.trim();
+      const btn = document.getElementById('btnResetSubmit');
+
+      if (!newPin) {
+        alert("নতুন পাসকি প্রদান করুন!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "যাচাই করা হচ্ছে...";
 
       try {
-        const donorId = document.getElementById("donorId").value;
-        const newPasskey = document.getElementById("editPasskey").value.trim();
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('id, name, phone, birth_date')
+          .eq('phone', phone)
+          .maybeSingle();
 
-        if (!newPasskey) {
-          alert("প্রোফাইল সুরক্ষার জন্য একটি গোপন পাসকি বা পিন অবশ্যই সেট করুন!");
-          saveBtn.disabled = false;
-          saveBtn.textContent = "পরিবর্তন সেভ করুন";
+        if (error) throw error;
+        if (!data) {
+          alert("এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি!");
           return;
         }
 
-        const { error } = await supabaseClient.from("donors").update({
-          name: document.getElementById("editName").value.trim(),
-          blood_group: document.getElementById("editBlood").value,
-          passkey: newPasskey,
-          city: document.getElementById("editCity").value,
-          location: document.getElementById("editLocation").value.trim(),
-          last_donation: document.getElementById("editLastDonation").value || null,
-          status: document.getElementById("editStatus").value
-        }).eq("id", donorId);
+        // Verify birth_date
+        if (!data.birth_date || data.birth_date !== birthDate) {
+          alert("প্রদত্ত জন্মতারিখের সাথে অ্যাকাউন্টের তথ্য মেলেনি! সঠিক জন্মতারিখ প্রদান করুন।");
+          return;
+        }
+
+        // Update passkey
+        const { error: updateErr } = await supabaseClient
+          .from('donors')
+          .update({ passkey: newPin })
+          .eq('id', data.id);
+
+        if (updateErr) throw updateErr;
+
+        alert("আপনার পাসকি সফলভাবে পরিবর্তন করা হয়েছে! নতুন পাসকি দিয়ে লগইন করুন।");
+        document.getElementById('lookupPhone').value = phone;
+        document.getElementById('lookupPin').value = newPin;
+        closeForgotSection();
+
+      } catch (err) {
+        alert("পাসকি রিসেট করতে সমস্যা হয়েছে: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "পাসকি পরিবর্তন করুন";
+      }
+    }
+
+    // Step 3: Update Donor Info
+    async function handleUpdateDonor(e) {
+      e.preventDefault();
+      if (!activeDonor) return;
+
+      const btn = document.getElementById('btnUpdate');
+      btn.disabled = true;
+      btn.textContent = "সংরক্ষণ করা হচ্ছে...";
+
+      const updatedName = document.getElementById('editName').value.trim();
+      const updatedStatus = document.getElementById('editStatus').value;
+      const updatedLastDonation = document.getElementById('editLastDonation').value || null;
+      const updatedLocation = document.getElementById('editLocation').value.trim();
+      const updatedPasskey = document.getElementById('editPasskey').value.trim();
+
+      const updateData = {
+        name: updatedName,
+        status: updatedStatus,
+        last_donation: updatedLastDonation,
+        location: updatedLocation
+      };
+
+      if (updatedPasskey) {
+        updateData.passkey = updatedPasskey;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from('donors')
+          .update(updateData)
+          .eq('id', activeDonor.id);
 
         if (error) throw error;
 
         alert("আপনার তথ্য সফলভাবে আপডেট হয়েছে!");
         window.location.href = "index.html";
-
       } catch (err) {
-        alert("আপডেট ব্যর্থ হয়েছে: " + err.message);
+        alert("তথ্য আপডেট করতে সমস্যা হয়েছে: " + err.message);
       } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = "পরিবর্তন সেভ করুন";
+        btn.disabled = false;
+        btn.textContent = "পরিবর্তন সংরক্ষণ করুন";
       }
+    }
+
+    function cancelEdit() {
+      activeDonor = null;
+      document.getElementById('editSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
     }
   </script>
 </body>
