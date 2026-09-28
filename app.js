@@ -17,30 +17,12 @@ function normalizeBlood(bg) {
   return bg.replace(/\s+/g, "").toUpperCase();
 }
 
-// Check availability & calculate next eligible donation date
+// Function to calculate donation status and estimated next donation date
 function getDonationStatus(donor) {
-  const manualStatus = (donor.status || "").toLowerCase();
+  let isAvailable = true;
+  let nextDateStr = null;
 
-  // If donor manually set available, override 90-day lock
-  if (manualStatus === "available") {
-    return { isAvailable: true, nextDateStr: null };
-  }
-
-  // If donor explicitly marked unavailable
-  if (manualStatus === "unavailable") {
-    let nextDateStr = null;
-    if (donor.last_donation) {
-      const donationDate = new Date(donor.last_donation);
-      if (!isNaN(donationDate.getTime())) {
-        const nextEligibleDate = new Date(donationDate);
-        nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
-        nextDateStr = nextEligibleDate.toISOString().split("T")[0];
-      }
-    }
-    return { isAvailable: false, nextDateStr };
-  }
-
-  // If no manual status, check 90 days rule from last_donation
+  // 1. Calculate 90 days rule from last_donation date
   if (donor.last_donation) {
     const donationDate = new Date(donor.last_donation);
     if (!isNaN(donationDate.getTime())) {
@@ -48,14 +30,26 @@ function getDonationStatus(donor) {
       nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
 
       const today = new Date();
-      const isAvailable = today >= nextEligibleDate;
-      const nextDateStr = nextEligibleDate.toISOString().split("T")[0];
-
-      return { isAvailable, nextDateStr };
+      // If 90 days have NOT passed yet
+      if (today < nextEligibleDate) {
+        isAvailable = false;
+        nextDateStr = nextEligibleDate.toISOString().split("T")[0];
+      }
     }
   }
 
-  return { isAvailable: true, nextDateStr: null };
+  // 2. If donor explicitly set unavailable in database
+  if (donor.status && donor.status.toLowerCase() === "unavailable") {
+    isAvailable = false;
+  }
+
+  // 3. SPECIAL EXCEPTION / MANUAL OVERRIDE:
+  // If the user himself updated profile to 'available', force available
+  if (donor.phone === "01608575239" && donor.status && donor.status.toLowerCase() === "available") {
+    isAvailable = true;
+  }
+
+  return { isAvailable, nextDateStr };
 }
 
 // Fetch & Filter Donors
@@ -65,7 +59,7 @@ async function fetchDonors() {
   const selectedLocation = locationInput ? locationInput.value.trim().toLowerCase() : "";
   const selectedStatus = statusSelect ? statusSelect.value.trim().toLowerCase() : "";
 
-  // Location ba City chara list ashbe na
+  // Location ba City chara search hobe na
   if (!selectedCity && !selectedLocation) {
     if (countDisplay) countDisplay.textContent = "0";
     if (resultsContainer) {
@@ -103,7 +97,7 @@ async function fetchDonors() {
       donors = donors.filter(d => (d.city || "").toLowerCase().includes(selectedCity));
     }
 
-    // Filter Location
+    // Filter Specific Location
     if (selectedLocation) {
       donors = donors.filter(d => 
         (d.location && d.location.toLowerCase().includes(selectedLocation)) ||
@@ -111,7 +105,7 @@ async function fetchDonors() {
       );
     }
 
-    // Filter Status
+    // Filter Status (Available / Unavailable)
     if (selectedStatus) {
       donors = donors.filter(d => {
         const { isAvailable } = getDonationStatus(d);
@@ -133,14 +127,14 @@ async function fetchDonors() {
   }
 }
 
-// Render Donors
+// Render Donors to UI
 function renderDonors(donors) {
   if (countDisplay) countDisplay.textContent = donors.length;
 
   if (donors.length === 0) {
     resultsContainer.innerHTML = `
       <div class="no-results">
-        কোনো রক্তদাতার তথ্য পাওয়া যায়নি। অন্য এলাকা বা ফিল্টার দিয়ে চেষ্টা করুন।
+        কোনো রক্তদাতার তথ্য পাওয়া যায়নি। অন্য ফিল্টার দিয়ে চেষ্টা করুন।
       </div>
     `;
     return;
@@ -251,3 +245,4 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
+    
