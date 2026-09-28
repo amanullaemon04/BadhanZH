@@ -1,4 +1,4 @@
-/* Reset & Base Fonts */
+/* Reset & Base Setup */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,7 +10,6 @@
   --primary: #d32f2f;
   --primary-hover: #b71c1c;
   --bg-color: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.45);
   --text-main: #0f172a;
   --text-muted: #475569;
   --border-color: #cbd5e1;
@@ -35,111 +34,134 @@ body {
   position: relative;
 }
 
-/* Background Watermark Logo (Opacity 0.12 - crystal clear) */
+/* Background Watermark Logo */
 body::before {
   content: "";
   position: fixed;
-  top: 48%;
+  top: 52%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(88vw, 440px);
-  height: min(88vw, 440px);
+  width: min(88vw, 420px);
+  height: min(88vw, 420px);
   background-image: url('https://lh3.googleusercontent.com/d/1ynfT2kM9ZgEAHmc_wS24MfwWRziomdPa');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  opacity: 0.15;
+  opacity: 0.10;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Main Sections over Watermark */
+/* Relative positioning over logo */
 .header, .container, .footer, .quick-shortcuts {
   position: relative;
   z-index: 1;
 }
 
-/* Header */
+/* Compact Modern Header */
 .header {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(203, 213, 225, 0.8);
-  padding: 8px 16px;
+  border-bottom: 1px solid rgba(203, 213, 225, 0.7);
+  padding: 8px 12px 6px 12px;
   position: sticky;
   top: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   width: 100%;
 }
 
 .header-container {
-  width: 100%;
+  max-width: 520px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
 }
 
-.header-top {
+/* Prominent BADHAN ZH Title */
+.header-main-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
-  width: 100%;
 }
 
 .logo {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.admin-link {
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.7);
-  white-space: nowrap;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+}
+
+.logo-drop {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.logo-sub {
+  color: #0f172a;
+  background: rgba(211, 47, 47, 0.08);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 1.15rem;
+}
+
+/* Clean Nav Pills Row */
+.header-nav-row {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 1px;
+}
+
+.nav-chip {
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.8);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   transition: all 0.2s ease;
 }
 
-.admin-link:hover {
+.nav-chip:hover {
+  border-color: var(--primary);
   color: var(--primary);
+}
+
+.nav-chip-primary {
+  background: var(--primary);
+  color: #ffffff;
   border-color: var(--primary);
 }
 
-.btn-primary-action {
-  background: var(--primary) !important;
-  color: #ffffff !important;
-  border-color: var(--primary) !important;
+.nav-chip-primary:hover {
+  background: var(--primary-hover);
+  color: #ffffff;
 }
 
-/* Slogan */
 .header-slogan-wrap {
   text-align: center;
   padding-top: 2px;
-  border-top: 1px dashed #e2e8f0;
 }
 
 .header-slogan {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -149,53 +171,53 @@ body::before {
   max-width: 520px;
   width: 100%;
   margin: 0 auto;
-  padding: 8px 14px;
+  padding: 6px 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-/* Filter Card (See-Through Glass Transparency) */
+/* Sheer Glass Filter Card (Height optimized so footer is visible) */
 .filter-card {
-  background: rgba(255, 255, 255, 0.35); /* Logo completely visible */
+  background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(2px);
-  padding: 20px 18px;
+  padding: 14px 14px;
   border-radius: var(--radius);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  margin-bottom: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 8px;
 }
 
 .filter-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .filter-group label {
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: #1e293b;
 }
 
-/* Inputs & Selects also transparent so they don't block the logo */
+/* Transparent Inputs (Compact 40px height) */
 .filter-group select,
 .filter-group input {
   width: 100%;
-  height: 48px;
-  padding: 10px 14px;
+  height: 40px;
+  padding: 6px 12px;
   border: 1.5px solid rgba(203, 213, 225, 0.85);
   border-radius: 8px;
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 500;
-  background-color: rgba(255, 255, 255, 0.45); /* Transparent input background */
+  background-color: rgba(255, 255, 255, 0.45);
   color: var(--text-main);
   outline: none;
   transition: all 0.2s ease;
@@ -209,23 +231,22 @@ body::before {
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--primary);
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15);
+  background-color: rgba(255, 255, 255, 0.85);
 }
 
 /* Results Section */
 .results-section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .results-header {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .results-header h2 {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -237,32 +258,32 @@ body::before {
 .donor-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .no-results {
   text-align: center;
-  padding: 14px 12px;
+  padding: 10px 12px;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(2px);
   border-radius: var(--radius);
   border: 1px dashed rgba(203, 213, 225, 0.9);
-  font-size: 0.88rem;
-  line-height: 1.4;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 /* Donor Card */
 .donor-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(3px);
   border-radius: var(--radius);
-  padding: 16px 18px;
-  border: 1px solid rgba(203, 213, 225, 0.7);
+  padding: 14px 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .donor-header {
@@ -272,7 +293,7 @@ body::before {
 }
 
 .donor-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.08rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -281,18 +302,17 @@ body::before {
   background-color: #fee2e2;
   color: var(--primary);
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .donor-status {
   display: inline-block;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 3px 8px;
+  border-radius: 16px;
   width: fit-content;
 }
 
@@ -307,11 +327,11 @@ body::before {
 }
 
 .donor-details {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .donor-details strong {
@@ -324,29 +344,24 @@ body::before {
   background-color: var(--primary);
   color: #ffffff;
   text-decoration: none;
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   border-radius: 6px;
   transition: background-color 0.2s;
-  margin-top: 4px;
 }
 
-.contact-btn:hover {
-  background-color: var(--primary-hover);
-}
-
-/* Quick Shortcuts Bar (Auto-Compact & Responsive) */
+/* Quick Shortcuts Bar */
 .quick-shortcuts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px;
+  padding: 2px 8px;
   max-width: 520px;
   width: 100%;
-  margin: 8px auto 4px auto;
-  gap: 6px 10px;
+  margin: 4px auto 2px auto;
+  gap: 4px 8px;
 }
 
 .shortcut-chip {
@@ -354,57 +369,21 @@ body::before {
   background: transparent;
   color: #1e40af;
   border-bottom: 1.5px solid #3b82f6;
-  padding: 2px 3px;
-  font-size: clamp(0.74rem, 2.7vw, 0.85rem);
+  padding: 1px 2px;
+  font-size: clamp(0.72rem, 2.5vw, 0.8rem);
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 3px;
   white-space: nowrap;
-  transition: all 0.2s ease;
 }
 
-.shortcut-chip:hover {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-/* Form Card */
-.form-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  padding: 18px;
-  border-radius: var(--radius);
-  border: 1px solid rgba(203, 213, 225, 0.7);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-}
-
-.form-title {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 12px;
-}
-
-.submit-btn {
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
-  padding: 11px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 6px;
-}
-
-/* Footer */
+/* Ultra Compact Footer (Zero Scroll Needed) */
 .footer {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--border-color);
-  padding: 8px 16px;
+  padding: 6px 12px;
   width: 100%;
   flex-shrink: 0;
 }
@@ -414,18 +393,18 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .footer-notice {
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .footer-credit {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -434,12 +413,4 @@ body::before {
   color: var(--primary);
   font-weight: 700;
   text-decoration: none;
-}
-
-@media (min-width: 650px) {
-  .logo { font-size: 1.25rem; }
-  .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
   }
-}
