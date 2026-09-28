@@ -1,32 +1,166 @@
-const bloodEl = document.getElementById("blood");
-const cityEl = document.getElementById("city");
-const locationEl = document.getElementById("location");
-const statusEl = document.getElementById("status");
-const resultsEl = document.getElementById("results");
-const countEl = document.getElementById("count");
+// Supabase Client Initialization
+const supabaseUrl = window.SUPABASE_URL || "https://qqwuweskgtoqigfvvfso.supabase.co";
+const supabaseAnonKey = window.SUPABASE_ANON_KEY || "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-let allDonors = [];
+// DOM Elements
+const bloodSelect = document.getElementById("blood");
+const citySelect = document.getElementById("city");
+const locationInput = document.getElementById("location");
+const statusSelect = document.getElementById("status");
+const resultsContainer = document.getElementById("results");
+const countDisplay = document.getElementById("count");
 
-function normalize(value) {
-  return String(value ?? "")
-    .normalize("NFKC")
-    .replace(/\u00A0/g, " ")
-    .replace(/\u200B/g, "")
-    .trim()
-    .replace(/\s+/g, " ")
-    .toLowerCase();
+// Fetch & Filter Donors
+async function fetchDonors() {
+  const blood = bloodSelect ? bloodSelect.value.trim() : "";
+  const city = citySelect ? citySelect.value.trim() : "";
+  const location = locationInput ? locationInput.value.trim().toLowerCase() : "";
+  const status = statusSelect ? statusSelect.value.trim() : "";
+
+  // Prompt user if no initial filter is selected to optimize initial render
+  if (!blood && !city && !location) {
+    countDisplay.textContent = "0";
+    resultsContainer.innerHTML = `
+      <div class="no-results">
+        Please select a Blood Group, City, or enter a Specific Location to view donors.
+      </div>
+    `;
+    return;
+  }
+
+  resultsContainer.innerHTML = `<div class="no-results">ডোনারদের তথ্য খোঁজা হচ্ছে...</div>`;
+
+  try {
+    let query = supabaseClient
+      .from("donors")
+      .select("*")
+      .eq("verified", true); // Only verified donors
+
+    if (blood) {
+      query = query.eq("blood_group", blood);
+    }
+
+    if (city) {
+      query = query.ilike("city", `%${city}%`);
+    }
+
+    if (status) {
+      query = query.eq("status", status);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    // Filter location in memory if user typed specific place
+    let filteredData = data || [];
+    if (location) {
+      filteredData = filteredData.filter(d => 
+        (d.location && d.location.toLowerCase().includes(location)) ||
+        (d.city && d.city.toLowerCase().includes(location))
+      );
+    }
+
+    renderDonors(filteredData);
+  } catch (err) {
+    console.error("Error fetching donors:", err);
+    resultsContainer.innerHTML = `
+      <div class="no-results" style="color: var(--danger);">
+        তথ্য লোড করতে সমস্যা হয়েছে: ${err.message}
+      </div>
+    `;
+    countDisplay.textContent = "0";
+  }
 }
 
-function textMatches(filterValue, donorValue) {
-  const filter = normalize(filterValue);
-  const donor = normalize(donorValue);
-  if (!filter) return true;
-  if (!donor) return false;
-  return donor.includes(filter);
+// Render Donors to UI
+function renderDonors(donors) {
+  countDisplay.textContent = donors.length;
+
+  if (donors.length === 0) {
+    resultsContainer.innerHTML = `
+      <div class="no-results">
+        কোনো রক্তদাতার তথ্য পাওয়া যায়নি। অন্য ফিল্টার দিয়ে চেষ্টা করুন।
+      </div>
+    `;
+    return;
+  }
+
+  resultsContainer.innerHTML = donors.map(donor => {
+    const isAvailable = (donor.status || 'available') === 'available';
+    const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
+    const statusText = isAvailable ? 'Available' : 'Unavailable';
+
+    // Format last donation date if available
+    let donationInfo = "";
+    if (donor.last_donation) {
+      donationInfo = `<span>সর্বশেষ রক্তদান: <strong>${donor.last_donation}</strong></span>`;
+    }
+
+    return `
+      <div class="donor-card">
+        <div class="donor-header">
+          <h3>${escapeHtml(donor.name)}</h3>
+          <span class="blood-badge">${escapeHtml(donor.blood_group)}</span>
+        </div>
+
+        <div>
+          <span class="donor-status ${statusClass}">${statusText}</span>
+        </div>
+
+        <div class="donor-details">
+          <span>ঠিকানা: <strong>${escapeHtml(donor.location || 'N/A')}, ${escapeHtml(donor.city || '')}</strong></span>
+          ${donationInfo}
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <a href="tel:${donor.phone}" class="contact-btn" style="flex: 1; text-align: center;">
+            📞 কল করুন
+          </a>
+          <button 
+            type="button" 
+            onclick="reportDonor('${donor.id}', '${escapeAttr(donor.name)}', '${escapeAttr(donor.phone)}')" 
+            class="report-btn" 
+            style="background: rgba(220, 38, 38, 0.12); color: #dc2626; border: 1.5px solid rgba(220, 38, 38, 0.4); padding: 8px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+            ⚠️ রিপোর্ট
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
+// Patient Report Feature
+async function reportDonor(id, name, phone) {
+  const reason = prompt(
+    `${name}-এর বিষয়ে রিপোর্ট জানান:\n1. রক্ত দিয়ে ফেলেছেন (অপ্রাপ্য)\n2. ফোন বন্ধ / ধরছেন না\n3. ভুল নম্বর / অস্তিত্ব নেই\n\n(কারণটি সংক্ষেপে লিখুন):`
+  );
+
+  if (!reason || reason.trim() === "") return;
+
+  try {
+    const { error } = await supabaseClient
+      .from('reports')
+      .insert([{
+        donor_id: id,
+        donor_name: name,
+        donor_phone: phone,
+        reason: reason.trim(),
+        report_status: 'pending'
+      }]);
+
+    if (error) throw error;
+    alert("আপনার রিপোর্টটি সফলভাবে জমা হয়েছে। দ্রুত যাচাই করে ব্যবস্থা নেওয়া হবে। ধন্যবাদ!");
+  } catch (err) {
+    alert("রিপোর্ট জমা দিতে সমস্যা হয়েছে: " + err.message);
+  }
+}
+
+// Helper to escape HTML tags to prevent XSS
 function escapeHtml(str) {
-  return String(str ?? "")
+  if (!str) return "";
+  return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -34,209 +168,22 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
-function parseDate(value) {
-  if (!value) return null;
-  if (value instanceof Date) {
-    const d = new Date(value);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  const raw = String(value).trim();
-  const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (iso) {
-    const d = new Date(Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3])));
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  const slash = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (slash) {
-    const d = new Date(Date.UTC(Number(slash[3]), Number(slash[1]) - 1, Number(slash[2])));
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  const d = new Date(raw);
-  return Number.isNaN(d.getTime()) ? null : d;
+function escapeAttr(str) {
+  if (!str) return "";
+  return String(str).replace(/'/g, "\\'");
 }
 
-function formatDate(dateValue) {
-  const d = parseDate(dateValue);
-  if (!d) return "N/A";
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC"
+// Event Listeners
+if (bloodSelect) bloodSelect.addEventListener("change", fetchDonors);
+if (citySelect) citySelect.addEventListener("change", fetchDonors);
+if (statusSelect) statusSelect.addEventListener("change", fetchDonors);
+if (locationInput) {
+  let debounceTimeout;
+  locationInput.addEventListener("input", () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(fetchDonors, 300);
   });
 }
 
-function today() {
-  const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-}
-
-function eligibilityDate(lastDonation) {
-  const d = parseDate(lastDonation);
-  if (!d) return null;
-  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 3, d.getUTCDate()));
-}
-
-function effectiveAvailable(donor) {
-  if (donor.last_donation) {
-    const eligible = eligibilityDate(donor.last_donation);
-    if (eligible) {
-      return eligible.getTime() <= today().getTime();
-    }
-  }
-  return !!donor.available;
-}
-
-function effectiveAvailableDate(donor) {
-  if (donor.last_donation) {
-    return eligibilityDate(donor.last_donation);
-  }
-  return donor.available_from ? parseDate(donor.available_from) : null;
-}
-
-function createSupabaseClient() {
-  const url = window.SUPABASE_URL;
-  const key = window.SUPABASE_ANON_KEY;
-
-  if (!url || !key || url.includes("YOUR_PROJECT_REF")) {
-    return null;
-  }
-  if (!window.supabase || typeof window.supabase.createClient !== "function") {
-    return null;
-  }
-  return window.supabase.createClient(url, key);
-}
-
-function filteredDonors() {
-  const blood = normalize(bloodEl?.value);
-  const city = normalize(cityEl?.value);
-  const location = normalize(locationEl?.value);
-  const status = normalize(statusEl?.value);
-
-  if (!city && !location) {
-    return [];
-  }
-
-  return allDonors.filter((donor) => {
-    const donorBlood = normalize(donor.blood_group ?? donor.blood);
-    const donorCity = normalize(donor.city);
-    const donorLocation = normalize(donor.location);
-
-    if (blood && donorBlood !== blood) return false;
-    if (city && donorCity !== city) return false;
-    if (location && !textMatches(location, donorLocation)) return false;
-
-    const available = effectiveAvailable(donor);
-    if (status === "available" && !available) return false;
-    if (status === "unavailable" && available) return false;
-
-    return true;
-  });
-}
-
-function donorCard(donor) {
-  const isAvailable = effectiveAvailable(donor);
-  const nextDate = effectiveAvailableDate(donor);
-  const blood = donor.blood_group || donor.blood || "Unknown";
-  const city = donor.city ? escapeHtml(donor.city) : "";
-  const location = donor.location ? escapeHtml(donor.location) : "";
-  const fullLocation = [location, city].filter(Boolean).join(", ") || "Location not specified";
-
-  return `
-    <div class="donor-card">
-      <div class="donor-header">
-        <h3>${escapeHtml(donor.name || "Anonymous")}</h3>
-        <span class="blood-badge">${escapeHtml(blood)}</span>
-      </div>
-      <div class="donor-status ${isAvailable ? "status-available" : "status-unavailable"}">
-        ${isAvailable ? "Available" : "Unavailable"}
-      </div>
-      <div class="donor-details">
-        <p><strong>Location:</strong> ${fullLocation}</p>
-        <p><strong>Last Donation:</strong> ${formatDate(donor.last_donation)}</p>
-        <p><strong>Available From:</strong> ${nextDate ? formatDate(nextDate) : "Now"}</p>
-        ${donor.verified_at ? `<p><strong>Verified:</strong> ${formatDate(donor.verified_at)}</p>` : ""}
-      </div>
-      ${donor.phone ? `
-        <div class="donor-actions">
-          <a href="tel:${escapeHtml(donor.phone)}" class="contact-btn">Contact Donor</a>
-        </div>
-      ` : ""}
-    </div>
-  `;
-}
-
-function render() {
-  const donors = filteredDonors();
-  if (countEl) countEl.textContent = donors.length;
-
-  if (resultsEl) {
-    if (donors.length === 0) {
-      const citySelected = normalize(cityEl?.value);
-      const locSelected = normalize(locationEl?.value);
-      if (!citySelected && !locSelected) {
-        resultsEl.innerHTML = `<div class="no-results">Please select a City or enter a Specific Location to view donors.</div>`;
-      } else {
-        resultsEl.innerHTML = `<div class="no-results">No donors found matching your search.</div>`;
-      }
-    } else {
-      resultsEl.innerHTML = donors.map(donorCard).join("");
-    }
-  }
-}
-
-async function loadDonors() {
-  const supabase = createSupabaseClient();
-
-  if (!supabase) {
-    allDonors = [
-      {
-        id: "1",
-        name: "Salman Ahmed Saimon",
-        blood_group: "B+",
-        city: "Dhaka",
-        location: "Zahurul Huq Hall",
-        last_donation: "2026-04-15",
-        available: true,
-        phone: "01700000000"
-      },
-      {
-        id: "2",
-        name: "Amanulla Emon",
-        blood_group: "B+",
-        city: "Dhaka",
-        location: "Zahurul Huq Hall",
-        last_donation: "2026-09-02",
-        available: false,
-        phone: "01800000000"
-      }
-    ];
-    render();
-    return;
-  }
-
-  try {
-    const { data, error } = await supabase.from("donors").select("*");
-    if (error) throw error;
-    allDonors = Array.isArray(data) ? data : [];
-    render();
-  } catch (err) {
-    console.error("Failed to load donors from Supabase:", err);
-    allDonors = [];
-    render();
-  }
-}
-
-[bloodEl, cityEl, locationEl, statusEl].forEach((element) => {
-  if (element) {
-    element.addEventListener("input", render);
-    element.addEventListener("change", render);
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadDonors();
-});
+// Initial Load
+document.addEventListener("DOMContentLoaded", fetchDonors);
