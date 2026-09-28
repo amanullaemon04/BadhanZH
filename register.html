@@ -120,7 +120,7 @@
         
         <div class="form-group">
           <label for="name">আপনার পুরো নাম *</label>
-          <input type="text" id="name" placeholder="যেমন: Tamzid" required />
+          <input type="text" id="name" placeholder="যেমন: Amanulla Emon" required />
         </div>
 
         <div class="form-group">
@@ -221,7 +221,7 @@
 
         <div class="form-group">
           <label for="location">নির্দিষ্ট এলাকা / হল / রুম নম্বর *</label>
-          <input type="text" id="location" placeholder="যেমন: Zahurul Huq Hall" required />
+          <input type="text" id="location" placeholder="যেমন: Zahurul Huq Hall, Room No. 24" required />
         </div>
 
         <div class="form-group">
@@ -259,7 +259,7 @@
         name: document.getElementById('name').value.trim(),
         blood_group: document.getElementById('blood_group').value,
         phone: document.getElementById('phone').value.trim(),
-        passkey: document.getElementById('passkey').value.trim(), // সুরক্ষিত গোপন পাসকি
+        passkey: document.getElementById('passkey').value.trim(),
         city: document.getElementById('city').value,
         location: document.getElementById('location').value.trim(),
         last_donation: document.getElementById('last_donation').value || null,
@@ -268,7 +268,6 @@
       };
 
       try {
-        // Check if phone already registered
         const { data: existingDonor, error: checkError } = await supabaseClient
           .from('donors')
           .select('id')
@@ -282,7 +281,6 @@
           return;
         }
 
-        // Insert new donor
         const { error } = await supabaseClient
           .from('donors')
           .insert([donorData]);
