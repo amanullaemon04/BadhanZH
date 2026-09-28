@@ -6,10 +6,129 @@
   <title>BADHAN ZH - Blood Donation</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Card & Action Button Styling to match original design */
+    .donor-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(3px);
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .donor-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
+    }
+
+    .donor-name {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .donor-badge {
+      color: #dc2626;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .status-text {
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .status-available {
+      color: #16a34a;
+    }
+
+    .status-unavailable {
+      color: #dc2626;
+    }
+
+    .donor-info {
+      font-size: 0.86rem;
+      color: #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+
+    .donor-actions-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Red Call Button */
+    .btn-call-red {
+      flex: 1;
+      height: 40px;
+      background: #b91c1c;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn-call-red:active {
+      background: #991b1b;
+    }
+
+    /* Yellow/Bordered Report Button */
+    .btn-report-box {
+      width: 95px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.75);
+      color: #854d0e;
+      border: 1.5px solid #fde047;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-report-box:active {
+      background: #fef08a;
+    }
+
+    .initial-prompt-box {
+      text-align: center;
+      padding: 30px 15px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: var(--radius);
+      border: 1.5px dashed #cbd5e1;
+      color: #64748b;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Unified Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -80,14 +199,18 @@
       </div>
     </div>
 
-    <div class="donors-count" id="donorsCount">Donors found: 0</div>
-    <div id="donorsList"></div>
+    <div class="donors-count" id="donorsCount" style="display: none;">Donors found: 0</div>
+    <div id="donorsList">
+      <div class="initial-prompt-box">
+        🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
+      </div>
+    </div>
   </main>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 6px; font-size: 0.85rem;">
+      <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 0.85rem;">
         <a href="stats.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📊 রক্তের পরিসংখ্যান</a>
         <a href="feedback.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">💬 মতামত দিন</a>
         <a href="guidelines.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📖 রক্তদানের নির্দেশিকা</a>
@@ -143,7 +266,6 @@
 
         if (error) throw error;
         allDonors = data || [];
-        filterDonors();
       } catch (err) {
         console.error(err);
       }
@@ -154,6 +276,22 @@
       const city = document.getElementById('cityFilter').value;
       const loc = document.getElementById('locationFilter').value.trim().toLowerCase();
       const status = document.getElementById('statusFilter').value;
+
+      const donorsCountEl = document.getElementById('donorsCount');
+      const listContainer = document.getElementById('donorsList');
+
+      // User jodi ekhono kono filter select na kore thake
+      const isFilterActive = (blood !== 'All' || city !== 'All' || loc !== '' || status !== 'All');
+
+      if (!isFilterActive) {
+        donorsCountEl.style.display = 'none';
+        listContainer.innerHTML = `
+          <div class="initial-prompt-box">
+            🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
+          </div>
+        `;
+        return;
+      }
 
       let filtered = allDonors.filter(d => {
         const matchesBlood = (blood === 'All' || d.blood_group === blood);
@@ -169,52 +307,61 @@
         return matchesBlood && matchesCity && matchesLoc && matchesStatus;
       });
 
-      document.getElementById('donorsCount').textContent = `Donors found: ${filtered.length}`;
+      donorsCountEl.style.display = 'block';
+      donorsCountEl.textContent = `Donors found: ${filtered.length}`;
       renderDonors(filtered);
     }
 
     function renderDonors(donors) {
       const listContainer = document.getElementById('donorsList');
       if (donors.length === 0) {
-        listContainer.innerHTML = `<div class="no-results">কোনো রক্তদাতা খুঁজে পাওয়া যায়নি।</div>`;
+        listContainer.innerHTML = `<div class="initial-prompt-box">কোনো রক্তদাতা খুঁজে পাওয়া যায়নি।</div>`;
         return;
       }
 
       listContainer.innerHTML = donors.map(d => {
         const { isAvailable, nextDateStr } = getDonationStatus(d);
         const statusBadge = isAvailable
-          ? `<span style="color: var(--success); font-weight: 800; font-size: 0.8rem;">AVAILABLE</span>`
-          : `<span style="color: var(--danger); font-weight: 800; font-size: 0.8rem;">UNAVAILABLE</span>`;
+          ? `<div class="status-text status-available">AVAILABLE</div>`
+          : `<div class="status-text status-unavailable">UNAVAILABLE</div>`;
 
-        let dateDetails = "";
-        if (d.last_donation) {
-          dateDetails += `<div>সর্বশেষ রক্তদান: <strong>${d.last_donation}</strong></div>`;
-        }
-        if (!isAvailable && nextDateStr) {
-          dateDetails += `<div>পরবর্তী রক্তদান: <strong>${nextDateStr} থেকে সম্ভাব্য</strong></div>`;
-        }
+        let lastDonationText = d.last_donation 
+          ? `<div>সর্বশেষ রক্তদান: <strong>${escapeHtml(d.last_donation)}</strong></div>` 
+          : ``;
+
+        let nextDonationText = (!isAvailable && nextDateStr)
+          ? `<div>পরবর্তী রক্তদান: <strong>${escapeHtml(nextDateStr)} থেকে সম্ভাব্য</strong></div>`
+          : ``;
+
+        let locationDisplay = [d.location, d.city].filter(Boolean).join(', ');
 
         return `
           <div class="donor-card">
-            <div class="donor-header">
-              <h3>${escapeHtml(d.name)}</h3>
-              <span class="blood-badge">${escapeHtml(d.blood_group)}</span>
+            <div class="donor-card-top">
+              <h3 class="donor-name">${escapeHtml(d.name)}</h3>
+              <span class="donor-badge">${escapeHtml(d.blood_group)}</span>
             </div>
-            <div style="margin-bottom: 6px;">${statusBadge}</div>
-            <div class="donor-details">
-              <div>ঠিকানা: <strong>${escapeHtml(d.location || '')}, ${escapeHtml(d.city || '')}</strong></div>
-              ${dateDetails}
+            ${statusBadge}
+            <div class="donor-info">
+              <div>ঠিকানা: <strong>${escapeHtml(locationDisplay || 'তথ্য নেই')}</strong></div>
+              ${lastDonationText}
+              ${nextDonationText}
             </div>
-            <div class="donor-actions">
-              <a href="tel:${escapeHtml(d.phone)}" class="action-btn btn-call">📞 কল করুন</a>
-              <button onclick="reportDonor('${d.id}', '${escapeHtml(d.name)}', '${escapeHtml(d.phone)}')" class="action-btn btn-report">⚠️ রিপোর্ট</button>
+            <div class="donor-actions-row">
+              <a href="tel:${escapeHtml(d.phone)}" class="btn-call-red">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.24.2 2.45.57 3.57a1 1 0 01-.24 1.02l-2.21 2.2z"/></svg>
+                কল করুন
+              </a>
+              <button onclick="reportDonor('${d.id}', '${escapeHtml(d.name)}', '${escapeHtml(d.phone)}')" class="btn-report-box">
+                ⚠️ রিপোর্ট
+              </button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // UPDATED REPORT DONOR FUNCTION
+    // 1, 2, 3 and 4 (Other) prompt
     async function reportDonor(donorId, donorName, donorPhone) {
       const promptMessage = 
 `${donorName}-এর বিষয়ে রিপোর্ট জানান:
@@ -223,7 +370,7 @@
 3. ভুল নম্বর / অস্তিত্ব নেই
 4. অন্যান্য (বিস্তারিত লিখুন)
 
-নম্বর (1, 2, 3) লিখুন অথবা 4 লিখে সমস্যাটি জানান:`;
+(কারণটি সংক্ষেপে লিখুন):`;
 
       const input = prompt(promptMessage);
       if (!input || !input.trim()) return;
