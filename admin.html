@@ -278,7 +278,6 @@
           ⏳ পেন্ডিং <span class="tab-badge" id="pendingBadge">0</span>
         </button>
         <button class="tab-btn" id="tabReports" onclick="switchTab('reports')">⚠️ রিপোর্ট</button>
-        <!-- Only Super Admin will see Feedback & Sub-Admin Tabs -->
         <button class="tab-btn superadmin-only" id="tabFeedback" onclick="switchTab('feedback')">
           💬 মতামত <span class="tab-badge" id="feedbackBadge" style="background:#2563eb;">0</span>
         </button>
@@ -321,6 +320,32 @@
     let allFeedbackCache = [];
     let allSubadminsCache = [];
 
+    // UPDATED REPORT REASON TEXT MAPPER
+    function getReportReasonText(reason) {
+      if (!reason) return "কোনো কারণ উল্লেখ নেই";
+
+      const reasonMap = {
+        "1": "রক্ত দিয়ে ফেলেছেন (অপ্রাপ্য)",
+        "2": "ফোন বন্ধ / ধরছেন না",
+        "3": "ভুল নম্বর / অস্তিত্ব নেই"
+      };
+
+      const trimmed = String(reason).trim();
+
+      // 1, 2 ba 3 hole bracket-e karon-ti dekhabe
+      if (reasonMap[trimmed]) {
+        return `${trimmed} (${reasonMap[trimmed]})`;
+      }
+
+      // 4 ba custom onnanno karon hole
+      if (trimmed.startsWith("4")) {
+        const detail = trimmed.replace(/^4[:\s-]*/, '').trim();
+        return detail ? `৪ (অন্যান্য: ${detail})` : `৪ (অন্যান্য সমস্যা)`;
+      }
+
+      return trimmed;
+    }
+
     function getDonationStatus(donor) {
       let isAvailable = true;
       let nextDateStr = null;
@@ -360,7 +385,7 @@
       btn.textContent = "যাচাই করা হচ্ছে...";
 
       try {
-        // 1. Try Super Admin Auth
+        // 1. Super Admin Auth
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         
         if (!error && data?.session) {
@@ -370,7 +395,7 @@
           return;
         }
 
-        // 2. Try Sub-Admin Table
+        // 2. Sub-Admin Table
         const { data: subadmins, error: subErr } = await supabaseClient
           .from('admin_users')
           .select('*')
@@ -408,7 +433,6 @@
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('logoutBtn').style.display = 'inline-flex';
 
-      // Restrict Sub-Admins: Hide Feedback & Sub-Admins Tab
       if (currentUserRole === 'subadmin') {
         document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = 'none');
       } else {
@@ -434,7 +458,6 @@
     }
 
     function switchTab(tab) {
-      // Security Guard: Prevent Sub-Admin from accessing Feedback or Sub-admin tabs
       if (currentUserRole === 'subadmin' && (tab === 'feedback' || tab === 'subadmins')) {
         tab = 'donors';
       }
@@ -479,7 +502,6 @@
         const { data: reportsData } = await supabaseClient.from('reports').select('*').order('id', { ascending: false });
         allReportsCache = reportsData || [];
 
-        // Only Super Admin fetches Feedback & Subadmins
         if (currentUserRole === 'superadmin') {
           try {
             const { data: feedbackData } = await supabaseClient.from('feedback').select('*').order('id', { ascending: false });
@@ -565,7 +587,11 @@
       } else if (currentTab === 'reports') {
         let reports = allReportsCache;
         if (query) {
-          reports = reports.filter(r => (r.donor_name && r.donor_name.toLowerCase().includes(query)) || (r.reason && r.reason.toLowerCase().includes(query)));
+          reports = reports.filter(r => 
+            (r.donor_name && r.donor_name.toLowerCase().includes(query)) || 
+            (r.reason && r.reason.toLowerCase().includes(query)) ||
+            (getReportReasonText(r.reason).toLowerCase().includes(query))
+          );
         }
 
         if (reports.length === 0) {
@@ -581,7 +607,7 @@
             </div>
             <div class="admin-details">
               <div>📞 মোবাইল: <strong>${escapeHtml(r.donor_phone || 'N/A')}</strong></div>
-              <div>📝 অভিযোগ/কারণ: <strong>${escapeHtml(r.reason)}</strong></div>
+              <div>📝 অভিযোগ/কারণ: <strong style="color: #b91c1c;">${escapeHtml(getReportReasonText(r.reason))}</strong></div>
               <div>🕒 তারিখ: <strong>${new Date(r.created_at).toLocaleDateString('bn-BD')}</strong></div>
             </div>
             <div class="admin-card-actions">
