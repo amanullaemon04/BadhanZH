@@ -17,29 +17,28 @@ function normalizeBlood(bg) {
   return bg.replace(/\s+/g, "").toUpperCase();
 }
 
-// Function to calculate availability based on 90 days rule & database status
-function checkAvailability(donor) {
-  // If database explicitly set to unavailable
+// Check availability & calculate next eligible donation date (90 days rule)
+function getDonationStatus(donor) {
   if (donor.status && donor.status.toLowerCase() === "unavailable") {
-    return false;
+    return { isAvailable: false, nextDateStr: null };
   }
 
-  // If last_donation date exists, check if 90 days (3 months) passed
   if (donor.last_donation) {
     const donationDate = new Date(donor.last_donation);
-    const today = new Date();
-    
-    // Difference in milliseconds
-    const diffTime = today - donationDate;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    if (!isNaN(donationDate.getTime())) {
+      // 90 days addition
+      const nextEligibleDate = new Date(donationDate);
+      nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
 
-    // If donated within last 90 days, donor is UNAVAILABLE
-    if (diffDays < 90) {
-      return false;
+      const today = new Date();
+      const isAvailable = today >= nextEligibleDate;
+      const nextDateStr = nextEligibleDate.toISOString().split("T")[0];
+
+      return { isAvailable, nextDateStr };
     }
   }
 
-  return true;
+  return { isAvailable: true, nextDateStr: null };
 }
 
 // Fetch & Filter Donors
@@ -49,7 +48,7 @@ async function fetchDonors() {
   const selectedLocation = locationInput ? locationInput.value.trim().toLowerCase() : "";
   const selectedStatus = statusSelect ? statusSelect.value.trim().toLowerCase() : "";
 
-  // STRICT RULE: Location or City must be provided to search donors
+  // Location ba City chara list ashbe na
   if (!selectedCity && !selectedLocation) {
     if (countDisplay) countDisplay.textContent = "0";
     if (resultsContainer) {
@@ -77,17 +76,17 @@ async function fetchDonors() {
 
     let donors = data || [];
 
-    // Filter by Blood Group if selected
+    // Filter Blood Group
     if (selectedBlood) {
       donors = donors.filter(d => normalizeBlood(d.blood_group) === selectedBlood);
     }
 
-    // Filter by City
+    // Filter City
     if (selectedCity) {
       donors = donors.filter(d => (d.city || "").toLowerCase().includes(selectedCity));
     }
 
-    // Filter by Specific Location
+    // Filter Location
     if (selectedLocation) {
       donors = donors.filter(d => 
         (d.location && d.location.toLowerCase().includes(selectedLocation)) ||
@@ -95,11 +94,11 @@ async function fetchDonors() {
       );
     }
 
-    // Filter by Status (Dynamic calculation)
+    // Filter Status
     if (selectedStatus) {
       donors = donors.filter(d => {
-        const isAvail = checkAvailability(d);
-        return selectedStatus === "available" ? isAvail : !isAvail;
+        const { isAvailable } = getDonationStatus(d);
+        return selectedStatus === "available" ? isAvailable : !isAvailable;
       });
     }
 
@@ -117,7 +116,7 @@ async function fetchDonors() {
   }
 }
 
-// Render Donors to UI
+// Render Donors
 function renderDonors(donors) {
   if (countDisplay) countDisplay.textContent = donors.length;
 
@@ -131,14 +130,18 @@ function renderDonors(donors) {
   }
 
   resultsContainer.innerHTML = donors.map(donor => {
-    // Dynamic real-time calculation
-    const isAvailable = checkAvailability(donor);
-    const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
-    const statusText = isAvailable ? 'AVAILABLE' : 'UNAVAILABLE';
+    const { isAvailable, nextDateStr } = getDonationStatus(donor);
+    const statusClass = isAvailable ? "status-available" : "status-unavailable";
+    const statusText = isAvailable ? "AVAILABLE" : "UNAVAILABLE";
 
-    let donationInfo = "";
+    let lastDonationHtml = "";
     if (donor.last_donation) {
-      donationInfo = `<span>সর্বশেষ রক্তদান: <strong>${escapeHtml(donor.last_donation)}</strong></span>`;
+      lastDonationHtml = `<span>সর্বশেষ রক্তদান: <strong>${escapeHtml(donor.last_donation)}</strong></span>`;
+    }
+
+    let nextAvailableHtml = "";
+    if (!isAvailable && nextDateStr) {
+      nextAvailableHtml = `<span>পরবর্তী রক্তদান: <strong style="color: #b91c1c;">${escapeHtml(nextDateStr)}</strong> থেকে সম্ভাব্য</span>`;
     }
 
     return `
@@ -154,7 +157,8 @@ function renderDonors(donors) {
 
         <div class="donor-details">
           <span>ঠিকানা: <strong>${escapeHtml(donor.location || 'N/A')}, ${escapeHtml(donor.city || '')}</strong></span>
-          ${donationInfo}
+          ${lastDonationHtml}
+          ${nextAvailableHtml}
         </div>
 
         <div style="display: flex; gap: 8px; margin-top: 6px;">
@@ -230,4 +234,4 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
-                                          
+                                                        
