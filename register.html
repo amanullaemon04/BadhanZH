@@ -7,97 +7,71 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Registration Form Card - Sheer Glass Transparency */
     .register-card {
       background: rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(2px);
       border: 1.5px solid rgba(255, 255, 255, 0.65);
       border-radius: var(--radius);
-      padding: 22px 18px;
+      padding: 16px 14px;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-      margin-top: 10px;
-      margin-bottom: 20px;
+      margin-top: 6px;
+      margin-bottom: 12px;
     }
-
     .form-title {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--primary);
       text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
-
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
+      gap: 3px;
+      margin-bottom: 10px;
     }
-
     .form-group label {
-      font-size: 0.92rem;
+      font-size: 0.84rem;
       font-weight: 700;
       color: #1e293b;
     }
-
-    /* Transparent Input and Select Boxes */
-    .form-group input,
-    .form-group select {
+    .form-group input, .form-group select {
       width: 100%;
-      height: 48px;
-      padding: 10px 14px;
+      height: 38px;
+      padding: 6px 12px;
       border: 1.5px solid rgba(203, 213, 225, 0.85);
       border-radius: 8px;
-      font-size: 0.96rem;
-      font-weight: 500;
+      font-size: 0.9rem;
       background-color: rgba(255, 255, 255, 0.45);
       color: var(--text-main);
       outline: none;
-      transition: all 0.2s ease;
     }
-
-    .form-group select option {
-      background: #ffffff;
-      color: #0f172a;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--primary);
-      background-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15);
-    }
-
     .btn-submit {
       width: 100%;
-      height: 48px;
+      height: 42px;
       background: var(--primary);
       color: #ffffff;
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 3px 10px rgba(211, 47, 47, 0.25);
-      transition: background-color 0.2s ease;
-    }
-
-    .btn-submit:hover {
-      background: var(--primary-hover);
+      margin-top: 6px;
     }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <header class="header">
     <div class="header-container">
-      <div class="header-top">
-        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
-        <div class="header-actions">
-          <a href="index.html" class="admin-link">← হোম পেজ</a>
-        </div>
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN</span>
+          <span class="logo-zh-badge">ZH</span>
+        </a>
+      </div>
+      <div class="header-nav-row">
+        <a href="index.html" class="nav-chip">← হোম পেজ</a>
       </div>
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
@@ -105,17 +79,14 @@
     </div>
   </header>
 
-  <!-- Main Container -->
   <main class="container">
     <div class="register-card">
       <h2 class="form-title">রক্তদাতা রেজিস্ট্রেশন</h2>
-      
       <form id="donorForm">
         <div class="form-group">
           <label for="name">আপনার পুরো নাম *</label>
           <input type="text" id="name" placeholder="e.g. Amanulla Emon" required />
         </div>
-
         <div class="form-group">
           <label for="blood_group">রক্তের গ্রুপ *</label>
           <select id="blood_group" required>
@@ -130,104 +101,43 @@
             <option value="AB-">AB-</option>
           </select>
         </div>
-
         <div class="form-group">
           <label for="phone">মোবাইল নম্বর *</label>
           <input type="tel" id="phone" placeholder="01XXXXXXXXX" required />
         </div>
-
         <div class="form-group">
           <label for="city">জেলা / শহর *</label>
           <select id="city" required>
             <option value="">জেলা নির্বাচন করুন</option>
-            <option value="Bagerhat">Bagerhat</option>
-            <option value="Bandarban">Bandarban</option>
-            <option value="Barguna">Barguna</option>
-            <option value="Barishal">Barishal</option>
-            <option value="Bhola">Bhola</option>
-            <option value="Bogura">Bogura</option>
-            <option value="Brahmanbaria">Brahmanbaria</option>
-            <option value="Chandpur">Chandpur</option>
-            <option value="Chattogram">Chattogram</option>
-            <option value="Chuadanga">Chuadanga</option>
-            <option value="Cox's Bazar">Cox's Bazar</option>
-            <option value="Cumilla">Cumilla</option>
             <option value="Dhaka">Dhaka</option>
-            <option value="Dinajpur">Dinajpur</option>
-            <option value="Faridpur">Faridpur</option>
-            <option value="Feni">Feni</option>
-            <option value="Gaibandha">Gaibandha</option>
-            <option value="Gazipur">Gazipur</option>
-            <option value="Gopalganj">Gopalganj</option>
-            <option value="Habiganj">Habiganj</option>
-            <option value="Jamalpur">Jamalpur</option>
-            <option value="Jashore">Jashore</option>
-            <option value="Jhalokati">Jhalokati</option>
-            <option value="Jhenaidah">Jhenaidah</option>
-            <option value="Joypurhat">Joypurhat</option>
-            <option value="Khagrachhari">Khagrachhari</option>
-            <option value="Khulna">Khulna</option>
-            <option value="Kishoreganj">Kishoreganj</option>
-            <option value="Kurigram">Kurigram</option>
-            <option value="Kushtia">Kushtia</option>
-            <option value="Lakshmipur">Lakshmipur</option>
-            <option value="Lalmonirhat">Lalmonirhat</option>
-            <option value="Madaripur">Madaripur</option>
-            <option value="Magura">Magura</option>
-            <option value="Manikganj">Manikganj</option>
-            <option value="Meherpur">Meherpur</option>
-            <option value="Moulvibazar">Moulvibazar</option>
-            <option value="Munshiganj">Munshiganj</option>
-            <option value="Mymensingh">Mymensingh</option>
-            <option value="Naogaon">Naogaon</option>
-            <option value="Narail">Narail</option>
-            <option value="Narayanganj">Narayanganj</option>
-            <option value="Narsingdi">Narsingdi</option>
-            <option value="Natore">Natore</option>
-            <option value="Netrokona">Netrokona</option>
-            <option value="Nilphamari">Nilphamari</option>
-            <option value="Noakhali">Noakhali</option>
-            <option value="Pabna">Pabna</option>
-            <option value="Panchagarh">Panchagarh</option>
-            <option value="Patuakhali">Patuakhali</option>
-            <option value="Pirojpur">Pirojpur</option>
-            <option value="Rajbari">Rajbari</option>
+            <option value="Chattogram">Chattogram</option>
             <option value="Rajshahi">Rajshahi</option>
-            <option value="Rangamati">Rangamati</option>
-            <option value="Rangpur">Rangpur</option>
-            <option value="Satkhira">Satkhira</option>
-            <option value="Shariatpur">Shariatpur</option>
-            <option value="Sherpur">Sherpur</option>
-            <option value="Sirajganj">Sirajganj</option>
-            <option value="Sunamganj">Sunamganj</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Barishal">Barishal</option>
             <option value="Sylhet">Sylhet</option>
-            <option value="Tangail">Tangail</option>
-            <option value="Thakurgaon">Thakurgaon</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Mymensingh">Mymensingh</option>
+            <option value="Gazipur">Gazipur</option>
+            <option value="Narayanganj">Narayanganj</option>
           </select>
         </div>
-
         <div class="form-group">
           <label for="location">নির্দিষ্ট এলাকা / হল / রুম নম্বর</label>
           <input type="text" id="location" placeholder="e.g. Zahurul Huq Hall, Room 24" />
         </div>
-
         <div class="form-group">
-          <label for="last_donation">সর্বশেষ রক্তদানের তারিখ (যদি পূর্বে দিয়ে থাকেন)</label>
+          <label for="last_donation">সর্বশেষ রক্তদানের তারিখ</label>
           <input type="date" id="last_donation" />
         </div>
-
         <button type="submit" class="btn-submit" id="submitBtn">রেজিস্ট্রেশন সম্পন্ন করুন</button>
       </form>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — মানবসেবায় আমরা প্রতিজ্ঞাবদ্ধ</p>
-      <p class="footer-credit">
-        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
-      </p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
 
@@ -256,10 +166,10 @@
       try {
         const { error } = await supabaseClient.from('donors').insert([donorData]);
         if (error) throw error;
-        alert("রেজিস্ট্রেশন সফল হয়েছে! অ্যাডমিন রিভিউয়ের পর আপনার তথ্য প্রদর্শিত হবে।");
+        alert("রেজিস্ট্রেশন সফল হয়েছে! অ্যাডমিন রিভিউয়ের পর তথ্য প্রকাশিত হবে।");
         document.getElementById('donorForm').reset();
       } catch (err) {
-        alert("সমস্যা হয়েছে: " + err.message);
+        alert("ত্রুটি: " + err.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "রেজিস্ট্রেশন সম্পন্ন করুন";
