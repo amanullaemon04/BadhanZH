@@ -7,35 +7,59 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* Stats Card - Sheer Glass Transparency */
+    .stats-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+
     .stats-title {
-      text-align: center;
       font-size: 1.25rem;
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 16px;
+      text-align: center;
+      margin-bottom: 18px;
     }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 16px 10px;
+
+    /* Individual Blood Group Box - Sheer Glass */
+    .stat-box {
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(3px);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 12px;
+      padding: 14px 10px;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
     }
-    .stat-group {
+
+    .stat-box:hover {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: var(--primary);
+    }
+
+    .stat-blood {
       font-size: 1.35rem;
       font-weight: 800;
       color: var(--primary);
       margin-bottom: 2px;
     }
+
     .stat-count {
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-size: 1.3rem;
+      font-weight: 800;
       color: var(--text-main);
     }
   </style>
@@ -59,12 +83,41 @@
 
   <!-- Main Container -->
   <main class="container">
-    <div class="form-card" style="margin-top: 10px;">
+    <div class="stats-card">
       <h2 class="stats-title">রক্তের গ্রুপভিত্তিক পরিসংখ্যান</h2>
       
-      <div class="stats-grid" id="statsContainer">
-        <div class="stat-card" style="grid-column: span 2;">
-          <div class="stat-count" style="color: var(--text-muted); font-size: 0.95rem;">ডাটা লোড হচ্ছে...</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-blood">A+</div>
+          <div class="stat-count" id="count-A-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">A-</div>
+          <div class="stat-count" id="count-A-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B+</div>
+          <div class="stat-count" id="count-B-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B-</div>
+          <div class="stat-count" id="count-B-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB+</div>
+          <div class="stat-count" id="count-AB-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB-</div>
+          <div class="stat-count" id="count-AB-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O+</div>
+          <div class="stat-count" id="count-O-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O-</div>
+          <div class="stat-count" id="count-O-neg">0</div>
         </div>
       </div>
     </div>
@@ -74,28 +127,26 @@
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — রিয়েল-টাইম ডাটা আপডেট</p>
-      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+      <p class="footer-credit">
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
+      </p>
     </div>
   </footer>
 
   <script>
     const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-    async function loadBloodStats() {
-      const container = document.getElementById("statsContainer");
-
+    async function loadStats() {
       try {
-        // Shob data fetch korbe
-        const { data, error } = await client
-          .from("donors")
-          .select("*");
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('blood_group, verified');
 
         if (error) throw error;
 
+        // Group counting
         const counts = {
           "A+": 0, "A-": 0,
           "B+": 0, "B-": 0,
@@ -103,39 +154,32 @@
           "O+": 0, "O-": 0
         };
 
-        if (data && data.length > 0) {
-          data.forEach(item => {
-            // column blood_group ba blood ja-i thakuk seta dhore nibe
-            const bg = (item.blood_group || item.blood || item.group || "").trim();
+        if (data) {
+          data.forEach(donor => {
+            // Count verified donors or all valid groups
+            const bg = (donor.blood_group || "").trim().toUpperCase();
             if (counts.hasOwnProperty(bg)) {
               counts[bg]++;
             }
           });
         }
 
-        container.innerHTML = bloodGroups.map(bg => `
-          <div class="stat-card">
-            <div class="stat-group">${bg}</div>
-            <div class="stat-count">${counts[bg]}</div>
-          </div>
-        `).join("");
+        // Map to IDs
+        document.getElementById('count-A-pos').textContent = counts["A+"];
+        document.getElementById('count-A-neg').textContent = counts["A-"];
+        document.getElementById('count-B-pos').textContent = counts["B+"];
+        document.getElementById('count-B-neg').textContent = counts["B-"];
+        document.getElementById('count-AB-pos').textContent = counts["AB+"];
+        document.getElementById('count-AB-neg').textContent = counts["AB-"];
+        document.getElementById('count-O-pos').textContent = counts["O+"];
+        document.getElementById('count-O-neg').textContent = counts["O-"];
 
       } catch (err) {
-        console.error("Stats Error:", err);
-        container.innerHTML = `
-          <div class="stat-card" style="grid-column: span 2; padding: 20px;">
-            <div class="stat-count" style="color: var(--danger); font-size: 0.95rem;">
-              ডাটা লোড করতে সমস্যা হয়েছে!
-            </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
-              ${err.message || 'Supabase error'}
-            </p>
-          </div>
-        `;
+        console.error("Error loading stats:", err);
       }
     }
 
-    loadBloodStats();
+    document.addEventListener('DOMContentLoaded', loadStats);
   </script>
 </body>
 </html>
