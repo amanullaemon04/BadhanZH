@@ -32,6 +32,31 @@ body {
   flex-direction: column;
   justify-content: space-between;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Background Watermark Logo */
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(85vw, 420px);
+  height: min(85vw, 420px);
+  background-image: url('https://lh3.googleusercontent.com/d/1ynfT2kM9ZgEAHmc_wS24MfwWRziomdPa');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Main Sections over Watermark */
+.header, .container, .footer, .quick-shortcuts {
+  position: relative;
+  z-index: 1;
 }
 
 /* Header */
@@ -41,7 +66,6 @@ body {
   padding: 8px 16px;
   position: sticky;
   top: 0;
-  z-index: 50;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   width: 100%;
 }
@@ -404,4 +428,4 @@ body {
     flex-direction: row;
     justify-content: space-between;
   }
-  }
+}
