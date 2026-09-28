@@ -7,29 +7,29 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Card & Action Button Styling to match original design */
+    /* Card & Action Button Styling perfectly matched with screenshots */
     .donor-card {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(3px);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(4px);
       border: 1.5px solid rgba(255, 255, 255, 0.85);
-      border-radius: var(--radius);
+      border-radius: var(--radius, 12px);
       padding: 14px 16px;
       margin-bottom: 12px;
       position: relative;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
     }
 
     .donor-card-top {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       margin-bottom: 4px;
     }
 
     .donor-name {
       font-size: 1.08rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--text-main, #0f172a);
       margin: 0;
     }
 
@@ -40,7 +40,7 @@
     }
 
     .status-text {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       margin-bottom: 6px;
       letter-spacing: 0.5px;
@@ -65,17 +65,17 @@
 
     .donor-actions-row {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
     }
 
     /* Red Call Button */
     .btn-call-red {
       flex: 1;
-      height: 40px;
+      height: 42px;
       background: #b91c1c;
-      color: #ffffff;
-      text-decoration: none;
+      color: #ffffff !important;
+      text-decoration: none !important;
       border-radius: 8px;
       font-size: 0.92rem;
       font-weight: 700;
@@ -84,18 +84,18 @@
       justify-content: center;
       gap: 6px;
       border: none;
-      transition: background 0.2s ease;
+      box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25);
     }
 
     .btn-call-red:active {
       background: #991b1b;
     }
 
-    /* Yellow/Bordered Report Button */
+    /* Yellow Outlined Report Button */
     .btn-report-box {
-      width: 95px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.75);
+      width: 105px;
+      height: 42px;
+      background: #ffffff;
       color: #854d0e;
       border: 1.5px solid #fde047;
       border-radius: 8px;
@@ -106,7 +106,6 @@
       justify-content: center;
       gap: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
     .btn-report-box:active {
@@ -116,8 +115,8 @@
     .initial-prompt-box {
       text-align: center;
       padding: 30px 15px;
-      background: rgba(255, 255, 255, 0.45);
-      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius, 12px);
       border: 1.5px dashed #cbd5e1;
       color: #64748b;
       font-size: 0.92rem;
@@ -128,7 +127,7 @@
 </head>
 <body>
 
-  <!-- Unified Header -->
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -172,15 +171,70 @@
       <div class="filter-group">
         <label>জেলা / শহর (City / District)</label>
         <select id="cityFilter" class="select-box" onchange="filterDonors()">
-          <option value="All">All Cities</option>
-          <option value="Dhaka">Dhaka</option>
-          <option value="Chattogram">Chattogram</option>
-          <option value="Rajshahi">Rajshahi</option>
-          <option value="Khulna">Khulna</option>
-          <option value="Barishal">Barishal</option>
-          <option value="Sylhet">Sylhet</option>
-          <option value="Rangpur">Rangpur</option>
-          <option value="Mymensingh">Mymensingh</option>
+          <option value="All">All Cities (সকল জেলা)</option>
+          <option value="Bagerhat">Bagerhat (বাগেরহাট)</option>
+          <option value="Bandarban">Bandarban (বান্দরবান)</option>
+          <option value="Barguna">Barguna (বরগুনা)</option>
+          <option value="Barishal">Barishal (বরিশাল)</option>
+          <option value="Bhola">Bhola (ভোলা)</option>
+          <option value="Bogura">Bogura (বগুড়া)</option>
+          <option value="Brahmanbaria">Brahmanbaria (ব্রাহ্মণবাড়িয়া)</option>
+          <option value="Chandpur">Chandpur (চাঁদপুর)</option>
+          <option value="Chattogram">Chattogram (চট্টগ্রাম)</option>
+          <option value="Chuadanga">Chuadanga (চুয়াডাঙ্গা)</option>
+          <option value="Cox's Bazar">Cox's Bazar (কক্সবাজার)</option>
+          <option value="Cumilla">Cumilla (কুমিল্লা)</option>
+          <option value="Dhaka">Dhaka (ঢাকা)</option>
+          <option value="Dinajpur">Dinajpur (দিনাজপুর)</option>
+          <option value="Faridpur">Faridpur (ফরিদপুর)</option>
+          <option value="Feni">Feni (ফেনী)</option>
+          <option value="Gaibandha">Gaibandha (গাইবান্ধা)</option>
+          <option value="Gazipur">Gazipur (গাজীপুর)</option>
+          <option value="Gopalganj">Gopalganj (গোপালগঞ্জ)</option>
+          <option value="Habiganj">Habiganj (হবিগঞ্জ)</option>
+          <option value="Jamalpur">Jamalpur (জামালপুর)</option>
+          <option value="Jashore">Jashore (যশোর)</option>
+          <option value="Jhalokati">Jhalokati (ঝালকাঠি)</option>
+          <option value="Jhenaidah">Jhenaidah (ঝিনাইদহ)</option>
+          <option value="Joypurhat">Joypurhat (জয়পুরহাট)</option>
+          <option value="Khagrachhari">Khagrachhari (খাগড়াছড়ি)</option>
+          <option value="Khulna">Khulna (খুলনা)</option>
+          <option value="Kishoreganj">Kishoreganj (কিশোরগঞ্জ)</option>
+          <option value="Kurigram">Kurigram (কুড়িগ্রাম)</option>
+          <option value="Kushtia">Kushtia (কুষ্টিয়া)</option>
+          <option value="Lakshmipur">Lakshmipur (লক্ষ্মীপুর)</option>
+          <option value="Lalmonirhat">Lalmonirhat (লালমনিরহাট)</option>
+          <option value="Madaripur">Madaripur (মাদারীপুর)</option>
+          <option value="Magura">Magura (মাগুরা)</option>
+          <option value="Manikganj">Manikganj (মানিকগঞ্জ)</option>
+          <option value="Meherpur">Meherpur (মেহেরপুর)</option>
+          <option value="Moulvibazar">Moulvibazar (মৌলভীবাজার)</option>
+          <option value="Munshiganj">Munshiganj (মুন্সীগঞ্জ)</option>
+          <option value="Mymensingh">Mymensingh (ময়মনসিংহ)</option>
+          <option value="Naogaon">Naogaon (নওগাঁ)</option>
+          <option value="Narail">Narail (নড়াইল)</option>
+          <option value="Narayanganj">Narayanganj (নারায়ণগঞ্জ)</option>
+          <option value="Narsingdi">Narsingdi (নরসিংদী)</option>
+          <option value="Natore">Natore (নাটোর)</option>
+          <option value="Netrokona">Netrokona (নেত্রকোণা)</option>
+          <option value="Nilphamari">Nilphamari (নীলফামারী)</option>
+          <option value="Noakhali">Noakhali (নোয়াখালী)</option>
+          <option value="Pabna">Pabna (পাবনা)</option>
+          <option value="Panchagarh">Panchagarh (পঞ্চগড়)</option>
+          <option value="Patuakhali">Patuakhali (পটুয়াখালী)</option>
+          <option value="Pirojpur">Pirojpur (পিরোজপুর)</option>
+          <option value="Rajbari">Rajbari (রাজবাড়ী)</option>
+          <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
+          <option value="Rangamati">Rangamati (রাঙ্গামাটি)</option>
+          <option value="Rangpur">Rangpur (রংপুর)</option>
+          <option value="Satkhira">Satkhira (সাতক্ষীরা)</option>
+          <option value="Shariatpur">Shariatpur (শরীয়তপুর)</option>
+          <option value="Sherpur">Sherpur (শেরপুর)</option>
+          <option value="Sirajganj">Sirajganj (সিরাজগঞ্জ)</option>
+          <option value="Sunamganj">Sunamganj (সুনামগঞ্জ)</option>
+          <option value="Sylhet">Sylhet (সিলেট)</option>
+          <option value="Tangail">Tangail (টাঙ্গাইল)</option>
+          <option value="Thakurgaon">Thakurgaon (ঠাকুরগাঁও)</option>
         </select>
       </div>
 
@@ -199,21 +253,17 @@
       </div>
     </div>
 
-    <div class="donors-count" id="donorsCount" style="display: none;">Donors found: 0</div>
-    <div id="donorsList">
-      <div class="initial-prompt-box">
-        🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
-      </div>
-    </div>
+    <div class="donors-count" id="donorsCount">Donors found: 0</div>
+    <div id="donorsList"></div>
   </main>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 0.85rem;">
-        <a href="stats.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📊 রক্তের পরিসংখ্যান</a>
-        <a href="feedback.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">💬 মতামত দিন</a>
-        <a href="guidelines.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📖 রক্তদানের নির্দেশিকা</a>
+        <a href="stats.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">📊 রক্তের পরিসংখ্যান</a>
+        <a href="feedback.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">💬 মতামত দিন</a>
+        <a href="guidelines.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">📖 রক্তদানের নির্দেশিকা</a>
       </div>
       <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting.</p>
       <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
@@ -266,6 +316,7 @@
 
         if (error) throw error;
         allDonors = data || [];
+        filterDonors();
       } catch (err) {
         console.error(err);
       }
@@ -276,22 +327,6 @@
       const city = document.getElementById('cityFilter').value;
       const loc = document.getElementById('locationFilter').value.trim().toLowerCase();
       const status = document.getElementById('statusFilter').value;
-
-      const donorsCountEl = document.getElementById('donorsCount');
-      const listContainer = document.getElementById('donorsList');
-
-      // User jodi ekhono kono filter select na kore thake
-      const isFilterActive = (blood !== 'All' || city !== 'All' || loc !== '' || status !== 'All');
-
-      if (!isFilterActive) {
-        donorsCountEl.style.display = 'none';
-        listContainer.innerHTML = `
-          <div class="initial-prompt-box">
-            🔍 রক্তদাতা খুঁজতে উপরের ফিল্টার থেকে রক্তের গ্রুপ অথবা এলাকা নির্বাচন করুন।
-          </div>
-        `;
-        return;
-      }
 
       let filtered = allDonors.filter(d => {
         const matchesBlood = (blood === 'All' || d.blood_group === blood);
@@ -307,8 +342,7 @@
         return matchesBlood && matchesCity && matchesLoc && matchesStatus;
       });
 
-      donorsCountEl.style.display = 'block';
-      donorsCountEl.textContent = `Donors found: ${filtered.length}`;
+      document.getElementById('donorsCount').textContent = `Donors found: ${filtered.length}`;
       renderDonors(filtered);
     }
 
@@ -349,8 +383,7 @@
             </div>
             <div class="donor-actions-row">
               <a href="tel:${escapeHtml(d.phone)}" class="btn-call-red">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.24.2 2.45.57 3.57a1 1 0 01-.24 1.02l-2.21 2.2z"/></svg>
-                কল করুন
+                📞 কল করুন
               </a>
               <button onclick="reportDonor('${d.id}', '${escapeHtml(d.name)}', '${escapeHtml(d.phone)}')" class="btn-report-box">
                 ⚠️ রিপোর্ট
@@ -361,7 +394,7 @@
       }).join('');
     }
 
-    // 1, 2, 3 and 4 (Other) prompt
+    // UPDATED REPORT DONOR PROMPT (1, 2, 3 & 4 OTHER)
     async function reportDonor(donorId, donorName, donorPhone) {
       const promptMessage = 
 `${donorName}-এর বিষয়ে রিপোর্ট জানান:
