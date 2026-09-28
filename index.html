@@ -131,6 +131,7 @@
       font-size: 0.92rem;
       font-weight: 600;
       margin-top: 10px;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -165,7 +166,7 @@
       <div class="filter-group">
         <label>রক্তের গ্রুপ (Blood Group)</label>
         <select id="bloodGroupFilter" class="select-box" onchange="filterDonors()">
-          <option value="All">All Groups</option>
+          <option value="All">রক্তের গ্রুপ নির্বাচন করুন (Select Blood Group)</option>
           <option value="A+">A+</option>
           <option value="A-">A-</option>
           <option value="B+">B+</option>
@@ -265,7 +266,7 @@
     <div class="donors-count" id="donorsCount" style="display: none;">Donors found: 0</div>
     <div id="donorsList">
       <div class="initial-prompt-box">
-        📍 রক্তদাতা খুঁজতে অনুগ্রহ করে প্রথমে আপনার জেলা নির্বাচন করুন।
+        📍 রক্তদাতা খুঁজতে অনুগ্রহ করে রক্তের গ্রুপ ও জেলা নির্বাচন করুন।
       </div>
     </div>
   </main>
@@ -343,25 +344,25 @@
       const donorsCountEl = document.getElementById('donorsCount');
       const listContainer = document.getElementById('donorsList');
 
-      // Zila select na kora porjonto kono donor dekhabe na
-      if (city === 'All') {
+      // Rokter group ebong zela dutoi select thakle shudhu donor dekhabe
+      if (blood === 'All' || city === 'All') {
         donorsCountEl.style.display = 'none';
         listContainer.innerHTML = `
           <div class="initial-prompt-box">
-            📍 রক্তদাতা খুঁজতে অনুগ্রহ করে প্রথমে আপনার জেলা নির্বাচন করুন।
+            📍 রক্তদাতা খুঁজতে অনুগ্রহ করে রক্তের গ্রুপ ও জেলা নির্বাচন করুন।
           </div>
         `;
         return;
       }
 
       let filtered = allDonors.filter(d => {
-        // District match (Exact match with selected city)
+        // District exact match
         const matchesCity = d.city && d.city.toLowerCase() === city.toLowerCase();
         
-        // Blood group filter (All hole sobai, nahole match)
-        const matchesBlood = (blood === 'All' || d.blood_group === blood);
+        // Blood group exact match
+        const matchesBlood = d.blood_group === blood;
         
-        // Specific location optional (faka thakle zilar sobai, dile area match)
+        // Specific location optional match
         const matchesLoc = (!loc || (d.location && d.location.toLowerCase().includes(loc)));
         
         // Status match (All hole available + unavailable sobai)
@@ -382,7 +383,7 @@
     function renderDonors(donors) {
       const listContainer = document.getElementById('donorsList');
       if (donors.length === 0) {
-        listContainer.innerHTML = `<div class="initial-prompt-box">নির্বাচিত এলাকায় কোনো রক্তদাতা খুঁজে পাওয়া যায়নি।</div>`;
+        listContainer.innerHTML = `<div class="initial-prompt-box">নির্বাচিত রক্তের গ্রুপ ও এলাকার কোনো রক্তদাতা খুঁজে পাওয়া যায়নি।</div>`;
         return;
       }
 
@@ -427,7 +428,7 @@
       }).join('');
     }
 
-    // 1, 2, 3 & 4 (Other) prompt
+    // Report Donor Prompt (1, 2, 3 & 4 Other)
     async function reportDonor(donorId, donorName, donorPhone) {
       const promptMessage = 
 `${donorName}-এর বিষয়ে রিপোর্ট জানান:
