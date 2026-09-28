@@ -3,151 +3,181 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - BADHAN ZH</title>
+  <title>Admin - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .admin-card-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .admin-search-box {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      font-size: 0.95rem;
-      background: #ffffff;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .admin-search-box:focus {
-      border-color: var(--primary);
-    }
-    /* Tab buttons */
-    .admin-tabs {
+    /* Admin Specific Styling */
+    .admin-controls {
       display: flex;
       gap: 8px;
-      margin-bottom: 4px;
-      justify-content: center;
+      margin-bottom: 12px;
+      margin-top: 6px;
     }
+
     .tab-btn {
       flex: 1;
-      padding: 9px 12px;
+      height: 40px;
       border: 1px solid var(--border-color);
-      background: #ffffff;
-      color: var(--text-muted);
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
-      transition: all 0.2s;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
     }
+
     .tab-btn.active {
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.25);
     }
-    /* Donor item card */
-    .admin-donor-card {
-      background: var(--card-bg);
+
+    .search-box {
+      width: 100%;
+      height: 40px;
+      padding: 8px 12px;
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      background-color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+    }
+
+    .admin-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(3px);
+      border: 1.5px solid rgba(255, 255, 255, 0.8);
       border-radius: var(--radius);
-      padding: 16px 18px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      padding: 12px 14px;
+      margin-bottom: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
-    .admin-donor-header {
+
+    .admin-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .admin-donor-name {
-      font-size: 1.15rem;
-      font-weight: 700;
+
+    .admin-card-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
       color: var(--text-main);
     }
-    .admin-donor-info {
+
+    .admin-details {
+      font-size: 0.84rem;
+      color: var(--text-muted);
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      gap: 3px;
     }
-    .admin-donor-info strong {
-      color: var(--text-main);
-    }
+
     .admin-card-actions {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--border-color);
-    }
-    .btn-action-group {
-      display: flex;
       gap: 8px;
+      margin-top: 6px;
+      align-items: center;
     }
-    .btn-approve {
-      background: var(--success);
-      color: #ffffff;
+
+    .action-btn {
+      flex: 1;
+      height: 34px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
       border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
     }
-    .btn-remove {
-      background: #fee2e2;
+
+    .btn-verify {
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(22, 163, 74, 0.4);
+    }
+
+    .btn-verified {
+      background: #dcfce7;
+      color: var(--success);
+      font-weight: 700;
+      cursor: default;
+    }
+
+    .btn-delete {
+      background: rgba(220, 38, 38, 0.12);
       color: var(--danger);
-      border: 1px solid #fca5a5;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      max-width: 90px;
     }
-    .btn-remove:hover {
+
+    .btn-delete:hover {
       background: var(--danger);
-      color: #ffffff;
+      color: #fff;
     }
-    .btn-approve:hover {
-      opacity: 0.9;
+
+    /* Login Form Card */
+    .login-card {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      margin-top: 20px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
     }
-    /* Feedback card */
-    .feedback-message-box {
-      background: #f8fafc;
-      border-left: 3px solid var(--primary);
-      padding: 10px 12px;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      color: var(--text-main);
-      line-height: 1.45;
-      margin-top: 4px;
+
+    .login-card input {
+      width: 100%;
+      height: 42px;
+      padding: 8px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      margin: 10px 0 14px 0;
+      font-size: 0.95rem;
+      outline: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header matching HomePage exactly -->
   <header class="header">
     <div class="header-container">
-      <div class="header-top">
-        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH – Admin</a>
-        <div class="header-actions">
-          <a href="index.html" class="admin-link">← মেইন সাইট</a>
-          <button id="btnLogout" class="admin-link" style="display: none; cursor: pointer;">Logout</button>
-        </div>
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN</span>
+          <span class="logo-zh-badge">ZH</span>
+        </a>
       </div>
+
+      <div class="header-nav-row">
+        <a href="index.html" class="nav-chip">← মেইন সাইট</a>
+        <button onclick="logoutAdmin()" class="nav-chip" id="logoutBtn" style="cursor: pointer; background: rgba(220, 38, 38, 0.12); color: #dc2626; border-color: rgba(220, 38, 38, 0.35); display: none;">Logout</button>
+      </div>
+
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
       </div>
@@ -156,48 +186,27 @@
 
   <!-- Main Container -->
   <main class="container">
-
+    
     <!-- Login Section -->
-    <div id="loginSection" class="form-card" style="margin: 20px auto 0; width: 100%;">
-      <h2 class="form-title">অ্যাডমিন লগইন</h2>
-      <form id="loginForm" class="filter-grid">
-        <div class="filter-group">
-          <label>ইমেইল (Email)</label>
-          <input type="email" id="adminEmail" placeholder="admin@example.com" required autocomplete="username" />
-        </div>
-        <div class="filter-group">
-          <label>পাসওয়ার্ড (Password)</label>
-          <input type="password" id="adminPassword" placeholder="••••••••" required autocomplete="current-password" />
-        </div>
-        <button type="submit" id="btnLogin" class="submit-btn">লগইন করুন</button>
-      </form>
+    <div id="loginSection" class="login-card">
+      <h2 style="color: var(--primary); font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">অ্যাডমিন প্যানেল লগইন</h2>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">অ্যাডমিন পাসওয়ার্ড প্রদান করুন</p>
+      <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড লিখুন..." />
+      <button onclick="checkAdminPassword()" class="tab-btn active" style="width: 100%;">প্রবেশ করুন</button>
     </div>
 
-    <!-- Admin Dashboard Section -->
-    <div id="dashboardSection" class="admin-card-container" style="display: none; margin-top: 10px;">
-      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); text-align: center;">অ্যাডমিন কন্ট্রোল</h2>
+    <!-- Admin Panel Content Section -->
+    <div id="adminPanel" style="display: none;">
+      <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center; margin: 8px 0 6px 0;">অ্যাডমিন কন্ট্রোল</h2>
 
-      <!-- Navigation Tabs -->
-      <div class="admin-tabs">
-        <button type="button" id="tabDonors" class="tab-btn active" onclick="switchTab('donors')">👥 ডোনার ম্যানেজমেন্ট</button>
-        <button type="button" id="tabFeedbacks" class="tab-btn" onclick="switchTab('feedbacks')">💬 ইউজার মতামত</button>
+      <div class="admin-controls">
+        <button class="tab-btn active" id="tabDonors" onclick="switchTab('donors')">👥 ডোনার ম্যানেজমেন্ট</button>
+        <button class="tab-btn" id="tabReports" onclick="switchTab('reports')">⚠️ রিপোর্ট ও মতামত</button>
       </div>
 
-      <!-- Donors View -->
-      <div id="donorsView" style="display: flex; flex-direction: column; gap: 12px;">
-        <input 
-          type="text" 
-          id="adminSearch" 
-          class="admin-search-box" 
-          placeholder="নাম, হল, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
-        />
-        <div id="adminDonorList" style="display: flex; flex-direction: column; gap: 12px;"></div>
-      </div>
+      <input type="text" id="adminSearch" class="search-box" placeholder="নাম, হল, রক্ত বা জেলা দিয়ে সার্চ করুন..." oninput="filterAdminList()" />
 
-      <!-- Feedbacks View -->
-      <div id="feedbacksView" style="display: none; flex-direction: column; gap: 12px;">
-        <div id="adminFeedbackList" style="display: flex; flex-direction: column; gap: 12px;"></div>
-      </div>
+      <div id="adminContentList"></div>
     </div>
 
   </main>
@@ -206,245 +215,223 @@
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — অ্যাডমিন কন্ট্রোল প্যানেল</p>
-      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+      <p class="footer-credit">
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
+      </p>
     </div>
   </footer>
 
   <script>
     const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const loginSection = document.getElementById("loginSection");
-    const dashboardSection = document.getElementById("dashboardSection");
-    const btnLogout = document.getElementById("btnLogout");
+    let currentTab = 'donors';
+    let allDonorsCache = [];
+    let allReportsCache = [];
 
-    // Session check
-    async function checkAuth() {
-      const { data: { session } } = await client.auth.getSession();
-      if (session) {
-        showDashboard();
+    // Simple Admin Auth Check
+    function checkAdminPassword() {
+      const pass = document.getElementById('adminPassword').value;
+      if (pass === "badhanzh2026" || pass === "admin123") {
+        sessionStorage.setItem("badhan_admin_auth", "true");
+        showAdminPanel();
+      } else {
+        alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
       }
     }
-    checkAuth();
 
-    // Login
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("btnLogin");
-      btn.disabled = true;
-      btn.innerText = "যাচাই হচ্ছে...";
+    function logoutAdmin() {
+      sessionStorage.removeItem("badhan_admin_auth");
+      window.location.reload();
+    }
 
-      const email = document.getElementById("adminEmail").value.trim();
-      const password = document.getElementById("adminPassword").value;
+    function showAdminPanel() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('logoutBtn').style.display = 'inline-flex';
+      loadAdminData();
+    }
+
+    // Tab Switching
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabDonors').classList.toggle('active', tab === 'donors');
+      document.getElementById('tabReports').classList.toggle('active', tab === 'reports');
+      
+      const searchBox = document.getElementById('adminSearch');
+      searchBox.placeholder = tab === 'donors' 
+        ? "নাম, হল, রক্ত বা জেলা দিয়ে সার্চ করুন..." 
+        : "রিপোর্টের কারণ বা ডোনারের নাম দিয়ে খুঁজুন...";
+      searchBox.value = "";
+      
+      renderAdminList();
+    }
+
+    // Load Data from Supabase
+    async function loadAdminData() {
+      const listContainer = document.getElementById('adminContentList');
+      listContainer.innerHTML = `<div class="no-results">ডাটা লোড হচ্ছে...</div>`;
 
       try {
-        const { data, error } = await client.auth.signInWithPassword({ email, password });
-        if (error) {
-          alert("লগইন ব্যর্থ হয়েছে: " + error.message);
-          btn.disabled = false;
-          btn.innerText = "লগইন করুন";
-        } else if (data.session) {
-          showDashboard();
-        }
+        // Fetch Donors
+        const { data: donorsData, error: dError } = await supabaseClient
+          .from('donors')
+          .select('*')
+          .order('id', { ascending: false });
+        if (dError) throw dError;
+        allDonorsCache = donorsData || [];
+
+        // Fetch Reports
+        const { data: reportsData } = await supabaseClient
+          .from('reports')
+          .select('*')
+          .order('id', { ascending: false });
+        allReportsCache = reportsData || [];
+
+        renderAdminList();
       } catch (err) {
-        alert("নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।");
-        btn.disabled = false;
-        btn.innerText = "লগইন করুন";
+        listContainer.innerHTML = `<div class="no-results" style="color: var(--danger);">ত্রুটি: ${err.message}</div>`;
       }
-    });
-
-    // Logout
-    btnLogout.addEventListener("click", async () => {
-      await client.auth.signOut();
-      window.location.reload();
-    });
-
-    function showDashboard() {
-      loginSection.style.display = "none";
-      dashboardSection.style.display = "flex";
-      btnLogout.style.display = "inline-flex";
-      loadDonors();
     }
 
-    // Tab Switch
-    window.switchTab = (tab) => {
-      const tabDonors = document.getElementById("tabDonors");
-      const tabFeedbacks = document.getElementById("tabFeedbacks");
-      const donorsView = document.getElementById("donorsView");
-      const feedbacksView = document.getElementById("feedbacksView");
+    // Render List based on current tab
+    function renderAdminList() {
+      const listContainer = document.getElementById('adminContentList');
+      const query = document.getElementById('adminSearch').value.trim().toLowerCase();
 
-      if (tab === "donors") {
-        tabDonors.classList.add("active");
-        tabFeedbacks.classList.remove("active");
-        donorsView.style.display = "flex";
-        feedbacksView.style.display = "none";
-        loadDonors();
-      } else {
-        tabFeedbacks.classList.add("active");
-        tabDonors.classList.remove("active");
-        feedbacksView.style.display = "flex";
-        donorsView.style.display = "none";
-        loadFeedbacks();
-      }
-    };
+      if (currentTab === 'donors') {
+        let donors = allDonorsCache;
+        if (query) {
+          donors = donors.filter(d => 
+            (d.name && d.name.toLowerCase().includes(query)) ||
+            (d.blood_group && d.blood_group.toLowerCase().includes(query)) ||
+            (d.location && d.location.toLowerCase().includes(query)) ||
+            (d.city && d.city.toLowerCase().includes(query))
+          );
+        }
 
-    // Load Donors
-    async function loadDonors() {
-      const container = document.getElementById("adminDonorList");
-      container.innerHTML = "<p style='text-align:center; color:var(--text-muted); padding:20px;'>লোড হচ্ছে...</p>";
+        if (donors.length === 0) {
+          listContainer.innerHTML = `<div class="no-results">কোনো ডোনার পাওয়া যায়নি।</div>`;
+          return;
+        }
 
-      const { data, error } = await client.from("donors").select("*").order("created_at", { ascending: false });
-
-      if (error || !data) {
-        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>ডাটা লোড করা যায়নি!</p>";
-        return;
-      }
-
-      renderDonors(data);
-
-      // Search matching Name, Hall/Location, Blood Group, City, or Phone
-      document.getElementById("adminSearch").addEventListener("input", (e) => {
-        const term = e.target.value.toLowerCase().trim();
-        const filtered = data.filter(d => {
-          const name = (d.name || "").toLowerCase();
-          const blood = (d.blood || d.blood_group || d.group || "").toLowerCase();
-          const city = (d.city || "").toLowerCase();
-          const location = (d.location || "").toLowerCase();
-          const phone = (d.phone || "");
-
-          return name.includes(term) || 
-                 location.includes(term) || 
-                 blood.includes(term) || 
-                 city.includes(term) || 
-                 phone.includes(term);
-        });
-        renderDonors(filtered);
-      });
-    }
-
-    // Render Donor Cards
-    function renderDonors(donors) {
-      const container = document.getElementById("adminDonorList");
-      if (donors.length === 0) {
-        container.innerHTML = "<p class='no-results'>কোনো ডোনারের তথ্য পাওয়া যায়নি।</p>";
-        return;
-      }
-
-      container.innerHTML = donors.map(d => {
-        const blood = d.blood || d.blood_group || d.group || "-";
-        return `
-          <div class="admin-donor-card">
-            <div class="admin-donor-header">
-              <span class="admin-donor-name">${d.name || 'অজ্ঞাত'}</span>
-              <span class="blood-badge">${blood}</span>
+        listContainer.innerHTML = donors.map(d => `
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>${escapeHtml(d.name)}</h3>
+              <span class="blood-badge">${escapeHtml(d.blood_group)}</span>
             </div>
-
-            <div class="admin-donor-info">
-              <div>📞 মোবাইল: <strong><a href="tel:${d.phone}" style="color:var(--text-main); text-decoration:none;">${d.phone || '-'}</a></strong></div>
-              <div>📍 জেলা: <strong>${d.city || '-'}</strong> ${d.location ? `(${d.location})` : ''}</div>
-              ${d.last_donation ? `<div>🗓️ শেষ রক্তদান: <strong>${d.last_donation}</strong></div>` : ''}
+            <div class="admin-details">
+              <div>📞 মোবাইল: <strong>${escapeHtml(d.phone)}</strong></div>
+              <div>📍 জেলা: <strong>${escapeHtml(d.city || '')} (${escapeHtml(d.location || '')})</strong></div>
+              <div>🗓️ শেষ রক্তদান: <strong>${escapeHtml(d.last_donation || 'তথ্য নেই')}</strong></div>
+              <div>⚡ প্রাপ্যতা: <strong style="color: ${d.status === 'unavailable' ? 'var(--danger)' : 'var(--success)'};">${(d.status || 'available').toUpperCase()}</strong></div>
             </div>
-
             <div class="admin-card-actions">
-              <div>
-                ${d.verified 
-                  ? '<span class="donor-status status-available">অনুমোদিত (Verified)</span>' 
-                  : '<span class="donor-status status-unavailable">অপেক্ষমান (Pending)</span>'}
-              </div>
-              <div class="btn-action-group">
-                ${!d.verified ? `<button class="btn-approve" onclick="verifyDonor('${d.id}')">Approve</button>` : ''}
-                <button class="btn-remove" onclick="deleteDonor('${d.id}')">Delete</button>
-              </div>
+              ${d.verified 
+                ? `<span class="action-btn btn-verified">অনুমোদিত (Verified)</span>` 
+                : `<button onclick="verifyDonor('${d.id}')" class="action-btn btn-verify">অনুমোদন দিন</button>`
+              }
+              <button onclick="toggleDonorStatus('${d.id}', '${d.status || 'available'}')" class="action-btn" style="background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.4);">
+                ${d.status === 'unavailable' ? 'Make Available' : 'Make Unavailable'}
+              </button>
+              <button onclick="deleteDonor('${d.id}')" class="action-btn btn-delete">Delete</button>
             </div>
           </div>
-        `;
-      }).join("");
+        `).join('');
+
+      } else {
+        // Reports Tab
+        let reports = allReportsCache;
+        if (query) {
+          reports = reports.filter(r => 
+            (r.donor_name && r.donor_name.toLowerCase().includes(query)) ||
+            (r.reason && r.reason.toLowerCase().includes(query))
+          );
+        }
+
+        if (reports.length === 0) {
+          listContainer.innerHTML = `<div class="no-results">কোনো রিপোর্ট বা মতামত নেই।</div>`;
+          return;
+        }
+
+        listContainer.innerHTML = reports.map(r => `
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>${escapeHtml(r.donor_name || 'Anonymous')}</h3>
+              <span class="blood-badge" style="background: #fee2e2; color: #dc2626;">Report</span>
+            </div>
+            <div class="admin-details">
+              <div>📞 মোবাইল: <strong>${escapeHtml(r.donor_phone || 'N/A')}</strong></div>
+              <div>📝 অভিযোগ/কারণ: <strong>${escapeHtml(r.reason)}</strong></div>
+              <div>🕒 তারিখ: <strong>${new Date(r.created_at).toLocaleDateString('bn-BD')}</strong></div>
+            </div>
+            <div class="admin-card-actions">
+              <button onclick="deleteReport('${r.id}')" class="action-btn btn-delete" style="max-width: 100%;">মুছে ফেলুন</button>
+            </div>
+          </div>
+        `).join('');
+      }
     }
 
-    // Load User Feedbacks
-    async function loadFeedbacks() {
-      const container = document.getElementById("adminFeedbackList");
-      container.innerHTML = "<p style='text-align:center; color:var(--text-muted); padding:20px;'>মতামত লোড হচ্ছে...</p>";
-
-      const { data, error } = await client.from("feedbacks").select("*").order("created_at", { ascending: false });
-
-      if (error || !data) {
-        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>মতামত লোড করা যায়নি!</p>";
-        return;
-      }
-
-      if (data.length === 0) {
-        container.innerHTML = "<p class='no-results'>এখনও কোনো ব্যবহারকারী মতামত পাঠাননি।</p>";
-        return;
-      }
-
-      container.innerHTML = data.map(f => `
-        <div class="admin-donor-card">
-          <div class="admin-donor-header">
-            <span class="admin-donor-name">${f.name || 'বেনামী'}</span>
-            <span style="font-size:0.75rem; color:var(--text-muted);">${f.created_at ? new Date(f.created_at).toLocaleDateString('bn-BD') : ''}</span>
-          </div>
-
-          <div class="admin-donor-info">
-            ${f.contact ? `<div>📞 যোগাযোগ: <strong>${f.contact}</strong></div>` : ''}
-            <div class="feedback-message-box">"${f.message || ''}"</div>
-          </div>
-
-          <div class="admin-card-actions" style="justify-content: flex-end;">
-            <button class="btn-remove" onclick="deleteFeedback('${f.id}')">Delete</button>
-          </div>
-        </div>
-      `).join("");
+    function filterAdminList() {
+      renderAdminList();
     }
 
-    // Approve Donor (With error feedback)
-    window.verifyDonor = async (id) => {
-      if (confirm("এই ডোনারকে অনুমোদন করতে চান?")) {
-        const { error } = await client
-          .from("donors")
-          .update({ verified: true })
-          .eq("id", id);
-
-        if (error) {
-          alert("অনুমোদন ব্যর্থ হয়েছে: " + error.message);
-        } else {
-          loadDonors();
-        }
+    // Admin Actions
+    async function verifyDonor(id) {
+      try {
+        const { error } = await supabaseClient.from('donors').update({ verified: true }).eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
       }
-    };
+    }
 
-    // Delete Donor (With error feedback)
-    window.deleteDonor = async (id) => {
-      if (confirm("আপনি কি নিশ্চিতভাবে এই ডোনারের তথ্য মুছে ফেলতে চান?")) {
-        const { error } = await client
-          .from("donors")
-          .delete()
-          .eq("id", id);
-
-        if (error) {
-          alert("ডিলিট ব্যর্থ হয়েছে: " + error.message);
-        } else {
-          loadDonors();
-        }
+    async function toggleDonorStatus(id, currentStatus) {
+      const nextStatus = currentStatus.toLowerCase() === 'available' ? 'unavailable' : 'available';
+      try {
+        const { error } = await supabaseClient.from('donors').update({ status: nextStatus }).eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
       }
-    };
+    }
 
-    // Delete Feedback (With error feedback)
-    window.deleteFeedback = async (id) => {
-      if (confirm("এই মতামতটি মুছে ফেলতে চান?")) {
-        const { error } = await client
-          .from("feedbacks")
-          .delete()
-          .eq("id", id);
-
-        if (error) {
-          alert("মুছে ফেলতে সমস্যা হয়েছে: " + error.message);
-        } else {
-          loadFeedbacks();
-        }
+    async function deleteDonor(id) {
+      if (!confirm("আপনি কি নিশ্চিতভাবে এই ডোনারের তথ্য মুছে ফেলতে চান?")) return;
+      try {
+        const { error } = await supabaseClient.from('donors').delete().eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
       }
-    };
+    }
+
+    async function deleteReport(id) {
+      if (!confirm("রিপোর্টটি মুছে ফেলতে চান?")) return;
+      try {
+        const { error } = await supabaseClient.from('reports').delete().eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    // Auto-login if session exists
+    if (sessionStorage.getItem("badhan_admin_auth") === "true") {
+      showAdminPanel();
+    }
   </script>
 </body>
 </html>
