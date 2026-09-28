@@ -10,16 +10,61 @@
     .stats-card {
       background: rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(2px);
-      padding: 16px 14px;
+      padding: 18px 14px;
       border-radius: var(--radius);
       border: 1.5px solid rgba(255, 255, 255, 0.65);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-      margin-top: 6px;
+      margin-top: 8px;
       margin-bottom: 12px;
+    }
+
+    .stats-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    /* 2-Column Clean Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    /* Individual Stat Box */
+    .stat-box {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .stat-blood {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-count {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--text-main);
     }
   </style>
 </head>
 <body>
+
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -29,35 +74,66 @@
           <span class="logo-zh-badge">ZH</span>
         </a>
       </div>
+
       <div class="header-nav-row">
         <a href="index.html" class="nav-chip">← হোম পেজ</a>
       </div>
+
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
       </div>
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="container">
     <div class="stats-card">
       <h2 class="stats-title">রক্তের গ্রুপভিত্তিক পরিসংখ্যান</h2>
+      
       <div class="stats-grid">
-        <div class="stat-box"><div class="stat-blood">A+</div><div class="stat-count" id="count-A-pos">0</div></div>
-        <div class="stat-box"><div class="stat-blood">A-</div><div class="stat-count" id="count-A-neg">0</div></div>
-        <div class="stat-box"><div class="stat-blood">B+</div><div class="stat-count" id="count-B-pos">0</div></div>
-        <div class="stat-box"><div class="stat-blood">B-</div><div class="stat-count" id="count-B-neg">0</div></div>
-        <div class="stat-box"><div class="stat-blood">AB+</div><div class="stat-count" id="count-AB-pos">0</div></div>
-        <div class="stat-box"><div class="stat-blood">AB-</div><div class="stat-count" id="count-AB-neg">0</div></div>
-        <div class="stat-box"><div class="stat-blood">O+</div><div class="stat-count" id="count-O-pos">0</div></div>
-        <div class="stat-box"><div class="stat-blood">O-</div><div class="stat-count" id="count-O-neg">0</div></div>
+        <div class="stat-box">
+          <div class="stat-blood">A+</div>
+          <div class="stat-count" id="count-A-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">A-</div>
+          <div class="stat-count" id="count-A-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B+</div>
+          <div class="stat-count" id="count-B-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">B-</div>
+          <div class="stat-count" id="count-B-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB+</div>
+          <div class="stat-count" id="count-AB-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">AB-</div>
+          <div class="stat-count" id="count-AB-neg">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O+</div>
+          <div class="stat-count" id="count-O-pos">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-blood">O-</div>
+          <div class="stat-count" id="count-O-neg">0</div>
+        </div>
       </div>
     </div>
   </main>
 
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — রিয়েল-টাইম ডাটা আপডেট</p>
-      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+      <p class="footer-credit">
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
+      </p>
     </div>
   </footer>
 
@@ -68,13 +144,25 @@
 
     async function loadStats() {
       try {
-        const { data, error } = await supabaseClient.from('donors').select('blood_group').eq('verified', true);
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('blood_group')
+          .eq('verified', true);
+
         if (error) throw error;
 
-        const counts = { 'A+': 0, 'A-': 0, 'B+': 0, 'B-': 0, 'AB+': 0, 'AB-': 0, 'O+': 0, 'O-': 0 };
+        const counts = {
+          'A+': 0, 'A-': 0,
+          'B+': 0, 'B-': 0,
+          'AB+': 0, 'AB-': 0,
+          'O+': 0, 'O-': 0
+        };
+
         (data || []).forEach(d => {
           const bg = (d.blood_group || '').replace(/\s+/g, '').toUpperCase();
-          if (counts[bg] !== undefined) counts[bg]++;
+          if (counts[bg] !== undefined) {
+            counts[bg]++;
+          }
         });
 
         document.getElementById('count-A-pos').textContent = counts['A+'];
@@ -85,10 +173,12 @@
         document.getElementById('count-AB-neg').textContent = counts['AB-'];
         document.getElementById('count-O-pos').textContent = counts['O+'];
         document.getElementById('count-O-neg').textContent = counts['O-'];
+
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load stats:", err);
       }
     }
+
     loadStats();
   </script>
 </body>
