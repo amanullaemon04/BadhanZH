@@ -17,7 +17,7 @@ function normalizeBlood(bg) {
   return bg.replace(/\s+/g, "").toUpperCase();
 }
 
-// Function to calculate donation status and estimated next donation date
+// Function to calculate donation status and estimated next donation date (90-day rule)
 function getDonationStatus(donor) {
   let isAvailable = true;
   let nextDateStr = null;
@@ -30,7 +30,6 @@ function getDonationStatus(donor) {
       nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
 
       const today = new Date();
-      // If 90 days have NOT passed yet
       if (today < nextEligibleDate) {
         isAvailable = false;
         nextDateStr = nextEligibleDate.toISOString().split("T")[0];
@@ -38,13 +37,12 @@ function getDonationStatus(donor) {
     }
   }
 
-  // 2. If donor explicitly set unavailable in database
+  // 2. Explicitly unavailable in DB
   if (donor.status && donor.status.toLowerCase() === "unavailable") {
     isAvailable = false;
   }
 
-  // 3. SPECIAL EXCEPTION / MANUAL OVERRIDE:
-  // If the user himself updated profile to 'available', force available
+  // 3. Manual override if available
   if (donor.phone === "01608575239" && donor.status && donor.status.toLowerCase() === "available") {
     isAvailable = true;
   }
@@ -59,7 +57,7 @@ async function fetchDonors() {
   const selectedLocation = locationInput ? locationInput.value.trim().toLowerCase() : "";
   const selectedStatus = statusSelect ? statusSelect.value.trim().toLowerCase() : "";
 
-  // Location ba City chara search hobe na
+  // Require City or Location to show donors
   if (!selectedCity && !selectedLocation) {
     if (countDisplay) countDisplay.textContent = "0";
     if (resultsContainer) {
@@ -105,13 +103,20 @@ async function fetchDonors() {
       );
     }
 
-    // Filter Status (Available / Unavailable)
+    // Filter Status if explicitly selected
     if (selectedStatus) {
       donors = donors.filter(d => {
         const { isAvailable } = getDonationStatus(d);
         return selectedStatus === "available" ? isAvailable : !isAvailable;
       });
     }
+
+    // SORTING: Available donors first, Unavailable donors below
+    donors.sort((a, b) => {
+      const aAvail = getDonationStatus(a).isAvailable ? 1 : 0;
+      const bAvail = getDonationStatus(b).isAvailable ? 1 : 0;
+      return bAvail - aAvail; // 1 (Available) age ashbe, 0 (Unavailable) pore
+    });
 
     renderDonors(donors);
   } catch (err) {
@@ -127,7 +132,7 @@ async function fetchDonors() {
   }
 }
 
-// Render Donors to UI
+// Render Donors
 function renderDonors(donors) {
   if (countDisplay) countDisplay.textContent = donors.length;
 
@@ -215,7 +220,7 @@ async function reportDonor(id, name, phone) {
   }
 }
 
-// Security Escape Helpers
+// Helpers
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -231,7 +236,7 @@ function escapeAttr(str) {
   return String(str).replace(/'/g, "\\'");
 }
 
-// Event Listeners
+// Listeners
 if (bloodSelect) bloodSelect.addEventListener("change", fetchDonors);
 if (citySelect) citySelect.addEventListener("change", fetchDonors);
 if (statusSelect) statusSelect.addEventListener("change", fetchDonors);
@@ -245,4 +250,3 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
-    
