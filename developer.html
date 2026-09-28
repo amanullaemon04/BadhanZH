@@ -3,129 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developer Profile - Amanulla Emon</title>
+  <title>Developer - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
-  <link 
-    rel="stylesheet" 
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
-    referrerpolicy="no-referrer" 
-  />
   <style>
-    .profile-card {
-      background: var(--card-bg);
+    .dev-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
       border-radius: var(--radius);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-      padding: 16px 14px;
+      padding: 18px 14px;
+      margin-top: 6px;
+      margin-bottom: 10px;
       text-align: center;
-      margin: auto 0;
     }
-    .profile-avatar-wrap {
+    .dev-avatar {
       width: 90px;
       height: 90px;
-      margin: 0 auto 10px;
       border-radius: 50%;
-      padding: 2px;
       border: 2px solid var(--primary);
-      box-shadow: 0 3px 10px rgba(211, 47, 47, 0.15);
-      background: #ffffff;
-    }
-    .profile-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
       object-fit: cover;
-      display: block;
+      margin-bottom: 8px;
     }
-    .profile-name {
+    .dev-name {
       font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-main);
-      margin-bottom: 2px;
     }
-    .profile-title {
+    .dev-role {
       font-size: 0.85rem;
+      font-weight: 700;
       color: var(--primary);
-      font-weight: 600;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
-    .profile-bio {
+    .dev-bio {
       font-size: 0.82rem;
       color: var(--text-muted);
       line-height: 1.35;
+      margin-bottom: 12px;
+      padding: 0 8px;
     }
-    .info-list {
+    .dev-info-box {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      padding: 10px 12px;
       text-align: left;
+      font-size: 0.85rem;
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin: 12px 0;
-      padding: 10px 12px;
-      background: #f8fafc;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
     }
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      word-break: break-all;
-    }
-    .info-item strong {
-      color: var(--text-main);
-      margin-left: 6px;
-    }
-    .social-grid {
+    .dev-actions {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-top: 12px;
     }
-    .social-btn {
+    .dev-btn {
       text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 600;
       padding: 8px 10px;
       border-radius: 6px;
-      border: 1px solid var(--border-color);
-      display: flex;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-align: center;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      background: #ffffff;
+      gap: 4px;
     }
-    .btn-mail {
-      background: #ea4335;
-      color: #ffffff;
-      border-color: #ea4335;
-    }
-    .btn-whatsapp {
-      color: #128c7e;
-      border-color: #25d366;
-    }
-    .btn-github {
-      color: #24292e;
-      border-color: #d1d5db;
-    }
-    .btn-facebook {
-      color: #1877f2;
-      border-color: #1877f2;
-    }
+    .btn-red { background: var(--primary); color: #fff; }
+    .btn-green { background: #25d366; color: #fff; }
+    .btn-outline { background: rgba(255, 255, 255, 0.7); border: 1.5px solid #cbd5e1; color: var(--text-main); }
   </style>
 </head>
 <body>
-
-  <!-- Header with Universal Slogan & Right-Aligned Home button -->
   <header class="header">
     <div class="header-container">
-      <div class="header-top">
-        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
-        <div class="header-actions">
-          <a href="index.html" class="admin-link">← হোম পেজ</a>
-        </div>
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN</span>
+          <span class="logo-zh-badge">ZH</span>
+        </a>
+      </div>
+      <div class="header-nav-row">
+        <a href="index.html" class="nav-chip">← হোম পেজ</a>
       </div>
       <div class="header-slogan-wrap">
         <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
@@ -133,48 +95,24 @@
     </div>
   </header>
 
-  <!-- Main Container -->
   <main class="container">
-    <div class="profile-card">
-      <div class="profile-avatar-wrap">
-        <img src="https://github.com/amanullaemon04.png" alt="Amanulla Emon" class="profile-img" />
+    <div class="dev-card">
+      <img src="https://lh3.googleusercontent.com/d/1vN5aYJ9lWk3m7DqK9Z-xX8Vw2E7" alt="Amanulla Emon" class="dev-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Amanulla+Emon&background=d32f2f&color=fff'" />
+      <h2 class="dev-name">Amanulla Emon</h2>
+      <p class="dev-role">Lead Developer & Maintainer</p>
+      <p class="dev-bio">BADHAN ZH ব্লাড ডোনার প্ল্যাটফর্মের ডেভেলপার। জরুরি রক্তের প্রয়োজনে মানুষের পাশে দাঁড়াতে ও যোগাযোগ সহজ করতেই এই প্ল্যাটফর্মের সূচনা।</p>
+
+      <div class="dev-info-box">
+        <div><strong>ইমেইল:</strong> amanullaemon04@gmail.com</div>
+        <div><strong>হোয়াটসঅ্যাপ:</strong> 01608575239</div>
+        <div><strong>স্ট্যাটাস:</strong> <span style="color: var(--success); font-weight: 700;">Active Developer</span></div>
       </div>
 
-      <h2 class="profile-name">Amanulla Emon</h2>
-      <p class="profile-title">Lead Developer & Maintainer</p>
-      
-      <p class="profile-bio">
-        BADHAN ZH ব্লাড ডোনার প্ল্যাটফর্মের ডেভলপার। জরুরি রক্তের প্রয়োজনে মানুষের পাশে দাঁড়াতে ও যোগাযোগ সহজ করতেই এই প্ল্যাটফর্মের সূচনা।
-      </p>
-
-      <div class="info-list">
-        <div class="info-item">
-          <span>ইমেইল:</span>
-          <strong>amanullaemon04@gmail.com</strong>
-        </div>
-        <div class="info-item">
-          <span>হোয়াটসঅ্যাপ:</span>
-          <strong>01608575239</strong>
-        </div>
-        <div class="info-item">
-          <span>স্ট্যাটাস:</span>
-          <strong style="color: var(--success);">Active Developer</strong>
-        </div>
-      </div>
-
-      <div class="social-grid">
-        <a href="mailto:amanullaemon04@gmail.com" class="social-btn btn-mail">
-          <i class="fa-solid fa-envelope"></i> Send Email
-        </a>
-        <a href="https://wa.me/8801608575239" target="_blank" class="social-btn btn-whatsapp">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
-        </a>
-        <a href="https://github.com/amanullaemon04" target="_blank" class="social-btn btn-github">
-          <i class="fa-brands fa-github"></i> GitHub
-        </a>
-        <a href="https://facebook.com/amanullaemon.5" target="_blank" class="social-btn btn-facebook">
-          <i class="fa-brands fa-facebook"></i> Facebook
-        </a>
+      <div class="dev-actions">
+        <a href="mailto:amanullaemon04@gmail.com" class="dev-btn btn-red">✉️ Send Email</a>
+        <a href="https://wa.me/8801608575239" class="dev-btn btn-green">💬 WhatsApp</a>
+        <a href="https://github.com/Amanullaemon" target="_blank" class="dev-btn btn-outline">🐙 GitHub</a>
+        <a href="https://facebook.com" target="_blank" class="dev-btn btn-outline">🌐 Facebook</a>
       </div>
     </div>
   </main>
@@ -182,8 +120,8 @@
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — Service to Humanity</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
-
 </body>
 </html>
