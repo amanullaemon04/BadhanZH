@@ -13,26 +13,27 @@
       margin-bottom: 12px;
       margin-top: 6px;
       overflow-x: auto;
+      padding-bottom: 4px;
     }
 
     .tab-btn {
       flex: 1;
-      min-width: 100px;
+      min-width: 90px;
       height: 40px;
       border: 1px solid var(--border-color);
       background: rgba(255, 255, 255, 0.7);
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       cursor: pointer;
       color: var(--text-main);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       transition: all 0.2s ease;
       white-space: nowrap;
-      padding: 0 8px;
+      padding: 0 6px;
     }
 
     .tab-btn.active {
@@ -45,9 +46,9 @@
     .tab-badge {
       background: #ef4444;
       color: #fff;
-      font-size: 0.72rem;
-      padding: 1px 6px;
-      border-radius: 12px;
+      font-size: 0.7rem;
+      padding: 1px 5px;
+      border-radius: 10px;
       font-weight: 800;
     }
 
@@ -233,7 +234,7 @@
 </head>
 <body>
 
-  <!-- Unified Header -->
+  <!-- Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -258,7 +259,7 @@
   <!-- Main Container -->
   <main class="container">
     
-    <!-- Email & Password Login Section -->
+    <!-- Login Section -->
     <div id="loginSection" class="login-card">
       <h2 style="color: var(--primary); font-size: 1.25rem; font-weight: 800; margin-bottom: 4px;">অ্যাডমিন প্যানেল লগইন</h2>
       <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px;">আপনার অ্যাডমিন ইমেইল ও পাসওয়ার্ড প্রদান করুন</p>
@@ -274,16 +275,19 @@
     <div id="adminPanel" style="display: none;">
       <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center; margin: 8px 0 6px 0;">অ্যাডমিন কন্ট্রোল</h2>
 
-      <!-- 3 Control Tabs -->
+      <!-- 4 Control Tabs -->
       <div class="admin-controls">
         <button class="tab-btn active" id="tabDonors" onclick="switchTab('donors')">👥 সকল ডোনার</button>
         <button class="tab-btn" id="tabPending" onclick="switchTab('pending')">
           ⏳ পেন্ডিং <span class="tab-badge" id="pendingBadge">0</span>
         </button>
         <button class="tab-btn" id="tabReports" onclick="switchTab('reports')">⚠️ রিপোর্ট</button>
+        <button class="tab-btn" id="tabFeedback" onclick="switchTab('feedback')">
+          💬 মতামত <span class="tab-badge" id="feedbackBadge" style="background:#2563eb;">0</span>
+        </button>
       </div>
 
-      <!-- Verify All Option (Only visible on Pending tab) -->
+      <!-- Verify All Bar -->
       <div id="verifyAllContainer" style="display: none;">
         <div class="verify-all-bar">
           <span style="font-size: 0.86rem; font-weight: 700; color: #166534;" id="pendingCountText">পেন্ডিং ডোনার: 0 জন</span>
@@ -313,9 +317,10 @@
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentTab = 'donors'; // 'donors' | 'pending' | 'reports'
+    let currentTab = 'donors'; // 'donors' | 'pending' | 'reports' | 'feedback'
     let allDonorsCache = [];
     let allReportsCache = [];
+    let allFeedbackCache = [];
 
     // Calculate Availability matching Home Page logic (90 days rule)
     function getDonationStatus(donor) {
@@ -347,7 +352,7 @@
       return { isAvailable, nextDateStr };
     }
 
-    // Supabase Email & Password Auth
+    // Admin Login
     async function handleAdminLogin(e) {
       e.preventDefault();
       const email = document.getElementById('adminEmail').value.trim();
@@ -397,6 +402,7 @@
       document.getElementById('tabDonors').classList.toggle('active', tab === 'donors');
       document.getElementById('tabPending').classList.toggle('active', tab === 'pending');
       document.getElementById('tabReports').classList.toggle('active', tab === 'reports');
+      document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
       
       const verifyAllContainer = document.getElementById('verifyAllContainer');
       const searchBox = document.getElementById('adminSearch');
@@ -407,9 +413,12 @@
       } else if (tab === 'donors') {
         verifyAllContainer.style.display = 'none';
         searchBox.placeholder = "নাম, হল, রক্ত বা জেলা দিয়ে সার্চ করুন...";
-      } else {
+      } else if (tab === 'reports') {
         verifyAllContainer.style.display = 'none';
         searchBox.placeholder = "রিপোর্টের কারণ বা ডোনারের নাম দিয়ে খুঁজুন...";
+      } else {
+        verifyAllContainer.style.display = 'none';
+        searchBox.placeholder = "মতামত প্রদানকারীর নাম বা বার্তা দিয়ে খুঁজুন...";
       }
 
       searchBox.value = "";
@@ -421,6 +430,7 @@
       listContainer.innerHTML = `<div class="no-results">ডাটা লোড হচ্ছে...</div>`;
 
       try {
+        // 1. Fetch Donors
         const { data: donorsData, error: dError } = await supabaseClient
           .from('donors')
           .select('*')
@@ -428,16 +438,29 @@
         if (dError) throw dError;
         allDonorsCache = donorsData || [];
 
+        // 2. Fetch Reports
         const { data: reportsData } = await supabaseClient
           .from('reports')
           .select('*')
           .order('id', { ascending: false });
         allReportsCache = reportsData || [];
 
-        // Update Pending Badge Count
+        // 3. Fetch Feedback
+        try {
+          const { data: feedbackData } = await supabaseClient
+            .from('feedback')
+            .select('*')
+            .order('id', { ascending: false });
+          allFeedbackCache = feedbackData || [];
+        } catch (e) {
+          allFeedbackCache = [];
+        }
+
+        // Update Badges
         const pendingCount = allDonorsCache.filter(d => !d.verified).length;
         document.getElementById('pendingBadge').textContent = pendingCount;
         document.getElementById('pendingCountText').textContent = `পেন্ডিং ডোনার: ${pendingCount} জন`;
+        document.getElementById('feedbackBadge').textContent = allFeedbackCache.length;
 
         renderAdminList();
       } catch (err) {
@@ -449,16 +472,14 @@
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
 
-      // TAB 1: ALL DONORS or TAB 2: PENDING VERIFICATION
+      // TAB 1 & 2: DONORS / PENDING
       if (currentTab === 'donors' || currentTab === 'pending') {
         let donors = allDonorsCache;
 
-        // Filter for Pending Tab
         if (currentTab === 'pending') {
           donors = donors.filter(d => !d.verified);
         }
 
-        // Search Filter
         if (query) {
           donors = donors.filter(d => 
             (d.name && d.name.toLowerCase().includes(query)) ||
@@ -512,7 +533,7 @@
         }).join('');
 
       // TAB 3: REPORTS
-      } else {
+      } else if (currentTab === 'reports') {
         let reports = allReportsCache;
         if (query) {
           reports = reports.filter(r => 
@@ -522,7 +543,7 @@
         }
 
         if (reports.length === 0) {
-          listContainer.innerHTML = `<div class="no-results">কোনো রিপোর্ট বা মতামত নেই।</div>`;
+          listContainer.innerHTML = `<div class="no-results">কোনো রিপোর্ট পাওয়া যায়নি।</div>`;
           return;
         }
 
@@ -542,6 +563,39 @@
             </div>
           </div>
         `).join('');
+
+      // TAB 4: FEEDBACK (পাবলিক মতামত)
+      } else if (currentTab === 'feedback') {
+        let feedbacks = allFeedbackCache;
+        if (query) {
+          feedbacks = feedbacks.filter(f => 
+            (f.name && f.name.toLowerCase().includes(query)) ||
+            (f.message && f.message.toLowerCase().includes(query)) ||
+            (f.contact && f.contact.toLowerCase().includes(query))
+          );
+        }
+
+        if (feedbacks.length === 0) {
+          listContainer.innerHTML = `<div class="no-results">কোনো পাবলিক মতামত পাওয়া যায়নি।</div>`;
+          return;
+        }
+
+        listContainer.innerHTML = feedbacks.map(f => `
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>${escapeHtml(f.name || 'বেনামী')}</h3>
+              <span class="blood-badge" style="background: #dbeafe; color: #2563eb;">মতামত</span>
+            </div>
+            <div class="admin-details">
+              <div>📞 যোগাযোগ: <strong>${escapeHtml(f.contact || 'প্রদান করেনি')}</strong></div>
+              <div>💬 মতামত/পরামর্শ: <strong style="color: #0f172a; font-weight: 600;">${escapeHtml(f.message)}</strong></div>
+              <div>🕒 পাঠানোর সময়: <strong>${new Date(f.created_at).toLocaleString('bn-BD')}</strong></div>
+            </div>
+            <div class="admin-card-actions">
+              <button onclick="deleteFeedback('${f.id}')" class="action-btn btn-delete" style="max-width: 100%;">মুছে ফেলুন</button>
+            </div>
+          </div>
+        `).join('');
       }
     }
 
@@ -549,7 +603,7 @@
       renderAdminList();
     }
 
-    // 1-Click: Verify All Pending Donors
+    // 1-Click Verify All
     async function verifyAllPendingDonors() {
       const pendingDonors = allDonorsCache.filter(d => !d.verified);
       if (pendingDonors.length === 0) {
@@ -619,6 +673,17 @@
       if (!confirm("রিপোর্টটি মুছে ফেলতে চান?")) return;
       try {
         const { error } = await supabaseClient.from('reports').delete().eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
+      }
+    }
+
+    async function deleteFeedback(id) {
+      if (!confirm("এই মতামতটি মুছে ফেলতে চান?")) return;
+      try {
+        const { error } = await supabaseClient.from('feedback').delete().eq('id', id);
         if (error) throw error;
         loadAdminData();
       } catch (err) {
