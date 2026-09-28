@@ -133,6 +133,28 @@
       margin-top: 10px;
       line-height: 1.6;
     }
+
+    /* Responsive Footer Links */
+    .footer-links-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      padding: 0 4px;
+    }
+
+    .footer-nav-link {
+      color: var(--primary, #d32f2f);
+      text-decoration: none;
+      font-weight: 700;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
   </style>
 </head>
 <body>
@@ -150,7 +172,6 @@
 
       <div class="header-nav-row">
         <a href="register.html" class="nav-chip nav-chip-primary">+ রক্তদাতা হন</a>
-        <!-- Updated link to update-profile.html -->
         <a href="update-profile.html" class="nav-chip">👤 প্রোফাইল</a>
         <a href="admin.html" class="nav-chip">⚙️ Admin</a>
       </div>
@@ -275,10 +296,18 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 0.85rem;">
-        <a href="stats.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">📊 রক্তের পরিসংখ্যান</a>
-        <a href="feedback.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">💬 মতামত দিন</a>
-        <a href="guidelines.html" style="color: var(--primary, #d32f2f); text-decoration: none; font-weight: 700;">📖 রক্তদানের নির্দেশিকা</a>
+      <div class="footer-links-row">
+        <a href="stats.html" class="footer-nav-link">
+          📊 রক্তের পরিসংখ্যান
+        </a>
+        <span style="color: #cbd5e1;">•</span>
+        <a href="feedback.html" class="footer-nav-link">
+          💬 মতামত দিন
+        </a>
+        <span style="color: #cbd5e1;">•</span>
+        <a href="guidelines.html" class="footer-nav-link">
+          📖 নির্দেশিকা
+        </a>
       </div>
       <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting.</p>
       <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
@@ -345,7 +374,7 @@
       const donorsCountEl = document.getElementById('donorsCount');
       const listContainer = document.getElementById('donorsList');
 
-      // Rokter group ebong zela dutoi select thakle shudhu donor dekhabe
+      // Blood Group ebong District duto-i select thakte hobe
       if (blood === 'All' || city === 'All') {
         donorsCountEl.style.display = 'none';
         listContainer.innerHTML = `
@@ -366,7 +395,7 @@
         // Specific location optional match
         const matchesLoc = (!loc || (d.location && d.location.toLowerCase().includes(loc)));
         
-        // Status match (All hole available + unavailable sobai)
+        // Status match (All thakle Available + Unavailable sobai)
         const { isAvailable } = getDonationStatus(d);
         const matchesStatus = (status === 'All' || 
           (status === 'Available' && isAvailable) || 
@@ -429,7 +458,7 @@
       }).join('');
     }
 
-    // Report Donor Prompt (1, 2, 3 & 4 Other)
+    // 1, 2, 3 ebong 4 (Other) prompt
     async function reportDonor(donorId, donorName, donorPhone) {
       const promptMessage = 
 `${donorName}-এর বিষয়ে রিপোর্ট জানান:
