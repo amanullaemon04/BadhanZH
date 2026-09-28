@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>তথ্য আপডেট করুন - BADHAN ZH</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .profile-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      height: 48px;
+      padding: 10px 14px;
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      font-size: 0.96rem;
+      font-weight: 500;
+      background-color: rgba(255, 255, 255, 0.45);
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group select option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .btn-action {
+      width: 100%;
+      height: 48px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 3px 10px rgba(211, 47, 47, 0.25);
+    }
+
+    .btn-action:hover {
+      background: var(--primary-hover);
+    }
+
+    #editSection {
+      display: none;
+      border-top: 1px dashed rgba(203, 213, 225, 0.9);
+      padding-top: 16px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="profile-card">
+      <h2 class="form-title">ডোনার তথ্য আপডেট</h2>
+      <p class="form-subtitle">আপনার নিবন্ধিত মোবাইল নম্বর দিয়ে প্রোফাইল খুঁজে তথ্য পরিবর্তন করুন।</p>
+
+      <!-- Step 1: Find by Phone -->
+      <div class="form-group" id="searchGroup">
+        <label for="searchPhone">আপনার মোবাইল নম্বর *</label>
+        <input type="tel" id="searchPhone" placeholder="01XXXXXXXXX" required />
+        <button type="button" class="btn-action" id="findBtn" onclick="findDonorProfile()">তথ্য খুঁজুন</button>
+      </div>
+
+      <!-- Step 2: Edit Info -->
+      <form id="editSection" onsubmit="saveUpdatedProfile(event)">
+        <input type="hidden" id="donorId" />
+
+        <div class="form-group">
+          <label for="editName">নাম</label>
+          <input type="text" id="editName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editBlood">রক্তের গ্রুপ</label>
+          <select id="editBlood" required>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editCity">জেলা / শহর</label>
+          <select id="editCity" required>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Barishal">Barishal</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Mymensingh">Mymensingh</option>
+            <option value="Cumilla">Cumilla</option>
+            <option value="Gazipur">Gazipur</option>
+            <option value="Narayanganj">Narayanganj</option>
+            <option value="Bagerhat">Bagerhat</option>
+            <option value="Bandarban">Bandarban</option>
+            <option value="Barguna">Barguna</option>
+            <option value="Bhola">Bhola</option>
+            <option value="Bogura">Bogura</option>
+            <option value="Brahmanbaria">Brahmanbaria</option>
+            <option value="Chandpur">Chandpur</option>
+            <option value="Chuadanga">Chuadanga</option>
+            <option value="Cox's Bazar">Cox's Bazar</option>
+            <option value="Dinajpur">Dinajpur</option>
+            <option value="Faridpur">Faridpur</option>
+            <option value="Feni">Feni</option>
+            <option value="Gaibandha">Gaibandha</option>
+            <option value="Gopalganj">Gopalganj</option>
+            <option value="Habiganj">Habiganj</option>
+            <option value="Jamalpur">Jamalpur</option>
+            <option value="Jashore">Jashore</option>
+            <option value="Jhalokati">Jhalokati</option>
+            <option value="Jhenaidah">Jhenaidah</option>
+            <option value="Joypurhat">Joypurhat</option>
+            <option value="Khagrachhari">Khagrachhari</option>
+            <option value="Kishoreganj">Kishoreganj</option>
+            <option value="Kurigram">Kurigram</option>
+            <option value="Kushtia">Kushtia</option>
+            <option value="Lakshmipur">Lakshmipur</option>
+            <option value="Lalmonirhat">Lalmonirhat</option>
+            <option value="Madaripur">Madaripur</option>
+            <option value="Magura">Magura</option>
+            <option value="Manikganj">Manikganj</option>
+            <option value="Meherpur">Meherpur</option>
+            <option value="Moulvibazar">Moulvibazar</option>
+            <option value="Munshiganj">Munshiganj</option>
+            <option value="Naogaon">Naogaon</option>
+            <option value="Narail">Narail</option>
+            <option value="Narsingdi">Narsingdi</option>
+            <option value="Natore">Natore</option>
+            <option value="Netrokona">Netrokona</option>
+            <option value="Nilphamari">Nilphamari</option>
+            <option value="Noakhali">Noakhali</option>
+            <option value="Pabna">Pabna</option>
+            <option value="Panchagarh">Panchagarh</option>
+            <option value="Patuakhali">Patuakhali</option>
+            <option value="Pirojpur">Pirojpur</option>
+            <option value="Rajbari">Rajbari</option>
+            <option value="Rangamati">Rangamati</option>
+            <option value="Satkhira">Satkhira</option>
+            <option value="Shariatpur">Shariatpur</option>
+            <option value="Sherpur">Sherpur</option>
+            <option value="Sirajganj">Sirajganj</option>
+            <option value="Sunamganj">Sunamganj</option>
+            <option value="Tangail">Tangail</option>
+            <option value="Thakurgaon">Thakurgaon</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editLocation">বর্তমান এলাকা / হল / রুম নম্বর</label>
+          <input type="text" id="editLocation" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editLastDonation">সর্বশেষ রক্তদানের তারিখ</label>
+          <input type="date" id="editLastDonation" />
+        </div>
+
+        <div class="form-group">
+          <label for="editStatus">বর্তমান প্রাপ্যতা (Status)</label>
+          <select id="editStatus" required>
+            <option value="available">Available (রক্তদানে সক্ষম)</option>
+            <option value="unavailable">Unavailable (অসুস্থ / রক্ত দিয়েছেন)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-action" id="saveBtn">পরিবর্তন সেভ করুন</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — রক্তদানে সচেতনতা গড়ুন</p>
+      <p class="footer-credit">
+        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function findDonorProfile() {
+      const phoneInput = document.getElementById("searchPhone").value.trim();
+      const findBtn = document.getElementById("findBtn");
+
+      if (!phoneInput) {
+        alert("অনুগ্রহ করে আপনার মোবাইল নম্বর লিখুন!");
+        return;
+      }
+
+      findBtn.disabled = true;
+      findBtn.textContent = "তথ্য খোঁজা হচ্ছে...";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("donors")
+          .select("*")
+          .eq("phone", phoneInput);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          alert("এই মোবাইল নম্বরে কোনো ডোনারের তথ্য পাওয়া যায়নি!");
+          return;
+        }
+
+        const donor = data[0];
+
+        // Populate fields
+        document.getElementById("donorId").value = donor.id;
+        document.getElementById("editName").value = donor.name || "";
+        document.getElementById("editBlood").value = (donor.blood_group || "").trim().toUpperCase();
+        document.getElementById("editCity").value = donor.city || "Dhaka";
+        document.getElementById("editLocation").value = donor.location || "";
+        document.getElementById("editLastDonation").value = donor.last_donation || "";
+        document.getElementById("editStatus").value = (donor.status || "available").toLowerCase();
+
+        // Show edit section
+        document.getElementById("editSection").style.display = "block";
+        document.getElementById("searchPhone").readOnly = true;
+        findBtn.style.display = "none";
+
+      } catch (err) {
+        alert("সমস্যা হয়েছে: " + err.message);
+      } finally {
+        findBtn.disabled = false;
+        findBtn.textContent = "তথ্য খুঁজুন";
+      }
+    }
+
+    async function saveUpdatedProfile(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById("saveBtn");
+      saveBtn.disabled = true;
+      saveBtn.textContent = "সেভ হচ্ছে...";
+
+      const donorId = document.getElementById("donorId").value;
+      const updatedData = {
+        name: document.getElementById("editName").value.trim(),
+        blood_group: document.getElementById("editBlood").value,
+        city: document.getElementById("editCity").value,
+        location: document.getElementById("editLocation").value.trim(),
+        last_donation: document.getElementById("editLastDonation").value || null,
+        status: document.getElementById("editStatus").value
+      };
+
+      try {
+        const { error } = await supabaseClient
+          .from("donors")
+          .update(updatedData)
+          .eq("id", donorId);
+
+        if (error) throw error;
+
+        alert("আপনার তথ্য সফলভাবে আপডেট হয়েছে!");
+        window.location.href = "index.html";
+
+      } catch (err) {
+        alert("আপডেট ব্যর্থ হয়েছে: " + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "পরিবর্তন সেভ করুন";
+      }
+    }
+  </script>
+</body>
+</html>
