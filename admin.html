@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - BADHAN ZH</title>
+  <title>Admin Login - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Admin Specific Styling */
     .admin-controls {
       display: flex;
       gap: 8px;
@@ -136,33 +135,56 @@
       color: #fff;
     }
 
-    /* Login Form Card */
+    /* Email-Password Login Box */
     .login-card {
       background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(2px);
       border: 1.5px solid rgba(255, 255, 255, 0.7);
       border-radius: var(--radius);
-      padding: 22px 18px;
-      margin-top: 20px;
+      padding: 24px 18px;
+      margin-top: 14px;
       text-align: center;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
     }
 
-    .login-card input {
+    .login-input {
       width: 100%;
       height: 42px;
       padding: 8px 12px;
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
-      margin: 10px 0 14px 0;
+      margin-bottom: 12px;
       font-size: 0.95rem;
       outline: none;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .login-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .btn-login-submit {
+      width: 100%;
+      height: 42px;
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.25);
+    }
+
+    .btn-login-submit:hover {
+      background: var(--primary-hover);
     }
   </style>
 </head>
 <body>
 
-  <!-- Header matching HomePage exactly -->
+  <!-- Unified Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -187,12 +209,16 @@
   <!-- Main Container -->
   <main class="container">
     
-    <!-- Login Section -->
+    <!-- Email & Password Login Section -->
     <div id="loginSection" class="login-card">
-      <h2 style="color: var(--primary); font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">অ্যাডমিন প্যানেল লগইন</h2>
-      <p style="font-size: 0.84rem; color: var(--text-muted);">অ্যাডমিন পাসওয়ার্ড প্রদান করুন</p>
-      <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড লিখুন..." />
-      <button onclick="checkAdminPassword()" class="tab-btn active" style="width: 100%;">প্রবেশ করুন</button>
+      <h2 style="color: var(--primary); font-size: 1.25rem; font-weight: 800; margin-bottom: 4px;">অ্যাডমিন প্যানেল লগইন</h2>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px;">আপনার অ্যাডমিন ইমেইল ও পাসওয়ার্ড প্রদান করুন</p>
+      
+      <form onsubmit="handleAdminLogin(event)">
+        <input type="email" id="adminEmail" class="login-input" placeholder="অ্যাডমিন ইমেইল (Email)..." required />
+        <input type="password" id="adminPassword" class="login-input" placeholder="পাসওয়ার্ড (Password)..." required />
+        <button type="submit" class="btn-login-submit" id="loginBtn">লগইন করুন</button>
+      </form>
     </div>
 
     <!-- Admin Panel Content Section -->
@@ -230,19 +256,35 @@
     let allDonorsCache = [];
     let allReportsCache = [];
 
-    // Simple Admin Auth Check
-    function checkAdminPassword() {
-      const pass = document.getElementById('adminPassword').value;
-      if (pass === "badhanzh2026" || pass === "admin123") {
-        sessionStorage.setItem("badhan_admin_auth", "true");
+    // Supabase Email & Password Auth
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const btn = document.getElementById('loginBtn');
+
+      btn.disabled = true;
+      btn.textContent = "যাচাই করা হচ্ছে...";
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+
+        if (error) throw error;
+
         showAdminPanel();
-      } else {
-        alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
+      } catch (err) {
+        alert("লগইন ব্যর্থ হয়েছে: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "লগইন করুন";
       }
     }
 
-    function logoutAdmin() {
-      sessionStorage.removeItem("badhan_admin_auth");
+    async function logoutAdmin() {
+      await supabaseClient.auth.signOut();
       window.location.reload();
     }
 
@@ -251,6 +293,14 @@
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('logoutBtn').style.display = 'inline-flex';
       loadAdminData();
+    }
+
+    // Check existing Supabase session
+    async function checkCurrentSession() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        showAdminPanel();
+      }
     }
 
     // Tab Switching
@@ -268,13 +318,12 @@
       renderAdminList();
     }
 
-    // Load Data from Supabase
+    // Load Data
     async function loadAdminData() {
       const listContainer = document.getElementById('adminContentList');
       listContainer.innerHTML = `<div class="no-results">ডাটা লোড হচ্ছে...</div>`;
 
       try {
-        // Fetch Donors
         const { data: donorsData, error: dError } = await supabaseClient
           .from('donors')
           .select('*')
@@ -282,7 +331,6 @@
         if (dError) throw dError;
         allDonorsCache = donorsData || [];
 
-        // Fetch Reports
         const { data: reportsData } = await supabaseClient
           .from('reports')
           .select('*')
@@ -295,7 +343,7 @@
       }
     }
 
-    // Render List based on current tab
+    // Render Admin Records
     function renderAdminList() {
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
@@ -342,7 +390,6 @@
         `).join('');
 
       } else {
-        // Reports Tab
         let reports = allReportsCache;
         if (query) {
           reports = reports.filter(r => 
@@ -379,7 +426,6 @@
       renderAdminList();
     }
 
-    // Admin Actions
     async function verifyDonor(id) {
       try {
         const { error } = await supabaseClient.from('donors').update({ verified: true }).eq('id', id);
@@ -428,10 +474,9 @@
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
-    // Auto-login if session exists
-    if (sessionStorage.getItem("badhan_admin_auth") === "true") {
-      showAdminPanel();
-    }
+    // Check login state on page load
+    checkCurrentSession();
   </script>
 </body>
-</html>
+  </html>
+  
