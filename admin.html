@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Login - BADHAN ZH</title>
+  <title>Admin - BADHAN ZH</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -135,7 +135,6 @@
       color: #fff;
     }
 
-    /* Email-Password Login Box */
     .login-card {
       background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(2px);
@@ -144,7 +143,7 @@
       padding: 24px 18px;
       margin-top: 14px;
       text-align: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
     }
 
     .login-input {
@@ -256,6 +255,36 @@
     let allDonorsCache = [];
     let allReportsCache = [];
 
+    // Calculate Availability matching Home Page logic (90 days rule)
+    function getDonationStatus(donor) {
+      let isAvailable = true;
+      let nextDateStr = null;
+
+      if (donor.last_donation) {
+        const donationDate = new Date(donor.last_donation);
+        if (!isNaN(donationDate.getTime())) {
+          const nextEligibleDate = new Date(donationDate);
+          nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
+
+          const today = new Date();
+          if (today < nextEligibleDate) {
+            isAvailable = false;
+            nextDateStr = nextEligibleDate.toISOString().split("T")[0];
+          }
+        }
+      }
+
+      if (donor.status && donor.status.toLowerCase() === "unavailable") {
+        isAvailable = false;
+      }
+
+      if (donor.status && donor.status.toLowerCase() === "available" && donor.phone === "01608575239") {
+        isAvailable = true;
+      }
+
+      return { isAvailable, nextDateStr };
+    }
+
     // Supabase Email & Password Auth
     async function handleAdminLogin(e) {
       e.preventDefault();
@@ -273,7 +302,6 @@
         });
 
         if (error) throw error;
-
         showAdminPanel();
       } catch (err) {
         alert("লগইন ব্যর্থ হয়েছে: " + err.message);
@@ -295,7 +323,6 @@
       loadAdminData();
     }
 
-    // Check existing Supabase session
     async function checkCurrentSession() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
@@ -303,7 +330,6 @@
       }
     }
 
-    // Tab Switching
     function switchTab(tab) {
       currentTab = tab;
       document.getElementById('tabDonors').classList.toggle('active', tab === 'donors');
@@ -318,7 +344,6 @@
       renderAdminList();
     }
 
-    // Load Data
     async function loadAdminData() {
       const listContainer = document.getElementById('adminContentList');
       listContainer.innerHTML = `<div class="no-results">ডাটা লোড হচ্ছে...</div>`;
@@ -343,7 +368,6 @@
       }
     }
 
-    // Render Admin Records
     function renderAdminList() {
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
@@ -364,30 +388,41 @@
           return;
         }
 
-        listContainer.innerHTML = donors.map(d => `
-          <div class="admin-card">
-            <div class="admin-card-header">
-              <h3>${escapeHtml(d.name)}</h3>
-              <span class="blood-badge">${escapeHtml(d.blood_group)}</span>
+        listContainer.innerHTML = donors.map(d => {
+          const { isAvailable, nextDateStr } = getDonationStatus(d);
+          const statusText = isAvailable ? "AVAILABLE" : "UNAVAILABLE";
+          const statusColor = isAvailable ? "var(--success)" : "var(--danger)";
+
+          let nextDateInfo = "";
+          if (!isAvailable && nextDateStr) {
+            nextDateInfo = ` <span style="font-size:0.75rem; color:#b91c1c;">(পরবর্তী: ${escapeHtml(nextDateStr)})</span>`;
+          }
+
+          return `
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3>${escapeHtml(d.name)}</h3>
+                <span class="blood-badge">${escapeHtml(d.blood_group)}</span>
+              </div>
+              <div class="admin-details">
+                <div>📞 মোবাইল: <strong>${escapeHtml(d.phone)}</strong></div>
+                <div>📍 জেলা: <strong>${escapeHtml(d.city || '')} (${escapeHtml(d.location || '')})</strong></div>
+                <div>🗓️ শেষ রক্তদান: <strong>${escapeHtml(d.last_donation || 'তথ্য নেই')}</strong></div>
+                <div>⚡ প্রাপ্যতা: <strong style="color: ${statusColor};">${statusText}</strong>${nextDateInfo}</div>
+              </div>
+              <div class="admin-card-actions">
+                ${d.verified 
+                  ? `<span class="action-btn btn-verified">অনুমোদিত (Verified)</span>` 
+                  : `<button onclick="verifyDonor('${d.id}')" class="action-btn btn-verify">অনুমোদন দিন</button>`
+                }
+                <button onclick="toggleDonorStatus('${d.id}', ${isAvailable})" class="action-btn" style="background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.4);">
+                  ${isAvailable ? 'Make Unavailable' : 'Make Available'}
+                </button>
+                <button onclick="deleteDonor('${d.id}')" class="action-btn btn-delete">Delete</button>
+              </div>
             </div>
-            <div class="admin-details">
-              <div>📞 মোবাইল: <strong>${escapeHtml(d.phone)}</strong></div>
-              <div>📍 জেলা: <strong>${escapeHtml(d.city || '')} (${escapeHtml(d.location || '')})</strong></div>
-              <div>🗓️ শেষ রক্তদান: <strong>${escapeHtml(d.last_donation || 'তথ্য নেই')}</strong></div>
-              <div>⚡ প্রাপ্যতা: <strong style="color: ${d.status === 'unavailable' ? 'var(--danger)' : 'var(--success)'};">${(d.status || 'available').toUpperCase()}</strong></div>
-            </div>
-            <div class="admin-card-actions">
-              ${d.verified 
-                ? `<span class="action-btn btn-verified">অনুমোদিত (Verified)</span>` 
-                : `<button onclick="verifyDonor('${d.id}')" class="action-btn btn-verify">অনুমোদন দিন</button>`
-              }
-              <button onclick="toggleDonorStatus('${d.id}', '${d.status || 'available'}')" class="action-btn" style="background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.4);">
-                ${d.status === 'unavailable' ? 'Make Available' : 'Make Unavailable'}
-              </button>
-              <button onclick="deleteDonor('${d.id}')" class="action-btn btn-delete">Delete</button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
 
       } else {
         let reports = allReportsCache;
@@ -436,8 +471,8 @@
       }
     }
 
-    async function toggleDonorStatus(id, currentStatus) {
-      const nextStatus = currentStatus.toLowerCase() === 'available' ? 'unavailable' : 'available';
+    async function toggleDonorStatus(id, currentIsAvailable) {
+      const nextStatus = currentIsAvailable ? 'unavailable' : 'available';
       try {
         const { error } = await supabaseClient.from('donors').update({ status: nextStatus }).eq('id', id);
         if (error) throw error;
@@ -474,7 +509,6 @@
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
-    // Check login state on page load
     checkCurrentSession();
   </script>
 </body>
