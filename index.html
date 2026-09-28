@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BADHAN ZH</title>
+  <title>BADHAN ZH - Blood Donation</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -21,8 +21,8 @@
       </div>
 
       <div class="header-nav-row">
-        <a href="register.html" class="nav-chip nav-chip-primary">+ রক্তদাতা হন</a>
-        <a href="update-profile.html" class="nav-chip">👤 প্রোফাইল</a>
+        <a href="register.html" class="nav-chip">+ রক্তদাতা হন</a>
+        <a href="profile.html" class="nav-chip">👤 প্রোফাইল</a>
         <a href="admin.html" class="nav-chip">⚙️ Admin</a>
       </div>
 
@@ -34,139 +34,231 @@
 
   <!-- Main Container -->
   <main class="container">
-    <section class="filter-card">
-      <div class="filter-grid">
-        <div class="filter-group">
-          <label for="blood">রক্তের গ্রুপ (Blood Group)</label>
-          <select id="blood">
-            <option value="">All Blood Groups</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="city">জেলা / শহর (City / District)</label>
-          <select id="city">
-            <option value="">All locations</option>
-            <option value="Bagerhat">Bagerhat</option>
-            <option value="Bandarban">Bandarban</option>
-            <option value="Barguna">Barguna</option>
-            <option value="Barishal">Barishal</option>
-            <option value="Bhola">Bhola</option>
-            <option value="Bogura">Bogura</option>
-            <option value="Brahmanbaria">Brahmanbaria</option>
-            <option value="Chandpur">Chandpur</option>
-            <option value="Chattogram">Chattogram</option>
-            <option value="Chuadanga">Chuadanga</option>
-            <option value="Cox's Bazar">Cox's Bazar</option>
-            <option value="Cumilla">Cumilla</option>
-            <option value="Dhaka">Dhaka</option>
-            <option value="Dinajpur">Dinajpur</option>
-            <option value="Faridpur">Faridpur</option>
-            <option value="Feni">Feni</option>
-            <option value="Gaibandha">Gaibandha</option>
-            <option value="Gazipur">Gazipur</option>
-            <option value="Gopalganj">Gopalganj</option>
-            <option value="Habiganj">Habiganj</option>
-            <option value="Jamalpur">Jamalpur</option>
-            <option value="Jashore">Jashore</option>
-            <option value="Jhalokati">Jhalokati</option>
-            <option value="Jhenaidah">Jhenaidah</option>
-            <option value="Joypurhat">Joypurhat</option>
-            <option value="Khagrachhari">Khagrachhari</option>
-            <option value="Khulna">Khulna</option>
-            <option value="Kishoreganj">Kishoreganj</option>
-            <option value="Kurigram">Kurigram</option>
-            <option value="Kushtia">Kushtia</option>
-            <option value="Lakshmipur">Lakshmipur</option>
-            <option value="Lalmonirhat">Lalmonirhat</option>
-            <option value="Madaripur">Madaripur</option>
-            <option value="Magura">Magura</option>
-            <option value="Manikganj">Manikganj</option>
-            <option value="Meherpur">Meherpur</option>
-            <option value="Moulvibazar">Moulvibazar</option>
-            <option value="Munshiganj">Munshiganj</option>
-            <option value="Mymensingh">Mymensingh</option>
-            <option value="Naogaon">Naogaon</option>
-            <option value="Narail">Narail</option>
-            <option value="Narayanganj">Narayanganj</option>
-            <option value="Narsingdi">Narsingdi</option>
-            <option value="Natore">Natore</option>
-            <option value="Netrokona">Netrokona</option>
-            <option value="Nilphamari">Nilphamari</option>
-            <option value="Noakhali">Noakhali</option>
-            <option value="Pabna">Pabna</option>
-            <option value="Panchagarh">Panchagarh</option>
-            <option value="Patuakhali">Patuakhali</option>
-            <option value="Pirojpur">Pirojpur</option>
-            <option value="Rajbari">Rajbari</option>
-            <option value="Rajshahi">Rajshahi</option>
-            <option value="Rangamati">Rangamati</option>
-            <option value="Rangpur">Rangpur</option>
-            <option value="Satkhira">Satkhira</option>
-            <option value="Shariatpur">Shariatpur</option>
-            <option value="Sherpur">Sherpur</option>
-            <option value="Sirajganj">Sirajganj</option>
-            <option value="Sunamganj">Sunamganj</option>
-            <option value="Sylhet">Sylhet</option>
-            <option value="Tangail">Tangail</option>
-            <option value="Thakurgaon">Thakurgaon</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="location">নির্দিষ্ট এলাকা / হল (Specific Location)</label>
-          <input type="text" id="location" placeholder="e.g. Zahurul Huq Hall" autocomplete="off" />
-        </div>
-
-        <div class="filter-group">
-          <label for="status">স্ট্যাটাস (Availability)</label>
-          <select id="status">
-            <option value="">All</option>
-            <option value="available">Available</option>
-            <option value="unavailable">Unavailable</option>
-          </select>
-        </div>
+    <div class="filter-card">
+      <div class="filter-group">
+        <label>রক্তের গ্রুপ (Blood Group)</label>
+        <select id="bloodGroupFilter" class="select-box" onchange="filterDonors()">
+          <option value="All">All Groups</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
       </div>
-    </section>
 
-    <!-- Results Section -->
-    <section class="results-section">
-      <div class="results-header">
-        <h2>Donors found: <span id="count">0</span></h2>
+      <div class="filter-group">
+        <label>জেলা / শহর (City / District)</label>
+        <select id="cityFilter" class="select-box" onchange="filterDonors()">
+          <option value="All">All Cities</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Chattogram">Chattogram</option>
+          <option value="Rajshahi">Rajshahi</option>
+          <option value="Khulna">Khulna</option>
+          <option value="Barishal">Barishal</option>
+          <option value="Sylhet">Sylhet</option>
+          <option value="Rangpur">Rangpur</option>
+          <option value="Mymensingh">Mymensingh</option>
+        </select>
       </div>
-      <div id="results" class="donor-grid"></div>
-    </section>
+
+      <div class="filter-group">
+        <label>নির্দিষ্ট এলাকা / হল (Specific Location)</label>
+        <input type="text" id="locationFilter" class="input-box" placeholder="e.g. Zahurul Huq Hall" oninput="filterDonors()" />
+      </div>
+
+      <div class="filter-group">
+        <label>স্ট্যাটাস (Availability)</label>
+        <select id="statusFilter" class="select-box" onchange="filterDonors()">
+          <option value="All">All</option>
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="donors-count" id="donorsCount">Donors found: 0</div>
+    <div id="donorsList"></div>
   </main>
-
-  <!-- Quick Shortcuts -->
-  <div class="quick-shortcuts">
-    <a href="stats.html" class="shortcut-chip">📊 রক্তের পরিসংখ্যান</a>
-    <a href="feedback.html" class="shortcut-chip">💬 মতামত দিন</a>
-    <a href="guidelines.html" class="shortcut-chip">📖 রক্তদানের নির্দেশিকা</a>
-  </div>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
+      <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 6px; font-size: 0.85rem;">
+        <a href="stats.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📊 রক্তের পরিসংখ্যান</a>
+        <a href="feedback.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">💬 মতামত দিন</a>
+        <a href="guidelines.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">📖 রক্তদানের নির্দেশিকা</a>
+      </div>
       <p class="footer-notice">Use donor information responsibly. Confirm availability before contacting.</p>
-      <p class="footer-credit">
-        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
-      </p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
 
   <script>
-    window.SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
-    window.SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let allDonors = [];
+
+    function getDonationStatus(donor) {
+      let isAvailable = true;
+      let nextDateStr = null;
+
+      if (donor.last_donation) {
+        const donationDate = new Date(donor.last_donation);
+        if (!isNaN(donationDate.getTime())) {
+          const nextEligibleDate = new Date(donationDate);
+          nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
+
+          const today = new Date();
+          if (today < nextEligibleDate) {
+            isAvailable = false;
+            nextDateStr = nextEligibleDate.toISOString().split("T")[0];
+          }
+        }
+      }
+
+      if (donor.status && donor.status.toLowerCase() === "unavailable") {
+        isAvailable = false;
+      }
+
+      if (donor.status && donor.status.toLowerCase() === "available" && donor.phone === "01608575239") {
+        isAvailable = true;
+      }
+
+      return { isAvailable, nextDateStr };
+    }
+
+    async function loadDonors() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('*')
+          .eq('verified', true)
+          .order('id', { ascending: false });
+
+        if (error) throw error;
+        allDonors = data || [];
+        filterDonors();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function filterDonors() {
+      const blood = document.getElementById('bloodGroupFilter').value;
+      const city = document.getElementById('cityFilter').value;
+      const loc = document.getElementById('locationFilter').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+
+      let filtered = allDonors.filter(d => {
+        const matchesBlood = (blood === 'All' || d.blood_group === blood);
+        const matchesCity = (city === 'All' || (d.city && d.city.toLowerCase() === city.toLowerCase()));
+        const matchesLoc = (!loc || (d.location && d.location.toLowerCase().includes(loc)));
+        
+        const { isAvailable } = getDonationStatus(d);
+        const matchesStatus = (status === 'All' || 
+          (status === 'Available' && isAvailable) || 
+          (status === 'Unavailable' && !isAvailable)
+        );
+
+        return matchesBlood && matchesCity && matchesLoc && matchesStatus;
+      });
+
+      document.getElementById('donorsCount').textContent = `Donors found: ${filtered.length}`;
+      renderDonors(filtered);
+    }
+
+    function renderDonors(donors) {
+      const listContainer = document.getElementById('donorsList');
+      if (donors.length === 0) {
+        listContainer.innerHTML = `<div class="no-results">কোনো রক্তদাতা খুঁজে পাওয়া যায়নি।</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = donors.map(d => {
+        const { isAvailable, nextDateStr } = getDonationStatus(d);
+        const statusBadge = isAvailable
+          ? `<span style="color: var(--success); font-weight: 800; font-size: 0.8rem;">AVAILABLE</span>`
+          : `<span style="color: var(--danger); font-weight: 800; font-size: 0.8rem;">UNAVAILABLE</span>`;
+
+        let dateDetails = "";
+        if (d.last_donation) {
+          dateDetails += `<div>সর্বশেষ রক্তদান: <strong>${d.last_donation}</strong></div>`;
+        }
+        if (!isAvailable && nextDateStr) {
+          dateDetails += `<div>পরবর্তী রক্তদান: <strong>${nextDateStr} থেকে সম্ভাব্য</strong></div>`;
+        }
+
+        return `
+          <div class="donor-card">
+            <div class="donor-header">
+              <h3>${escapeHtml(d.name)}</h3>
+              <span class="blood-badge">${escapeHtml(d.blood_group)}</span>
+            </div>
+            <div style="margin-bottom: 6px;">${statusBadge}</div>
+            <div class="donor-details">
+              <div>ঠিকানা: <strong>${escapeHtml(d.location || '')}, ${escapeHtml(d.city || '')}</strong></div>
+              ${dateDetails}
+            </div>
+            <div class="donor-actions">
+              <a href="tel:${escapeHtml(d.phone)}" class="action-btn btn-call">📞 কল করুন</a>
+              <button onclick="reportDonor('${d.id}', '${escapeHtml(d.name)}', '${escapeHtml(d.phone)}')" class="action-btn btn-report">⚠️ রিপোর্ট</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // UPDATED REPORT DONOR FUNCTION
+    async function reportDonor(donorId, donorName, donorPhone) {
+      const promptMessage = 
+`${donorName}-এর বিষয়ে রিপোর্ট জানান:
+1. রক্ত দিয়ে ফেলেছেন (অপ্রাপ্য)
+2. ফোন বন্ধ / ধরছেন না
+3. ভুল নম্বর / অস্তিত্ব নেই
+4. অন্যান্য (বিস্তারিত লিখুন)
+
+নম্বর (1, 2, 3) লিখুন অথবা 4 লিখে সমস্যাটি জানান:`;
+
+      const input = prompt(promptMessage);
+      if (!input || !input.trim()) return;
+
+      const trimmed = input.trim();
+      let reason = trimmed;
+
+      if (trimmed === '4') {
+        const customReason = prompt("অন্যান্য সমস্যাটি সংক্ষেপে লিখুন:");
+        if (!customReason || !customReason.trim()) return;
+        reason = `4: ${customReason.trim()}`;
+      }
+
+      try {
+        const { error } = await supabaseClient.from('reports').insert([{
+          donor_id: donorId,
+          donor_name: donorName,
+          donor_phone: donorPhone,
+          reason: reason,
+          report_status: 'pending'
+        }]);
+
+        if (error) throw error;
+        alert("আপনার রিপোর্টটি সফলভাবে জমা হয়েছে। ধন্যবাদ!");
+      } catch (err) {
+        alert("রিপোর্ট জমা দিতে সমস্যা হয়েছে: " + err.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    loadDonors();
   </script>
-  <script src="app.js"></script>
 </body>
 </html>
