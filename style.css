@@ -10,9 +10,9 @@
   --primary: #d32f2f;
   --primary-hover: #b71c1c;
   --bg-color: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-bg: rgba(255, 255, 255, 0.45);
   --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-muted: #475569;
   --border-color: #cbd5e1;
   --success: #16a34a;
   --danger: #dc2626;
@@ -35,20 +35,20 @@ body {
   position: relative;
 }
 
-/* Background Watermark Logo (Opacity 0.10) */
+/* Background Watermark Logo (Opacity 0.12 - crystal clear) */
 body::before {
   content: "";
   position: fixed;
-  top: 50%;
+  top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(85vw, 420px);
-  height: min(85vw, 420px);
+  width: min(88vw, 440px);
+  height: min(88vw, 440px);
   background-image: url('https://lh3.googleusercontent.com/d/1ynfT2kM9ZgEAHmc_wS24MfwWRziomdPa');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  opacity: 0.10;
+  opacity: 0.12;
   pointer-events: none;
   z-index: 0;
 }
@@ -61,9 +61,9 @@ body::before {
 
 /* Header */
 .header {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.8);
   padding: 8px 16px;
   position: sticky;
   top: 0;
@@ -112,7 +112,7 @@ body::before {
   padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.7);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -156,14 +156,14 @@ body::before {
   justify-content: flex-start;
 }
 
-/* Filter Card (Semi-transparent with Glassmorphism) */
+/* Filter Card (See-Through Glass Transparency) */
 .filter-card {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.35); /* Logo completely visible */
+  backdrop-filter: blur(2px);
   padding: 20px 18px;
   border-radius: var(--radius);
-  border: 1px solid rgba(203, 213, 225, 0.7);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
   margin-bottom: 12px;
 }
 
@@ -181,28 +181,36 @@ body::before {
 
 .filter-group label {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: #1e293b;
 }
 
+/* Inputs & Selects also transparent so they don't block the logo */
 .filter-group select,
 .filter-group input {
   width: 100%;
   height: 48px;
   padding: 10px 14px;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid rgba(203, 213, 225, 0.85);
   border-radius: 8px;
   font-size: 0.98rem;
-  background-color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.45); /* Transparent input background */
   color: var(--text-main);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
+}
+
+.filter-group select option {
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15);
 }
 
 /* Results Section */
@@ -236,17 +244,17 @@ body::before {
   text-align: center;
   padding: 14px 12px;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
   border-radius: var(--radius);
-  border: 1px dashed rgba(203, 213, 225, 0.8);
+  border: 1px dashed rgba(203, 213, 225, 0.9);
   font-size: 0.88rem;
   line-height: 1.4;
 }
 
 /* Donor Card */
 .donor-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
   border-radius: var(--radius);
   padding: 16px 18px;
@@ -363,7 +371,7 @@ body::before {
 
 /* Form Card */
 .form-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
   padding: 18px;
   border-radius: var(--radius);
@@ -393,7 +401,7 @@ body::before {
 
 /* Footer */
 .footer {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--border-color);
   padding: 8px 16px;
