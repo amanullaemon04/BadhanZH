@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amanulla Emon - Biography & Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .bio-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 14px 40px;
+    }
+
+    .bio-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius, 12px);
+      padding: 24px 20px;
+      margin-top: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .bio-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .bio-avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      border: 3px solid #dc2626;
+      padding: 3px;
+      background: #ffffff;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+    }
+
+    .bio-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 10px 0 2px 0;
+    }
+
+    .bio-tagline {
+      font-size: 0.86rem;
+      color: #dc2626;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .bio-section {
+      margin-top: 20px;
+      border-top: 1px solid rgba(203, 213, 225, 0.6);
+      padding-top: 16px;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .bio-text {
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Skills Pill Grid */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .skill-chip {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #cbd5e1;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    /* Details List */
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.86rem;
+      color: #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .info-list strong {
+      color: #0f172a;
+      min-width: 85px;
+    }
+
+    .quote-box {
+      background: rgba(220, 38, 38, 0.05);
+      border-left: 3px solid #dc2626;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: #475569;
+      font-size: 0.84rem;
+      margin: 16px 0 6px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="header-main-row">
+        <a href="index.html" class="logo">
+          <span class="logo-drop">🩸</span>
+          <span class="logo-text">BADHAN</span>
+          <span class="logo-zh-badge">ZH</span>
+        </a>
+      </div>
+
+      <div class="header-nav-row">
+        <a href="index.html" class="nav-chip">← হোম পেজ</a>
+        <a href="developer.html" class="nav-chip">👨‍💻 ডেভেলপার পেজ</a>
+      </div>
+
+      <div class="header-slogan-wrap">
+        <p class="header-slogan">"একের রক্ত অন্যের জীবন, রক্তই হোক আত্মার বাঁধন"</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="bio-container">
+    <div class="bio-card">
+      
+      <!-- Top Profile Overview -->
+      <div class="bio-header">
+        <!-- Chhobi path thik kore boshate paro -->
+        <img src="https://via.placeholder.com/150" alt="Amanulla Emon" class="bio-avatar" />
+        <h1 class="bio-name">Amanulla Emon</h1>
+        <p class="bio-tagline">Web Developer & Tech Enthusiast</p>
+      </div>
+
+      <div class="quote-box">
+        "প্রযুক্তি মানুষের কল্যাণে আসুক, সেবাই হোক জীবনের মূল সুর।"
+      </div>
+
+      <!-- Section: About Me -->
+      <div class="bio-section">
+        <div class="section-title">
+          <span>👤</span> আমার সম্পর্কে (About Me)
+        </div>
+        <p class="bio-text">
+          আমি প্রযুক্তি এবং সফটওয়্যার আর্কিটেকচার নিয়ে কাজ করতে ভালোবাসি। যেকোনো জটিল সমস্যা সমাধান করা এবং সাধারণ মানুষের দৈনন্দিন জীবনের উপকারে আসে এমন ডিজিটাল টুলস বা প্ল্যাটফর্ম তৈরি করাই আমার মূল লক্ষ্য।
+        </p>
+      </div>
+
+      <!-- Section: Academics & Info -->
+      <div class="bio-section">
+        <div class="section-title">
+          <span>🎓</span> শিক্ষা ও ব্যক্তিগত তথ্য (Details)
+        </div>
+        <ul class="info-list">
+          <li><strong>ইনস্টিটিউট:</strong> ঢাকা বিশ্ববিদ্যালয় (University of Dhaka)</li>
+          <li><strong>আবাসন/হল:</strong> শহীদ সার্জেন্ট জহুরুল হক হল</li>
+          <li><strong>জেলা:</strong> ঢাকা, বাংলাদেশ</li>
+          <li><strong>ইন্টারেস্ট:</strong> ওয়েব ডেভেলপমেন্ট, প্রবলেম সলভিং ও সমাজসেবা</li>
+        </ul>
+      </div>
+
+      <!-- Section: BADHAN ZH Story -->
+      <div class="bio-section">
+        <div class="section-title">
+          <span>🩸</span> BADHAN ZH প্ল্যাটফর্মের গল্প
+        </div>
+        <p class="bio-text">
+          জরুরি রক্তের প্রয়োজনে রক্তদাতার সন্ধান পাওয়া প্রায়ই সময়সাপেক্ষ হয়ে দাঁড়ায়। শহীদ সার্জেন্ট জহুরুল হক হলের রক্তদাতাদের নেটওয়ার্কিং সহজ করতে এবং সারা দেশের ৬৪ জেলার ডোনারদের দ্রুত যোগাযোগের আওতায় আনতেই একক উদ্যোগে BADHAN ZH ওয়েব অ্যাপ্লিকেশনটি তৈরি করা।
+        </p>
+      </div>
+
+      <!-- Section: Technical Stack -->
+      <div class="bio-section">
+        <div class="section-title">
+          <span>💻</span> টেকনিক্যাল স্কিলস (Tech Stack)
+        </div>
+        <div class="skills-grid">
+          <span class="skill-chip">HTML5</span>
+          <span class="skill-chip">CSS3 / Responsive UI</span>
+          <span class="skill-chip">JavaScript (ES6+)</span>
+          <span class="skill-chip">Supabase (PostgreSQL)</span>
+          <span class="skill-chip">Cloudflare Workers</span>
+          <span class="skill-chip">REST APIs</span>
+          <span class="skill-chip">Git / GitHub</span>
+        </div>
+      </div>
+
+      <!-- Section: Co-curricular / Hobbies -->
+      <div class="bio-section">
+        <div class="section-title">
+          <span>🎯</span> সহশিক্ষা ও অন্যান্য আগ্রহ
+        </div>
+        <p class="bio-text">
+          কোডিংয়ের পাশাপাশি ভাষা শিক্ষা, দাবা (Chess) খেলা এবং বিভিন্ন স্বেচ্ছাসেবী কার্যক্রমে অংশ নিতে আমি পছন্দ করি।
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-notice">BADHAN ZH — রক্তদানে সচেতনতা আমাদের লক্ষ্য</p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
