@@ -9,7 +9,7 @@
   <style>
     .admin-controls {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       margin-bottom: 12px;
       margin-top: 6px;
       overflow-x: auto;
@@ -18,22 +18,22 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 90px;
-      height: 40px;
+      min-width: 82px;
+      height: 38px;
       border: 1px solid var(--border-color);
       background: rgba(255, 255, 255, 0.7);
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       cursor: pointer;
       color: var(--text-main);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
       transition: all 0.2s ease;
       white-space: nowrap;
-      padding: 0 6px;
+      padding: 0 5px;
     }
 
     .tab-btn.active {
@@ -46,7 +46,7 @@
     .tab-badge {
       background: #ef4444;
       color: #fff;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       padding: 1px 5px;
       border-radius: 10px;
       font-weight: 800;
@@ -78,10 +78,6 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(22, 163, 74, 0.25);
-    }
-
-    .btn-verify-all:hover {
-      background: #15803d;
     }
 
     .search-box {
@@ -153,18 +149,12 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      text-decoration: none;
     }
 
     .btn-verify {
       background: rgba(22, 163, 74, 0.15);
       color: var(--success);
       border: 1px solid rgba(22, 163, 74, 0.4);
-    }
-
-    .btn-verify:hover {
-      background: var(--success);
-      color: #fff;
     }
 
     .btn-verified {
@@ -181,9 +171,26 @@
       max-width: 90px;
     }
 
-    .btn-delete:hover {
-      background: var(--danger);
-      color: #fff;
+    .subadmin-form {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .subadmin-input {
+      width: 100%;
+      height: 38px;
+      padding: 6px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      outline: none;
+      background: #ffffff;
     }
 
     .login-card {
@@ -209,11 +216,6 @@
       background: rgba(255, 255, 255, 0.85);
     }
 
-    .login-input:focus {
-      border-color: var(--primary);
-      background: #ffffff;
-    }
-
     .btn-login-submit {
       width: 100%;
       height: 42px;
@@ -224,17 +226,12 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(211, 47, 47, 0.25);
-    }
-
-    .btn-login-submit:hover {
-      background: var(--primary-hover);
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Unified Header -->
   <header class="header">
     <div class="header-container">
       <div class="header-main-row">
@@ -265,19 +262,19 @@
       <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px;">আপনার অ্যাডমিন ইমেইল ও পাসওয়ার্ড প্রদান করুন</p>
       
       <form onsubmit="handleAdminLogin(event)">
-        <input type="email" id="adminEmail" class="login-input" placeholder="অ্যাডমিন ইমেইল (Email)..." required />
+        <input type="email" id="adminEmail" class="login-input" placeholder="ইমেইল (Email)..." required />
         <input type="password" id="adminPassword" class="login-input" placeholder="পাসওয়ার্ড (Password)..." required />
         <button type="submit" class="btn-login-submit" id="loginBtn">লগইন করুন</button>
       </form>
     </div>
 
-    <!-- Admin Panel Content Section -->
+    <!-- Admin Panel Content -->
     <div id="adminPanel" style="display: none;">
       <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center; margin: 8px 0 6px 0;">অ্যাডমিন কন্ট্রোল</h2>
 
-      <!-- 4 Control Tabs -->
+      <!-- Navigation Tabs -->
       <div class="admin-controls">
-        <button class="tab-btn active" id="tabDonors" onclick="switchTab('donors')">👥 সকল ডোনার</button>
+        <button class="tab-btn active" id="tabDonors" onclick="switchTab('donors')">👥 ডোনার</button>
         <button class="tab-btn" id="tabPending" onclick="switchTab('pending')">
           ⏳ পেন্ডিং <span class="tab-badge" id="pendingBadge">0</span>
         </button>
@@ -285,6 +282,7 @@
         <button class="tab-btn" id="tabFeedback" onclick="switchTab('feedback')">
           💬 মতামত <span class="tab-badge" id="feedbackBadge" style="background:#2563eb;">0</span>
         </button>
+        <button class="tab-btn" id="tabSubadmins" onclick="switchTab('subadmins')">➕ সাব-এডমিন</button>
       </div>
 
       <!-- Verify All Bar -->
@@ -302,13 +300,10 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <p class="footer-notice">BADHAN ZH — অ্যাডমিন কন্ট্রোল প্যানেল</p>
-      <p class="footer-credit">
-        Designed & Developed by <a href="developer.html">Amanulla Emon</a>
-      </p>
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
     </div>
   </footer>
 
@@ -317,12 +312,13 @@
     const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentTab = 'donors'; // 'donors' | 'pending' | 'reports' | 'feedback'
+    let currentTab = 'donors';
+    let currentUserRole = 'superadmin'; // 'superadmin' | 'subadmin'
     let allDonorsCache = [];
     let allReportsCache = [];
     let allFeedbackCache = [];
+    let allSubadminsCache = [];
 
-    // Calculate Availability matching Home Page logic (90 days rule)
     function getDonationStatus(donor) {
       let isAvailable = true;
       let nextDateStr = null;
@@ -352,7 +348,7 @@
       return { isAvailable, nextDateStr };
     }
 
-    // Admin Login
+    // Unified Login: Supabase Auth (Super Admin) OR admin_users table (Sub-Admin)
     async function handleAdminLogin(e) {
       e.preventDefault();
       const email = document.getElementById('adminEmail').value.trim();
@@ -363,13 +359,34 @@
       btn.textContent = "যাচাই করা হচ্ছে...";
 
       try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
+        // 1. Try Super Admin Auth
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        
+        if (!error && data?.session) {
+          currentUserRole = 'superadmin';
+          localStorage.setItem('badhan_admin_role', 'superadmin');
+          showAdminPanel();
+          return;
+        }
 
-        if (error) throw error;
-        showAdminPanel();
+        // 2. Try Sub-Admin Table
+        const { data: subadmins, error: subErr } = await supabaseClient
+          .from('admin_users')
+          .select('*')
+          .eq('email', email)
+          .eq('password', password);
+
+        if (subErr) throw subErr;
+
+        if (subadmins && subadmins.length > 0) {
+          currentUserRole = 'subadmin';
+          localStorage.setItem('badhan_admin_role', 'subadmin');
+          localStorage.setItem('badhan_subadmin_email', email);
+          showAdminPanel();
+          return;
+        }
+
+        throw new Error("ভুল ইমেইল অথবা পাসওয়ার্ড!");
       } catch (err) {
         alert("লগইন ব্যর্থ হয়েছে: " + err.message);
       } finally {
@@ -380,6 +397,8 @@
 
     async function logoutAdmin() {
       await supabaseClient.auth.signOut();
+      localStorage.removeItem('badhan_admin_role');
+      localStorage.removeItem('badhan_subadmin_email');
       window.location.reload();
     }
 
@@ -387,23 +406,37 @@
       document.getElementById('loginSection').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('logoutBtn').style.display = 'inline-flex';
+
+      // Hide Sub-Admin creation tab if current logged-in user is a sub-admin
+      if (currentUserRole === 'subadmin') {
+        const subTab = document.getElementById('tabSubadmins');
+        if (subTab) subTab.style.display = 'none';
+      }
+
       loadAdminData();
     }
 
     async function checkCurrentSession() {
+      const savedRole = localStorage.getItem('badhan_admin_role');
+      if (savedRole === 'subadmin') {
+        currentUserRole = 'subadmin';
+        showAdminPanel();
+        return;
+      }
+
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
+        currentUserRole = 'superadmin';
         showAdminPanel();
       }
     }
 
     function switchTab(tab) {
       currentTab = tab;
-      document.getElementById('tabDonors').classList.toggle('active', tab === 'donors');
-      document.getElementById('tabPending').classList.toggle('active', tab === 'pending');
-      document.getElementById('tabReports').classList.toggle('active', tab === 'reports');
-      document.getElementById('tabFeedback').classList.toggle('active', tab === 'feedback');
-      
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+
       const verifyAllContainer = document.getElementById('verifyAllContainer');
       const searchBox = document.getElementById('adminSearch');
 
@@ -416,9 +449,12 @@
       } else if (tab === 'reports') {
         verifyAllContainer.style.display = 'none';
         searchBox.placeholder = "রিপোর্টের কারণ বা ডোনারের নাম দিয়ে খুঁজুন...";
-      } else {
+      } else if (tab === 'feedback') {
         verifyAllContainer.style.display = 'none';
-        searchBox.placeholder = "মতামত প্রদানকারীর নাম বা বার্তা দিয়ে খুঁজুন...";
+        searchBox.placeholder = "মতামত প্রদানকারীর নাম দিয়ে খুঁজুন...";
+      } else if (tab === 'subadmins') {
+        verifyAllContainer.style.display = 'none';
+        searchBox.placeholder = "সাব-এডমিনের ইমেইল দিয়ে খুঁজুন...";
       }
 
       searchBox.value = "";
@@ -430,33 +466,22 @@
       listContainer.innerHTML = `<div class="no-results">ডাটা লোড হচ্ছে...</div>`;
 
       try {
-        // 1. Fetch Donors
-        const { data: donorsData, error: dError } = await supabaseClient
-          .from('donors')
-          .select('*')
-          .order('id', { ascending: false });
-        if (dError) throw dError;
+        const { data: donorsData } = await supabaseClient.from('donors').select('*').order('id', { ascending: false });
         allDonorsCache = donorsData || [];
 
-        // 2. Fetch Reports
-        const { data: reportsData } = await supabaseClient
-          .from('reports')
-          .select('*')
-          .order('id', { ascending: false });
+        const { data: reportsData } = await supabaseClient.from('reports').select('*').order('id', { ascending: false });
         allReportsCache = reportsData || [];
 
-        // 3. Fetch Feedback
         try {
-          const { data: feedbackData } = await supabaseClient
-            .from('feedback')
-            .select('*')
-            .order('id', { ascending: false });
+          const { data: feedbackData } = await supabaseClient.from('feedback').select('*').order('id', { ascending: false });
           allFeedbackCache = feedbackData || [];
-        } catch (e) {
-          allFeedbackCache = [];
-        }
+        } catch(e) { allFeedbackCache = []; }
 
-        // Update Badges
+        try {
+          const { data: subData } = await supabaseClient.from('admin_users').select('*').order('id', { ascending: false });
+          allSubadminsCache = subData || [];
+        } catch(e) { allSubadminsCache = []; }
+
         const pendingCount = allDonorsCache.filter(d => !d.verified).length;
         document.getElementById('pendingBadge').textContent = pendingCount;
         document.getElementById('pendingCountText').textContent = `পেন্ডিং ডোনার: ${pendingCount} জন`;
@@ -472,13 +497,10 @@
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
 
-      // TAB 1 & 2: DONORS / PENDING
+      // TAB: DONORS or PENDING
       if (currentTab === 'donors' || currentTab === 'pending') {
         let donors = allDonorsCache;
-
-        if (currentTab === 'pending') {
-          donors = donors.filter(d => !d.verified);
-        }
+        if (currentTab === 'pending') donors = donors.filter(d => !d.verified);
 
         if (query) {
           donors = donors.filter(d => 
@@ -490,7 +512,7 @@
         }
 
         if (donors.length === 0) {
-          listContainer.innerHTML = currentTab === 'pending' 
+          listContainer.innerHTML = currentTab === 'pending'
             ? `<div class="no-results" style="color: var(--success); font-weight: 700;">🎉 কোনো পেন্ডিং ভেরিফিকেশন নেই! সব ডোনার অনুমোদিত।</div>`
             : `<div class="no-results">কোনো ডোনার পাওয়া যায়নি।</div>`;
           return;
@@ -500,11 +522,7 @@
           const { isAvailable, nextDateStr } = getDonationStatus(d);
           const statusText = isAvailable ? "AVAILABLE" : "UNAVAILABLE";
           const statusColor = isAvailable ? "var(--success)" : "var(--danger)";
-
-          let nextDateInfo = "";
-          if (!isAvailable && nextDateStr) {
-            nextDateInfo = ` <span style="font-size:0.75rem; color:#b91c1c;">(পরবর্তী: ${escapeHtml(nextDateStr)})</span>`;
-          }
+          let nextDateInfo = (!isAvailable && nextDateStr) ? ` <span style="font-size:0.75rem; color:#b91c1c;">(পরবর্তী: ${escapeHtml(nextDateStr)})</span>` : "";
 
           return `
             <div class="admin-card">
@@ -532,14 +550,11 @@
           `;
         }).join('');
 
-      // TAB 3: REPORTS
+      // TAB: REPORTS
       } else if (currentTab === 'reports') {
         let reports = allReportsCache;
         if (query) {
-          reports = reports.filter(r => 
-            (r.donor_name && r.donor_name.toLowerCase().includes(query)) ||
-            (r.reason && r.reason.toLowerCase().includes(query))
-          );
+          reports = reports.filter(r => (r.donor_name && r.donor_name.toLowerCase().includes(query)) || (r.reason && r.reason.toLowerCase().includes(query)));
         }
 
         if (reports.length === 0) {
@@ -564,15 +579,11 @@
           </div>
         `).join('');
 
-      // TAB 4: FEEDBACK (পাবলিক মতামত)
+      // TAB: FEEDBACK
       } else if (currentTab === 'feedback') {
         let feedbacks = allFeedbackCache;
         if (query) {
-          feedbacks = feedbacks.filter(f => 
-            (f.name && f.name.toLowerCase().includes(query)) ||
-            (f.message && f.message.toLowerCase().includes(query)) ||
-            (f.contact && f.contact.toLowerCase().includes(query))
-          );
+          feedbacks = feedbacks.filter(f => (f.name && f.name.toLowerCase().includes(query)) || (f.message && f.message.toLowerCase().includes(query)));
         }
 
         if (feedbacks.length === 0) {
@@ -588,7 +599,7 @@
             </div>
             <div class="admin-details">
               <div>📞 যোগাযোগ: <strong>${escapeHtml(f.contact || 'প্রদান করেনি')}</strong></div>
-              <div>💬 মতামত/পরামর্শ: <strong style="color: #0f172a; font-weight: 600;">${escapeHtml(f.message)}</strong></div>
+              <div>💬 মতামত/পরামর্শ: <strong style="color: #0f172a;">${escapeHtml(f.message)}</strong></div>
               <div>🕒 পাঠানোর সময়: <strong>${new Date(f.created_at).toLocaleString('bn-BD')}</strong></div>
             </div>
             <div class="admin-card-actions">
@@ -596,6 +607,46 @@
             </div>
           </div>
         `).join('');
+
+      // TAB: SUBADMINS (নতুন সাব-এডমিন তৈরি ও ব্যবস্থাপনা)
+      } else if (currentTab === 'subadmins') {
+        let subadmins = allSubadminsCache;
+        if (query) {
+          subadmins = subadmins.filter(s => s.email.toLowerCase().includes(query));
+        }
+
+        let formHtml = `
+          <div class="subadmin-form">
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--primary); margin-bottom: 2px;">➕ নতুন সাব-এডমিন যুক্ত করুন</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">সাব-এডমিন ডোনার ভেরিফাই ও স্ট্যাটাস ম্যানেজ করতে পারবে।</p>
+            <input type="email" id="newSubEmail" class="subadmin-input" placeholder="সাব-এডমিনের ইমেইল..." required />
+            <input type="text" id="newSubPassword" class="subadmin-input" placeholder="সাব-এডমিনের পাসওয়ার্ড..." required />
+            <button onclick="createSubAdmin()" class="btn-action" style="margin-top: 4px; height: 38px; font-size: 0.88rem;">সাব-এডমিন তৈরি করুন</button>
+          </div>
+        `;
+
+        if (subadmins.length === 0) {
+          listContainer.innerHTML = formHtml + `<div class="no-results">বর্তমানে কোনো সক্রিয় সাব-এডমিন নেই।</div>`;
+          return;
+        }
+
+        let listHtml = subadmins.map(s => `
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>${escapeHtml(s.email)}</h3>
+              <span class="blood-badge" style="background: #e0e7ff; color: #4338ca;">Sub-Admin</span>
+            </div>
+            <div class="admin-details">
+              <div>🔑 পাসওয়ার্ড: <strong>${escapeHtml(s.password)}</strong></div>
+              <div>📅 তৈরি করা হয়েছে: <strong>${new Date(s.created_at).toLocaleDateString('bn-BD')}</strong></div>
+            </div>
+            <div class="admin-card-actions">
+              <button onclick="deleteSubAdmin('${s.id}')" class="action-btn btn-delete" style="max-width: 100%;">মুছে ফেলুন (Access Revoke)</button>
+            </div>
+          </div>
+        `).join('');
+
+        listContainer.innerHTML = formHtml + `<h4 style="font-size: 0.88rem; font-weight: 700; color: #475569; margin: 10px 0 6px 4px;">সক্রিয় সাব-এডমিন তালিকা:</h4>` + listHtml;
       }
     }
 
@@ -603,7 +654,40 @@
       renderAdminList();
     }
 
-    // 1-Click Verify All
+    // Create Sub-Admin
+    async function createSubAdmin() {
+      const email = document.getElementById('newSubEmail').value.trim();
+      const password = document.getElementById('newSubPassword').value.trim();
+
+      if (!email || !password) {
+        alert("ইমেইল এবং পাসওয়ার্ড উভয়ই পূরণ করুন!");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient.from('admin_users').insert([{ email, password, role: 'subadmin' }]);
+        if (error) throw error;
+
+        alert(`সাব-এডমিন সফলভাবে তৈরি হয়েছে!\nইমেইল: ${email}\nপাসওয়ার্ড: ${password}`);
+        loadAdminData();
+      } catch (err) {
+        alert("সাব-এডমিন তৈরি করা যায়নি: " + err.message);
+      }
+    }
+
+    // Delete Sub-Admin
+    async function deleteSubAdmin(id) {
+      if (!confirm("আপনি কি নিশ্চিতভাবে এই সাব-এডমিনের অ্যাক্সেস বাতিল করতে চান?")) return;
+      try {
+        const { error } = await supabaseClient.from('admin_users').delete().eq('id', id);
+        if (error) throw error;
+        loadAdminData();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
+      }
+    }
+
+    // Verify All Pending Donors
     async function verifyAllPendingDonors() {
       const pendingDonors = allDonorsCache.filter(d => !d.verified);
       if (pendingDonors.length === 0) {
@@ -611,22 +695,15 @@
         return;
       }
 
-      if (!confirm(`আপনি কি নিশ্চিতভাবে একসাথে ${pendingDonors.length} জন পেন্ডিং ডোনারকে অনুমোদন দিতে চান?`)) {
-        return;
-      }
+      if (!confirm(`আপনি কি নিশ্চিতভাবে একসাথে ${pendingDonors.length} জন পেন্ডিং ডোনারকে অনুমোদন দিতে চান?`)) return;
 
       const btn = document.getElementById('btnVerifyAll');
       btn.disabled = true;
       btn.textContent = "অনুমোদন দেওয়া হচ্ছে...";
 
       try {
-        const { error } = await supabaseClient
-          .from('donors')
-          .update({ verified: true })
-          .eq('verified', false);
-
+        const { error } = await supabaseClient.from('donors').update({ verified: true }).eq('verified', false);
         if (error) throw error;
-
         alert(`অভিনন্দন! সফলভাবে সব (${pendingDonors.length} জন) ডোনার অনুমোদিত হয়েছে।`);
         loadAdminData();
       } catch (err) {
