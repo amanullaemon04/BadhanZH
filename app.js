@@ -17,16 +17,33 @@ function normalizeBlood(bg) {
   return bg.replace(/\s+/g, "").toUpperCase();
 }
 
-// Check availability & calculate next eligible donation date (90 days rule)
+// Check availability & calculate next eligible donation date
 function getDonationStatus(donor) {
-  if (donor.status && donor.status.toLowerCase() === "unavailable") {
-    return { isAvailable: false, nextDateStr: null };
+  const manualStatus = (donor.status || "").toLowerCase();
+
+  // If donor manually set available, override 90-day lock
+  if (manualStatus === "available") {
+    return { isAvailable: true, nextDateStr: null };
   }
 
+  // If donor explicitly marked unavailable
+  if (manualStatus === "unavailable") {
+    let nextDateStr = null;
+    if (donor.last_donation) {
+      const donationDate = new Date(donor.last_donation);
+      if (!isNaN(donationDate.getTime())) {
+        const nextEligibleDate = new Date(donationDate);
+        nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
+        nextDateStr = nextEligibleDate.toISOString().split("T")[0];
+      }
+    }
+    return { isAvailable: false, nextDateStr };
+  }
+
+  // If no manual status, check 90 days rule from last_donation
   if (donor.last_donation) {
     const donationDate = new Date(donor.last_donation);
     if (!isNaN(donationDate.getTime())) {
-      // 90 days addition
       const nextEligibleDate = new Date(donationDate);
       nextEligibleDate.setDate(nextEligibleDate.getDate() + 90);
 
@@ -234,4 +251,3 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
-                                                        
