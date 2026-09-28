@@ -278,10 +278,11 @@
           ⏳ পেন্ডিং <span class="tab-badge" id="pendingBadge">0</span>
         </button>
         <button class="tab-btn" id="tabReports" onclick="switchTab('reports')">⚠️ রিপোর্ট</button>
-        <button class="tab-btn" id="tabFeedback" onclick="switchTab('feedback')">
+        <!-- Only Super Admin will see Feedback & Sub-Admin Tabs -->
+        <button class="tab-btn superadmin-only" id="tabFeedback" onclick="switchTab('feedback')">
           💬 মতামত <span class="tab-badge" id="feedbackBadge" style="background:#2563eb;">0</span>
         </button>
-        <button class="tab-btn" id="tabSubadmins" onclick="switchTab('subadmins')">➕ সাব-এডমিন</button>
+        <button class="tab-btn superadmin-only" id="tabSubadmins" onclick="switchTab('subadmins')">➕ সাব-এডমিন</button>
       </div>
 
       <!-- Verify All Bar -->
@@ -359,6 +360,7 @@
       btn.textContent = "যাচাই করা হচ্ছে...";
 
       try {
+        // 1. Try Super Admin Auth
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         
         if (!error && data?.session) {
@@ -368,6 +370,7 @@
           return;
         }
 
+        // 2. Try Sub-Admin Table
         const { data: subadmins, error: subErr } = await supabaseClient
           .from('admin_users')
           .select('*')
@@ -405,9 +408,11 @@
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('logoutBtn').style.display = 'inline-flex';
 
+      // Restrict Sub-Admins: Hide Feedback & Sub-Admins Tab
       if (currentUserRole === 'subadmin') {
-        const subTab = document.getElementById('tabSubadmins');
-        if (subTab) subTab.style.display = 'none';
+        document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = 'none');
+      } else {
+        document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = 'inline-flex');
       }
 
       loadAdminData();
@@ -429,6 +434,11 @@
     }
 
     function switchTab(tab) {
+      // Security Guard: Prevent Sub-Admin from accessing Feedback or Sub-admin tabs
+      if (currentUserRole === 'subadmin' && (tab === 'feedback' || tab === 'subadmins')) {
+        tab = 'donors';
+      }
+
       currentTab = tab;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
@@ -469,21 +479,24 @@
         const { data: reportsData } = await supabaseClient.from('reports').select('*').order('id', { ascending: false });
         allReportsCache = reportsData || [];
 
-        try {
-          const { data: feedbackData } = await supabaseClient.from('feedback').select('*').order('id', { ascending: false });
-          allFeedbackCache = feedbackData || [];
-        } catch(e) { allFeedbackCache = []; }
+        // Only Super Admin fetches Feedback & Subadmins
+        if (currentUserRole === 'superadmin') {
+          try {
+            const { data: feedbackData } = await supabaseClient.from('feedback').select('*').order('id', { ascending: false });
+            allFeedbackCache = feedbackData || [];
+          } catch(e) { allFeedbackCache = []; }
 
-        try {
-          const { data: subData } = await supabaseClient.from('admin_users').select('*').order('id', { ascending: false });
-          // Super admin email list theke filter out kora
-          allSubadminsCache = (subData || []).filter(s => s.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase());
-        } catch(e) { allSubadminsCache = []; }
+          try {
+            const { data: subData } = await supabaseClient.from('admin_users').select('*').order('id', { ascending: false });
+            allSubadminsCache = (subData || []).filter(s => s.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase());
+          } catch(e) { allSubadminsCache = []; }
+
+          document.getElementById('feedbackBadge').textContent = allFeedbackCache.length;
+        }
 
         const pendingCount = allDonorsCache.filter(d => !d.verified).length;
         document.getElementById('pendingBadge').textContent = pendingCount;
         document.getElementById('pendingCountText').textContent = `পেন্ডিং ডোনার: ${pendingCount} জন`;
-        document.getElementById('feedbackBadge').textContent = allFeedbackCache.length;
 
         renderAdminList();
       } catch (err) {
@@ -495,6 +508,7 @@
       const listContainer = document.getElementById('adminContentList');
       const query = document.getElementById('adminSearch').value.trim().toLowerCase();
 
+      // TAB: DONORS or PENDING
       if (currentTab === 'donors' || currentTab === 'pending') {
         let donors = allDonorsCache;
         if (currentTab === 'pending') donors = donors.filter(d => !d.verified);
@@ -547,6 +561,7 @@
           `;
         }).join('');
 
+      // TAB: REPORTS
       } else if (currentTab === 'reports') {
         let reports = allReportsCache;
         if (query) {
@@ -575,7 +590,8 @@
           </div>
         `).join('');
 
-      } else if (currentTab === 'feedback') {
+      // TAB: FEEDBACK (SUPER ADMIN ONLY)
+      } else if (currentTab === 'feedback' && currentUserRole === 'superadmin') {
         let feedbacks = allFeedbackCache;
         if (query) {
           feedbacks = feedbacks.filter(f => (f.name && f.name.toLowerCase().includes(query)) || (f.message && f.message.toLowerCase().includes(query)));
@@ -603,7 +619,8 @@
           </div>
         `).join('');
 
-      } else if (currentTab === 'subadmins') {
+      // TAB: SUBADMINS (SUPER ADMIN ONLY)
+      } else if (currentTab === 'subadmins' && currentUserRole === 'superadmin') {
         let subadmins = allSubadminsCache;
         if (query) {
           subadmins = subadmins.filter(s => s.email.toLowerCase().includes(query));
@@ -612,7 +629,7 @@
         let formHtml = `
           <div class="subadmin-form">
             <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--primary); margin-bottom: 2px;">➕ নতুন সাব-এডমিন যুক্ত করুন</h3>
-            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">সাব-এডমিন ডোনার ভেরিফাই ও স্ট্যাটাস ম্যানেজ করতে পারবে।</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">সাব-এডমিন শুধু ডোনার ভেরিফাই ও প্রাপ্যতা ম্যানেজ করতে পারবে।</p>
             <input type="email" id="newSubEmail" class="subadmin-input" placeholder="সাব-এডমিনের ইমেইল..." required />
             <input type="text" id="newSubPassword" class="subadmin-input" placeholder="সাব-এডমিনের পাসওয়ার্ড..." required />
             <button onclick="createSubAdmin()" class="btn-action" style="margin-top: 4px; height: 38px; font-size: 0.88rem; background: var(--primary); color: #fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">সাব-এডমিন তৈরি করুন</button>
