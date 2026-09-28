@@ -11,10 +11,35 @@ const statusSelect = document.getElementById("status");
 const resultsContainer = document.getElementById("results");
 const countDisplay = document.getElementById("count");
 
-// Normalizer helper: removes extra spaces & normalizes case
+// Normalizer helper
 function normalizeBlood(bg) {
   if (!bg) return "";
   return bg.replace(/\s+/g, "").toUpperCase();
+}
+
+// Function to calculate availability based on 90 days rule & database status
+function checkAvailability(donor) {
+  // If database explicitly set to unavailable
+  if (donor.status && donor.status.toLowerCase() === "unavailable") {
+    return false;
+  }
+
+  // If last_donation date exists, check if 90 days (3 months) passed
+  if (donor.last_donation) {
+    const donationDate = new Date(donor.last_donation);
+    const today = new Date();
+    
+    // Difference in milliseconds
+    const diffTime = today - donationDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    // If donated within last 90 days, donor is UNAVAILABLE
+    if (diffDays < 90) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 // Fetch & Filter Donors
@@ -24,13 +49,13 @@ async function fetchDonors() {
   const selectedLocation = locationInput ? locationInput.value.trim().toLowerCase() : "";
   const selectedStatus = statusSelect ? statusSelect.value.trim().toLowerCase() : "";
 
-  // Prompt user if no filter is applied at all
-  if (!selectedBlood && !selectedCity && !selectedLocation) {
+  // STRICT RULE: Location or City must be provided to search donors
+  if (!selectedCity && !selectedLocation) {
     if (countDisplay) countDisplay.textContent = "0";
     if (resultsContainer) {
       resultsContainer.innerHTML = `
         <div class="no-results">
-          Please select a Blood Group, City, or enter a Specific Location to view donors.
+          Please select a City or enter a Specific Location to view donors.
         </div>
       `;
     }
@@ -42,7 +67,6 @@ async function fetchDonors() {
   }
 
   try {
-    // Basic query for verified donors
     let query = supabaseClient
       .from("donors")
       .select("*")
@@ -53,15 +77,17 @@ async function fetchDonors() {
 
     let donors = data || [];
 
-    // Precise filtering on client-side to prevent URL encoding issues with "+"
+    // Filter by Blood Group if selected
     if (selectedBlood) {
       donors = donors.filter(d => normalizeBlood(d.blood_group) === selectedBlood);
     }
 
+    // Filter by City
     if (selectedCity) {
       donors = donors.filter(d => (d.city || "").toLowerCase().includes(selectedCity));
     }
 
+    // Filter by Specific Location
     if (selectedLocation) {
       donors = donors.filter(d => 
         (d.location && d.location.toLowerCase().includes(selectedLocation)) ||
@@ -69,10 +95,11 @@ async function fetchDonors() {
       );
     }
 
+    // Filter by Status (Dynamic calculation)
     if (selectedStatus) {
       donors = donors.filter(d => {
-        const donorStatus = (d.status || "available").toLowerCase();
-        return donorStatus === selectedStatus;
+        const isAvail = checkAvailability(d);
+        return selectedStatus === "available" ? isAvail : !isAvail;
       });
     }
 
@@ -97,16 +124,17 @@ function renderDonors(donors) {
   if (donors.length === 0) {
     resultsContainer.innerHTML = `
       <div class="no-results">
-        কোনো রক্তদাতার তথ্য পাওয়া যায়নি। অন্য ফিল্টার দিয়ে চেষ্টা করুন।
+        কোনো রক্তদাতার তথ্য পাওয়া যায়নি। অন্য এলাকা বা ফিল্টার দিয়ে চেষ্টা করুন।
       </div>
     `;
     return;
   }
 
   resultsContainer.innerHTML = donors.map(donor => {
-    const isAvailable = (donor.status || 'available').toLowerCase() === 'available';
+    // Dynamic real-time calculation
+    const isAvailable = checkAvailability(donor);
     const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
-    const statusText = isAvailable ? 'Available' : 'Unavailable';
+    const statusText = isAvailable ? 'AVAILABLE' : 'UNAVAILABLE';
 
     let donationInfo = "";
     if (donor.last_donation) {
@@ -172,7 +200,7 @@ async function reportDonor(id, name, phone) {
   }
 }
 
-// Helper functions for security
+// Security Escape Helpers
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -202,4 +230,4 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
-        
+                                          
