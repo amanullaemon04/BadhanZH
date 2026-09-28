@@ -11,72 +11,88 @@ const statusSelect = document.getElementById("status");
 const resultsContainer = document.getElementById("results");
 const countDisplay = document.getElementById("count");
 
+// Normalizer helper: removes extra spaces & normalizes case
+function normalizeBlood(bg) {
+  if (!bg) return "";
+  return bg.replace(/\s+/g, "").toUpperCase();
+}
+
 // Fetch & Filter Donors
 async function fetchDonors() {
-  const blood = bloodSelect ? bloodSelect.value.trim() : "";
-  const city = citySelect ? citySelect.value.trim() : "";
-  const location = locationInput ? locationInput.value.trim().toLowerCase() : "";
-  const status = statusSelect ? statusSelect.value.trim() : "";
+  const selectedBlood = bloodSelect ? normalizeBlood(bloodSelect.value) : "";
+  const selectedCity = citySelect ? citySelect.value.trim().toLowerCase() : "";
+  const selectedLocation = locationInput ? locationInput.value.trim().toLowerCase() : "";
+  const selectedStatus = statusSelect ? statusSelect.value.trim().toLowerCase() : "";
 
-  // Prompt user if no initial filter is selected to optimize initial render
-  if (!blood && !city && !location) {
-    countDisplay.textContent = "0";
-    resultsContainer.innerHTML = `
-      <div class="no-results">
-        Please select a Blood Group, City, or enter a Specific Location to view donors.
-      </div>
-    `;
+  // Prompt user if no filter is applied at all
+  if (!selectedBlood && !selectedCity && !selectedLocation) {
+    if (countDisplay) countDisplay.textContent = "0";
+    if (resultsContainer) {
+      resultsContainer.innerHTML = `
+        <div class="no-results">
+          Please select a Blood Group, City, or enter a Specific Location to view donors.
+        </div>
+      `;
+    }
     return;
   }
 
-  resultsContainer.innerHTML = `<div class="no-results">ডোনারদের তথ্য খোঁজা হচ্ছে...</div>`;
+  if (resultsContainer) {
+    resultsContainer.innerHTML = `<div class="no-results">ডোনারদের তথ্য খোঁজা হচ্ছে...</div>`;
+  }
 
   try {
+    // Basic query for verified donors
     let query = supabaseClient
       .from("donors")
       .select("*")
-      .eq("verified", true); // Only verified donors
-
-    if (blood) {
-      query = query.eq("blood_group", blood);
-    }
-
-    if (city) {
-      query = query.ilike("city", `%${city}%`);
-    }
-
-    if (status) {
-      query = query.eq("status", status);
-    }
+      .eq("verified", true);
 
     const { data, error } = await query;
-
     if (error) throw error;
 
-    // Filter location in memory if user typed specific place
-    let filteredData = data || [];
-    if (location) {
-      filteredData = filteredData.filter(d => 
-        (d.location && d.location.toLowerCase().includes(location)) ||
-        (d.city && d.city.toLowerCase().includes(location))
+    let donors = data || [];
+
+    // Precise filtering on client-side to prevent URL encoding issues with "+"
+    if (selectedBlood) {
+      donors = donors.filter(d => normalizeBlood(d.blood_group) === selectedBlood);
+    }
+
+    if (selectedCity) {
+      donors = donors.filter(d => (d.city || "").toLowerCase().includes(selectedCity));
+    }
+
+    if (selectedLocation) {
+      donors = donors.filter(d => 
+        (d.location && d.location.toLowerCase().includes(selectedLocation)) ||
+        (d.city && d.city.toLowerCase().includes(selectedLocation))
       );
     }
 
-    renderDonors(filteredData);
+    if (selectedStatus) {
+      donors = donors.filter(d => {
+        const donorStatus = (d.status || "available").toLowerCase();
+        return donorStatus === selectedStatus;
+      });
+    }
+
+    renderDonors(donors);
   } catch (err) {
     console.error("Error fetching donors:", err);
-    resultsContainer.innerHTML = `
-      <div class="no-results" style="color: var(--danger);">
-        তথ্য লোড করতে সমস্যা হয়েছে: ${err.message}
-      </div>
-    `;
-    countDisplay.textContent = "0";
+    if (resultsContainer) {
+      resultsContainer.innerHTML = `
+        <div class="no-results" style="color: var(--danger);">
+          তথ্য লোড করতে সমস্যা হয়েছে: ${err.message}
+        </div>
+      `;
+    }
+    if (countDisplay) countDisplay.textContent = "0";
   }
 }
 
 // Render Donors to UI
 function renderDonors(donors) {
-  countDisplay.textContent = donors.length;
+  if (countDisplay) countDisplay.textContent = donors.length;
 
   if (donors.length === 0) {
     resultsContainer.innerHTML = `
@@ -88,14 +104,13 @@ function renderDonors(donors) {
   }
 
   resultsContainer.innerHTML = donors.map(donor => {
-    const isAvailable = (donor.status || 'available') === 'available';
+    const isAvailable = (donor.status || 'available').toLowerCase() === 'available';
     const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
     const statusText = isAvailable ? 'Available' : 'Unavailable';
 
-    // Format last donation date if available
     let donationInfo = "";
     if (donor.last_donation) {
-      donationInfo = `<span>সর্বশেষ রক্তদান: <strong>${donor.last_donation}</strong></span>`;
+      donationInfo = `<span>সর্বশেষ রক্তদান: <strong>${escapeHtml(donor.last_donation)}</strong></span>`;
     }
 
     return `
@@ -115,7 +130,7 @@ function renderDonors(donors) {
         </div>
 
         <div style="display: flex; gap: 8px; margin-top: 6px;">
-          <a href="tel:${donor.phone}" class="contact-btn" style="flex: 1; text-align: center;">
+          <a href="tel:${escapeHtml(donor.phone)}" class="contact-btn" style="flex: 1; text-align: center;">
             📞 কল করুন
           </a>
           <button 
@@ -157,7 +172,7 @@ async function reportDonor(id, name, phone) {
   }
 }
 
-// Helper to escape HTML tags to prevent XSS
+// Helper functions for security
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -187,3 +202,4 @@ if (locationInput) {
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", fetchDonors);
+        
