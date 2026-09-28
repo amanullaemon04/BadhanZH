@@ -26,24 +26,33 @@
     .bio-header {
       text-align: center;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
+    /* Perfect Circle Avatar */
     .bio-avatar {
-      width: 105px;
-      height: 105px;
+      width: 108px;
+      height: 108px;
+      min-width: 108px;
+      min-height: 108px;
+      aspect-ratio: 1 / 1;
       border-radius: 50%;
-      border: 3px solid #dc2626;
-      padding: 3px;
-      background: #ffffff;
+      border: 3.5px solid #dc2626;
       object-fit: cover;
-      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+      object-position: center;
+      background: #f8fafc;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+      display: block;
     }
 
     .bio-name {
       font-size: 1.35rem;
       font-weight: 800;
       color: #0f172a;
-      margin: 10px 0 2px 0;
+      margin: 12px 0 2px 0;
     }
 
     .bio-tagline {
@@ -127,6 +136,9 @@
       font-size: 0.84rem;
       margin: 16px 0 6px;
       line-height: 1.5;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -157,10 +169,13 @@
   <main class="bio-container">
     <div class="bio-card">
       
-      <!-- Top Profile Overview -->
+      <!-- Top Profile Overview (Uses profile.jpg) -->
       <div class="bio-header">
-        <!-- Chhobi path thik kore boshate paro -->
-        <img src="https://via.placeholder.com/150" alt="Amanulla Emon" class="bio-avatar" />
+        <img 
+          src="profile.jpg" 
+          alt="Amanulla Emon" 
+          class="bio-avatar" 
+        />
         <h1 class="bio-name">Amanulla Emon</h1>
         <p class="bio-tagline">Web Developer & Tech Enthusiast</p>
       </div>
