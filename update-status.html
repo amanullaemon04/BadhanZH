@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>স্ট্যাটাস আপডেট - BADHAN ZH</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .update-card {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(2px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    .form-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .form-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      height: 48px;
+      padding: 10px 14px;
+      border: 1.5px solid rgba(203, 213, 225, 0.85);
+      border-radius: 8px;
+      font-size: 0.96rem;
+      background-color: rgba(255, 255, 255, 0.45);
+      color: var(--text-main);
+      outline: none;
+    }
+    .btn-submit {
+      width: 100%;
+      height: 48px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="index.html" class="logo" style="text-decoration: none;">🩸 BADHAN ZH</a>
+        <div class="header-actions">
+          <a href="index.html" class="admin-link">← হোম পেজ</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="update-card">
+      <h2 class="form-title">রক্তদানের তথ্য আপডেট</h2>
+      <p class="form-subtitle">আপনি রক্ত দিয়ে থাকলে আপনার মোবাইল নম্বর দিয়ে তথ্য হালনাগাদ করুন</p>
+      
+      <form id="updateForm">
+        <div class="form-group">
+          <label for="phone">নিবন্ধিত মোবাইল নম্বর *</label>
+          <input type="tel" id="phone" placeholder="01XXXXXXXXX" required />
+        </div>
+
+        <div class="form-group">
+          <label for="last_donation">রক্তদানের তারিখ *</label>
+          <input type="date" id="last_donation" required />
+        </div>
+
+        <div class="form-group">
+          <label for="status">বর্তমান প্রাপ্যতা (Status) *</label>
+          <select id="status" required>
+            <option value="unavailable">রক্ত দিয়েছি (Unavailable - ৩ মাস)</option>
+            <option value="available">রক্তদানের জন্য প্রস্তুত (Available)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="updateBtn">তথ্য আপডেট করুন</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-credit">Designed & Developed by <a href="developer.html">Amanulla Emon</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://qqwuweskgtoqigfvvfso.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_A1qWn9h-TYg1dXxOgbYlxg_MXanpCxA";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Set today's date by default
+    document.getElementById('last_donation').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('updateBtn');
+      btn.disabled = true;
+      btn.textContent = "অপেক্ষা করুন...";
+
+      const phone = document.getElementById('phone').value.trim();
+      const lastDonation = document.getElementById('last_donation').value;
+      const status = document.getElementById('status').value;
+
+      try {
+        // Find donor by phone
+        const { data, error } = await supabaseClient
+          .from('donors')
+          .select('id, name')
+          .eq('phone', phone);
+
+        if (error) throw error;
+        if (!data || data.length === 0) {
+          alert("এই নম্বরে কোনো ডোনারের তথ্য পাওয়া যায়নি!");
+          return;
+        }
+
+        // Update donor record
+        const { error: updateError } = await supabaseClient
+          .from('donors')
+          .update({
+            last_donation: lastDonation,
+            status: status
+          })
+          .eq('phone', phone);
+
+        if (updateError) throw updateError;
+
+        alert(`ধন্যবাদ ${data[0].name}! আপনার তথ্য সফলভাবে আপডেট হয়েছে।`);
+        document.getElementById('updateForm').reset();
+      } catch (err) {
+        alert("ত্রুটি: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "তথ্য আপডেট করুন";
+      }
+    });
+  </script>
+</body>
+</html>
